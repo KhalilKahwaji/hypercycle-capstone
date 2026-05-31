@@ -17,6 +17,8 @@ from pydantic import BaseModel, Field, ValidationError
 from precedents import precedents_block
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise RuntimeError("Missing GROQ_API_KEY environment variable")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 USE_RAG = os.getenv("USE_RAG", "false").lower() == "true"
 
