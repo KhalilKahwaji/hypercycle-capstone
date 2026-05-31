@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+venv/
+node_modules/
+dist/
+.pytest_cache/
+chroma_db/
+
+groq api.txt
