@@ -6,5 +6,7 @@ node_modules/
 dist/
 .pytest_cache/
 chroma_db/
-
+run_all.bat
+backend/test_capstone_api.py
 groq api.txt
+todo.txt
