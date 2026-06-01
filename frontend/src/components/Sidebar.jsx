@@ -1,17 +1,18 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
+    onClose();
     navigate("/login");
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${mobileOpen ? " open" : ""}`}>
       <div className="brand">
         Hyper<span>Cycle</span>
       </div>
@@ -20,16 +21,16 @@ export default function Sidebar() {
       {user?.is_admin ? (
         <>
           <div className="nav-section-label">Admin</div>
-          <NavLink to="/admin" className="nav-link">All Users</NavLink>
-          <NavLink to="/admin/search" className="nav-link">Search User</NavLink>
+          <NavLink to="/admin" className="nav-link" onClick={onClose}>All Users</NavLink>
+          <NavLink to="/admin/search" className="nav-link" onClick={onClose}>Search User</NavLink>
         </>
       ) : (
         <>
           <div className="nav-section-label">Learn</div>
-          <NavLink to="/dashboard" className="nav-link">Dashboard</NavLink>
-          <NavLink to="/assessment" className="nav-link">Self-Assessment</NavLink>
-          <NavLink to="/program" className="nav-link">My Program</NavLink>
-          <NavLink to="/history" className="nav-link">Submission History</NavLink>
+          <NavLink to="/dashboard" className="nav-link" onClick={onClose}>Dashboard</NavLink>
+          <NavLink to="/assessment" className="nav-link" onClick={onClose}>Self-Assessment</NavLink>
+          <NavLink to="/program" className="nav-link" onClick={onClose}>My Program</NavLink>
+          <NavLink to="/history" className="nav-link" onClick={onClose}>Submission History</NavLink>
         </>
       )}
 

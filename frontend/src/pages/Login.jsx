@@ -1,11 +1,28 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import NeuralBg from "../components/NeuralBg";
+
+function EyeIcon({ open }) {
+  return open ? (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ) : (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+      <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+      <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+  );
+}
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ username_or_email: "", password: "" });
+  const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -28,7 +45,9 @@ export default function Login() {
 
   return (
     <div className="center-screen">
-      <div className="card center">
+      <NeuralBg />
+
+      <div className="card center" style={{ position: "relative", zIndex: 2 }}>
         <div className="brand" style={{ fontFamily: "var(--display)", fontWeight: 900, fontSize: 30 }}>
           Hyper<span style={{ color: "var(--amber)" }}>Cycle</span>
         </div>
@@ -44,13 +63,19 @@ export default function Login() {
           onChange={(e) => setForm({ ...form, username_or_email: e.target.value })}
           onKeyDown={(e) => e.key === "Enter" && submit()}
         />
+
         <label>Password</label>
-        <input
-          type="password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          onKeyDown={(e) => e.key === "Enter" && submit()}
-        />
+        <div className="pw-wrap">
+          <input
+            type={showPw ? "text" : "password"}
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            onKeyDown={(e) => e.key === "Enter" && submit()}
+          />
+          <button type="button" className="pw-toggle" onClick={() => setShowPw((v) => !v)} tabIndex={-1}>
+            <EyeIcon open={showPw} />
+          </button>
+        </div>
 
         <button className="full" style={{ marginTop: 20 }} onClick={submit} disabled={busy}>
           {busy ? <span className="spinner" /> : "Sign in"}

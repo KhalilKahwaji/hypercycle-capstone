@@ -164,6 +164,7 @@ def check_rate_limit(user_id: str):
 
 
 def find_user_by_email(email: str):
+    email = (email or "").lower()
     r = safe_execute(supabase.table("users").select("*").eq("email", email))
     return r.data[0] if r.data else None
 
@@ -177,7 +178,7 @@ def find_user_by_username_or_email(value: str):
     value = sanitize_text(value)
     r = safe_execute(
         supabase.table("users").select("*")
-        .or_(f"username.eq.{value},email.eq.{value}")
+        .or_(f"username.eq.{value},email.ilike.{value}")
     )
     return r.data[0] if r.data else None
 
@@ -319,7 +320,7 @@ def health():
 
 @app.post("/users/register", status_code=status.HTTP_201_CREATED)
 def register_user(request: RegisterUserRequest):
-    email = sanitize_text(request.email)
+    email = sanitize_text(request.email).lower()
     username = sanitize_text(request.username)
     full_name = sanitize_text(request.full_name)
 

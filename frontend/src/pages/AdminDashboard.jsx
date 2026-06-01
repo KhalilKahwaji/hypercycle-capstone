@@ -65,7 +65,7 @@ export default function AdminDashboard() {
       {loading ? (
         <div><span className="spinner" /> loading users…</div>
       ) : (
-        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+        <div className="card table-scroll" style={{ padding: 0 }}>
           <table>
             <thead>
               <tr>

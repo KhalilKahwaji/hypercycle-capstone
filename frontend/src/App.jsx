@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
@@ -29,9 +30,17 @@ function Protected({ children, admin = false }) {
 }
 
 function Shell({ children }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   return (
     <div className="app-shell">
-      <Sidebar />
+      <header className="mobile-topbar">
+        <span className="brand-mobile">Hyper<span>Cycle</span></span>
+        <button className="hamburger" onClick={() => setDrawerOpen((o) => !o)} aria-label="Open menu">
+          ☰
+        </button>
+      </header>
+      {drawerOpen && <div className="drawer-overlay" onClick={() => setDrawerOpen(false)} />}
+      <Sidebar mobileOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
       <main className="content">{children}</main>
     </div>
   );

@@ -47,7 +47,7 @@ export default function AdminSearch() {
         results.length === 0 ? (
           <div className="alert info">No users found.</div>
         ) : (
-          <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <div className="card table-scroll" style={{ padding: 0 }}>
             <table>
               <thead>
                 <tr>

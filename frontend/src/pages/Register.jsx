@@ -1,6 +1,22 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import NeuralBg from "../components/NeuralBg";
+
+function EyeIcon({ open }) {
+  return open ? (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  ) : (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+      <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+      <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+  );
+}
 
 export default function Register() {
   const { register } = useAuth();
@@ -8,6 +24,8 @@ export default function Register() {
   const [form, setForm] = useState({
     email: "", username: "", full_name: "", password: "", confirm: "",
   });
+  const [showPw, setShowPw] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -43,7 +61,9 @@ export default function Register() {
 
   return (
     <div className="center-screen">
-      <div className="card center">
+      <NeuralBg />
+
+      <div className="card center" style={{ position: "relative", zIndex: 2 }}>
         <div className="brand" style={{ fontFamily: "var(--display)", fontWeight: 900, fontSize: 30 }}>
           Create account
         </div>
@@ -55,15 +75,37 @@ export default function Register() {
 
         <label>Email</label>
         <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+
         <label>Username</label>
         <input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
+
         <label>Full name</label>
         <input value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+
         <label>Password</label>
-        <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <div className="pw-wrap">
+          <input
+            type={showPw ? "text" : "password"}
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />
+          <button type="button" className="pw-toggle" onClick={() => setShowPw((v) => !v)} tabIndex={-1}>
+            <EyeIcon open={showPw} />
+          </button>
+        </div>
+
         <label>Confirm password</label>
-        <input type="password" value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-          onKeyDown={(e) => e.key === "Enter" && submit()} />
+        <div className="pw-wrap">
+          <input
+            type={showConfirm ? "text" : "password"}
+            value={form.confirm}
+            onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+            onKeyDown={(e) => e.key === "Enter" && submit()}
+          />
+          <button type="button" className="pw-toggle" onClick={() => setShowConfirm((v) => !v)} tabIndex={-1}>
+            <EyeIcon open={showConfirm} />
+          </button>
+        </div>
 
         <button className="full" style={{ marginTop: 20 }} onClick={submit} disabled={busy}>
           {busy ? <span className="spinner" /> : "Create account"}
