@@ -650,18 +650,23 @@ def admin_list_users(request: Request, limit: int = 10, offset: int = 0):
     if offset < 0:
         offset = 0
 
-    count_res = safe_execute(
-        supabase.table("users").select("id", count="exact").eq("is_admin", False)
+    count_res = (
+        supabase.table("users")
+        .select("id", count="exact")
+        .not_.like("email", "%@example.com")
+        .execute()
     )
     total = count_res.count or 0
 
-    users = safe_execute(
+    users = (
         supabase.table("users")
         .select("id,email,username,full_name,is_admin,created_at")
-        .eq("is_admin", False)
+        .not_.like("email", "%@example.com")
         .order("created_at")
         .range(offset, offset + limit - 1)
-    ).data
+        .execute()
+        .data
+    )
 
     progress_by_user = bulk_compute_progress(users)
     enriched = [{**u, "progress": progress_by_user[u["id"]]} for u in users]
@@ -685,12 +690,14 @@ def admin_search_users(request: Request, q: str = ""):
             supabase.table("users")
             .select("id,email,username,full_name,is_admin,created_at")
             .eq("id", q)
+            .not_.like("email", "%@example.com")
         ).data
     else:
         users = safe_execute(
             supabase.table("users")
             .select("id,email,username,full_name,is_admin,created_at")
             .or_(f"username.ilike.%{q}%,email.ilike.%{q}%")
+            .not_.like("email", "%@example.com")
             .limit(50)
         ).data
 
