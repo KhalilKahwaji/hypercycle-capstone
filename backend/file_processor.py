@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field, ValidationError
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 MAX_CHARS = 5000
-SUPPORTED_EXTENSIONS = {".txt", ".md", ".py", ".json", ".pdf"}
+SUPPORTED_EXTENSIONS = {".txt", ".md", ".py", ".json", ".pdf", ".cpp"}
 
 _groq_client = None
 
