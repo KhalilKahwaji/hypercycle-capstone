@@ -3,13 +3,63 @@ import { useParams, useNavigate } from "react-router-dom";
 import client from "../api/client";
 import FeedbackCard from "../components/FeedbackCard";
 
+function DayDetail({ d }) {
+  const topics = (d.research_topics || "").split("\n").filter(Boolean);
+  return (
+    <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16, marginTop: 12 }}>
+      {d.objective && (
+        <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 14 }}>{d.objective}</p>
+      )}
+      {topics.length > 0 && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: "var(--faint)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+            Research topics
+          </div>
+          <ul className="fb-list">
+            {topics.map((t, i) => <li key={i}>{t}</li>)}
+          </ul>
+        </div>
+      )}
+      {d.task_description && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: "var(--faint)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+            Task
+          </div>
+          <p style={{ fontSize: 13, whiteSpace: "pre-wrap" }}>{d.task_description}</p>
+        </div>
+      )}
+      {d.expected_output && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: "var(--faint)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+            Expected output
+          </div>
+          <p style={{ fontSize: 13, whiteSpace: "pre-wrap" }}>{d.expected_output}</p>
+        </div>
+      )}
+      {d.evaluation_criteria && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 11, color: "var(--faint)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+            Evaluation criteria
+          </div>
+          <p style={{ fontSize: 13, whiteSpace: "pre-wrap" }}>{d.evaluation_criteria}</p>
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 24, color: "var(--muted)", fontSize: 12 }}>
+        {d.estimated_hours && <span>⏱ ~{d.estimated_hours} hrs</span>}
+        {d.unlock_condition && <span>🔓 {d.unlock_condition}</span>}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminUserDetail() {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [prog, setProg] = useState(null);
   const [subs, setSubs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(null);
+  const [openSub, setOpenSub] = useState(null);
+  const [expandedDay, setExpandedDay] = useState(null);
   const [passForm, setPassForm] = useState({ dayId: null, score: 7, summary: "", err: "", busy: false });
 
   const load = () => {
@@ -23,6 +73,8 @@ export default function AdminUserDetail() {
   };
 
   useEffect(() => { load(); }, [userId]);
+
+  const toggleDay = (id) => setExpandedDay((prev) => (prev === id ? null : id));
 
   const openPass = (dayId) =>
     setPassForm(passForm.dayId === dayId
@@ -64,31 +116,54 @@ export default function AdminUserDetail() {
       </div>
 
       <h2 className="section-title">Program days</h2>
+      {!prog.days.length && <div className="alert info">No program generated yet.</div>}
       {prog.days.map((d) => {
         const state = d.is_completed ? "completed" : d.is_unlocked ? "unlocked" : "locked";
+        const isExpanded = expandedDay === d.id;
         const isPassOpen = passForm.dayId === d.id;
+
         return (
           <div key={d.id}>
-            <div className={`day-card ${state}`}>
+            {/* Card header — click anywhere to expand/collapse day details */}
+            <div
+              className={`day-card ${state}`}
+              style={{ cursor: "pointer", flexWrap: "wrap" }}
+              onClick={() => toggleDay(d.id)}
+            >
               <div className="day-num">{String(d.day_number).padStart(2, "0")}</div>
-              <div className="day-body"><div className="t">{d.title}</div></div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="day-body">
+                <div className="t">{d.title}</div>
+                {d.objective && !isExpanded && (
+                  <div className="o">{d.objective}</div>
+                )}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }} onClick={(e) => e.stopPropagation()}>
                 {d.is_completed
                   ? <span className="badge green">Done</span>
                   : d.is_unlocked
                     ? <span className="badge amber">Active</span>
                     : <span className="badge locked">Locked</span>}
+                <span className="muted" style={{ fontSize: 11 }}>{isExpanded ? "▲" : "▼"}</span>
                 {!d.is_completed && (
                   <button
                     className="ghost"
                     style={{ fontSize: 12, padding: "3px 10px" }}
-                    onClick={() => openPass(d.id)}
+                    onClick={(e) => { e.stopPropagation(); openPass(d.id); }}
                   >
                     {isPassOpen ? "Cancel" : "Pass this day"}
                   </button>
                 )}
               </div>
+
+              {/* Expanded day detail — inside the card, full width */}
+              {isExpanded && (
+                <div style={{ width: "100%" }} onClick={(e) => e.stopPropagation()}>
+                  <DayDetail d={d} />
+                </div>
+              )}
             </div>
+
+            {/* Pass form — below the card */}
             {isPassOpen && (
               <div className="card" style={{ marginTop: 0, marginBottom: 12, borderTop: "none", borderRadius: "0 0 4px 4px" }}>
                 <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 10 }}>
@@ -126,11 +201,11 @@ export default function AdminUserDetail() {
       <h2 className="section-title">Submissions</h2>
       {subs.length === 0 && <div className="alert info">No submissions.</div>}
       {subs.map((s) => {
-        const isOpen = open === s.id;
+        const isOpen = openSub === s.id;
         return (
           <div key={s.id} className="card">
             <div style={{ display: "flex", gap: 14, alignItems: "center", cursor: "pointer" }}
-              onClick={() => setOpen(isOpen ? null : s.id)}>
+              onClick={() => setOpenSub(isOpen ? null : s.id)}>
               <div className="day-num" style={{ minWidth: 40, fontSize: 20 }}>D{s.day_number}</div>
               <div style={{ flex: 1 }} className="muted">{new Date(s.created_at).toLocaleString()}</div>
               {s.feedback && (
