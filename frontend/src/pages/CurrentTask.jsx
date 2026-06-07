@@ -19,6 +19,8 @@ export default function CurrentTask() {
   const [day, setDay] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [error, setError] = useState("");
+  const [setupBusy, setSetupBusy] = useState(false);
+  const [setupDone, setSetupDone] = useState(false);
 
   useEffect(() => {
     client
@@ -34,6 +36,19 @@ export default function CurrentTask() {
       })
       .catch((e) => setError(e.message));
   }, [dayId]);
+
+  const markSetupComplete = async () => {
+    setSetupBusy(true);
+    try {
+      await client.post(`/program-days/${day.id}/complete-setup`);
+      setSetupDone(true);
+      setDay((d) => ({ ...d, is_completed: true }));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setSetupBusy(false);
+    }
+  };
 
   if (error) return <div className="alert err">{error}</div>;
   if (!day) return <div><span className="spinner" /> loading task…</div>;
@@ -77,8 +92,16 @@ export default function CurrentTask() {
       )}
 
       <div style={{ display: "flex", gap: 12, marginTop: 20 }}>
-        {!day.is_completed && (
+        {!day.is_completed && day.day_number === 0 && (
+          <button onClick={markSetupComplete} disabled={setupBusy}>
+            {setupBusy ? <><span className="spinner" /> &nbsp;Completing…</> : "Mark setup complete ✓"}
+          </button>
+        )}
+        {!day.is_completed && day.day_number > 0 && (
           <button onClick={() => navigate(`/submit/${day.id}`)}>Submit work for this day →</button>
+        )}
+        {setupDone && (
+          <span className="badge green" style={{ alignSelf: "center" }}>Setup done — Day 1 unlocked!</span>
         )}
         <button className="ghost" onClick={() => navigate("/program")}>Back to program</button>
       </div>

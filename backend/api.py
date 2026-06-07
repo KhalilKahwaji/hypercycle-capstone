@@ -102,6 +102,7 @@ class AssessmentRequest(BaseModel):
     goals: str = Field(..., min_length=1, max_length=4000)
     background: str = Field(default="", max_length=2000)
     hours_per_week: int = Field(..., ge=1, le=80)
+    age: int = Field(..., ge=10, le=100)
 
 
 class AdminPassDayRequest(BaseModel):
@@ -249,7 +250,7 @@ def bulk_compute_progress(users: list) -> dict:
     for uid in user_ids:
         prog = prog_by_user.get(uid)
         if not prog:
-            result[uid] = {"completed_days": 0, "total_days": 15, "percentage": 0, "has_program": False}
+            result[uid] = {"completed_days": 0, "total_days": 16, "percentage": 0, "has_program": False}
         else:
             total = prog["total_days"]
             completed = completed_by_prog.get(prog["id"], 0)
@@ -375,6 +376,7 @@ def create_assessment(request: Request, body: AssessmentRequest):
         "goals": sanitize_text(body.goals),
         "background": sanitize_text(body.background),
         "hours_per_week": body.hours_per_week,
+        "age": body.age,
     }
     # upsert: a user has one current assessment
     result = safe_execute(
@@ -403,20 +405,25 @@ def generate_user_program(request: Request):
         raise HTTPException(status_code=400, detail="Complete the self-assessment first.")
     assessment = a.data[0]
 
-    # If a program already exists, remove it (regeneration) — cascades to days.
+    user = find_user_by_id(user_id)
+    username = user.get("username", "learner") if user else "learner"
+
+    # Purge all prior progress before regenerating (FK order: feedback → submissions → program).
     existing = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
     if existing.data:
+        safe_execute(supabase.table("submission_feedback").delete().eq("user_id", user_id))
+        safe_execute(supabase.table("submissions").delete().eq("user_id", user_id))
         safe_execute(supabase.table("programs").delete().eq("user_id", user_id))
 
     try:
-        program = program_generator.generate_program(assessment)
+        program = program_generator.generate_program(assessment, username=username)
     except Exception as e:
         log_json({"event": "program_generation_failed", "user_id": user_id, "error": repr(e)})
         raise HTTPException(status_code=502, detail="Could not generate program. Please try again.")
 
     prog_row = safe_execute(supabase.table("programs").insert({
         "user_id": user_id, "title": program.title,
-        "summary": program.summary, "total_days": 15,
+        "summary": program.summary, "total_days": 16,
     })).data[0]
 
     day_rows = []
@@ -432,7 +439,7 @@ def generate_user_program(request: Request):
             "evaluation_criteria": d.evaluation_criteria,
             "estimated_hours": d.estimated_hours,
             "unlock_condition": d.unlock_condition,
-            "is_unlocked": d.day_number == 1,   # day 1 unlocked
+            "is_unlocked": d.day_number == 0,   # day 0 (setup) unlocked
             "is_completed": False,
         })
     safe_execute(supabase.table("program_days").insert(day_rows))
@@ -491,6 +498,46 @@ def get_program_day_feedback(request: Request, day_id: str):
         .order("created_at", desc=True)
     ).data
     return {"feedback": fb[0] if fb else None}
+
+
+# Complete Day 0 without AI evaluation (setup days have nothing to grade).
+@app.post("/program-days/{day_id}/complete-setup")
+def complete_setup_day(request: Request, day_id: str):
+    user_id = request.state.user_id
+
+    day_res = safe_execute(supabase.table("program_days").select("*").eq("id", day_id))
+    if not day_res.data:
+        raise HTTPException(status_code=404, detail="Program day not found.")
+    day = day_res.data[0]
+
+    prog = safe_execute(
+        supabase.table("programs").select("user_id").eq("id", day["program_id"])
+    )
+    if not prog.data or prog.data[0]["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="You cannot access this program day.")
+
+    if day["day_number"] != 0:
+        raise HTTPException(
+            status_code=403,
+            detail="Only the setup day can be completed without review.",
+        )
+
+    if not day["is_completed"]:
+        safe_execute(
+            supabase.table("program_days").update({"is_completed": True}).eq("id", day_id)
+        )
+        next_day = safe_execute(
+            supabase.table("program_days").select("id")
+            .eq("program_id", day["program_id"])
+            .eq("day_number", 1)
+        )
+        if next_day.data:
+            safe_execute(
+                supabase.table("program_days").update({"is_unlocked": True})
+                .eq("id", next_day.data[0]["id"])
+            )
+
+    return {"message": "Setup day completed.", "day_id": day_id}
 
 
 # -----------------------------
@@ -619,7 +666,7 @@ def get_my_submissions(request: Request):
 def compute_progress(user_id: str) -> dict:
     prog = safe_execute(supabase.table("programs").select("id,total_days").eq("user_id", user_id))
     if not prog.data:
-        return {"completed_days": 0, "total_days": 15, "percentage": 0, "has_program": False}
+        return {"completed_days": 0, "total_days": 16, "percentage": 0, "has_program": False}
     total = prog.data[0]["total_days"]
     days = safe_execute(
         supabase.table("program_days").select("is_completed").eq("program_id", prog.data[0]["id"])

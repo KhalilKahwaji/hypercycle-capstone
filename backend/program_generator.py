@@ -1,7 +1,8 @@
 """
 Program generation.
-Takes a user's self-assessment and produces a personalized 15-day program
-as structured JSON, using precedent programs as few-shot guidance.
+Takes a user's self-assessment and produces a personalized 16-day program
+(Day 0 through Day 15) as structured JSON, using precedent programs as weak
+structural inspiration only.
 
 Optional RAG: if USE_RAG=true and rag_store is importable, retrieve the most
 relevant precedent chunks instead of dumping all precedents.
@@ -26,7 +27,7 @@ _client = OpenAI(api_key=GROQ_API_KEY, base_url="https://api.groq.com/openai/v1"
 
 
 class GeneratedDay(BaseModel):
-    day_number: int = Field(..., ge=1, le=15)
+    day_number: int = Field(..., ge=0, le=15)
     title: str
     objective: str
     research_topics: List[str] = Field(default_factory=list)
@@ -56,67 +57,113 @@ def _precedent_context(assessment: dict) -> str:
 
 SYSTEM_PROMPT = (
     "You are an expert AI-development curriculum designer. You create personalized, "
-    "spec-driven 15-day learning programs. Each day starts with a clear spec and ends "
-    "with a concrete shippable deliverable, and each day builds on the previous one. "
+    "spec-driven 16-day learning programs (Day 0 through Day 15). "
+    "Day 0 is always an environment and setup day. Days 1-15 are progressively harder "
+    "learning days, each starting with a clear spec and ending with a concrete shippable deliverable. "
     "You return STRICT JSON only. No markdown, no commentary."
 )
 
 
-def build_user_prompt(assessment: dict, precedent_context: str) -> str:
+def build_user_prompt(assessment: dict, precedent_context: str, username: str = "learner") -> str:
+    age = assessment.get("age", "")
+    age_line = f"- Age: {age}" if age else ""
+    age_pacing = (
+        f"- Consider {username}'s age ({age}) for pacing and tone: younger learners benefit "
+        f"from more scaffolding and encouragement; older/professional learners prefer direct, "
+        f"concise framing."
+        if age else ""
+    )
+    age_address = " and age" if age else ""
     return f"""
-Design a personalized 15-day AI-development learning program for this learner.
+Design a personalized 16-day AI-development learning program for {username}.
 
-LEARNER SELF-ASSESSMENT:
+LEARNER PROFILE:
+- Username: {username}
 - Known languages / tools: {assessment.get('known_languages', 'unknown')}
 - Experience level: {assessment.get('experience_level', 'unknown')}
 - Goals: {assessment.get('goals', 'unknown')}
 - Background: {assessment.get('background', 'unknown')}
 - Hours available per week: {assessment.get('hours_per_week', 'unknown')}
+{age_line}
 
-PRECEDENT PROGRAMS (use as style/quality reference, DO NOT copy verbatim):
+PRECEDENT PROGRAMS — LOOSE structural inspiration ONLY. DO NOT copy their topics or structure:
 {precedent_context}
+The precedents above exist solely to show what a well-formed day looks like (spec + shippable deliverable).
+Prioritize {username}'s goals, level{age_address} above all else. Do NOT replicate any precedent's topic
+sequence, tool choices, or phase structure.
 
 REQUIREMENTS:
-- The program MUST be tailored to THIS learner. A beginner gets fundamentals first;
-  an advanced learner gets harder, faster ramps. Reflect their stated goals and
-  known languages directly in the day titles and tasks.
-- Exactly 15 days, day_number 1 through 15.
-- Each day must be a spec ending in a shippable deliverable.
-- Days must build progressively. Day 15 should be a capstone/deployment day.
-- estimated_hours should be realistic given their hours_per_week.
-- Make it genuinely different from a generic template.
+1. Address {username} directly in second person throughout ALL text fields ("You will build...",
+   "Your goal today is...", "You should now have..."). NEVER write "the learner", "the student",
+   or any third-person phrasing. Every field — objective, task_description, expected_output,
+   evaluation_criteria — must speak directly to {username}.
+2. Tailor the entire program to THIS specific learner. Reflect their stated goals and known
+   tools directly in day titles and tasks. A beginner gets fundamentals first with heavy
+   scaffolding; an advanced learner gets harder tasks and faster ramps.
+{age_pacing}
+3. Exactly 16 days, day_number 0 through 15.
+4. DAY 0 MUST be an environment and setup day. It must cover:
+   - Creating a GitHub account (if needed) and initializing the project repository
+   - Installing every tool, library, and dependency this program will require
+   - Obtaining all required API keys (list each one explicitly)
+   - Setting up .gitignore (exclude .env, __pycache__, node_modules, etc.)
+   - Preparing the project folder structure as a scaffold for the entire program
+   The research_topics for Day 0 MUST list every specific tool, library, or service the
+   learner needs to install or register for (e.g. ["Python 3.11", "FastAPI", "Git", "Groq API key"]).
+5. Days 1-15 are learning and building days that increase in difficulty progressively.
+   Day 15 must be a capstone or deployment day that synthesizes everything built previously.
+6. Each day's research_topics MUST be an array of specific tool and library names relevant
+   to THAT day's work (e.g. ["FastAPI", "Pydantic", "uvicorn"]). Generic strings like
+   "documentation" or "AI concepts" are not acceptable — name the actual tools.
+7. Each day's evaluation_criteria MUST be a numbered list of exactly 3-5 concrete, measurable
+   checks that a reviewer can verify as pass/fail. A single vague sentence is not acceptable.
+   Good example: "1. GitHub repo initialized with .gitignore committed. 2. All dependencies
+   install without errors via pip install -r requirements.txt. 3. Project folder matches the
+   specified structure. 4. .env is excluded from git history."
+8. estimated_hours must be realistic given the learner's hours_per_week.
 
 Return JSON in EXACTLY this shape:
 {{
-  "title": "short program title referencing the learner's goal",
-  "summary": "2-3 sentence overview of the program and who it's for",
+  "title": "short program title referencing {username}'s goal",
+  "summary": "2-3 sentences addressing {username} directly about what they will build and learn",
   "days": [
+    {{
+      "day_number": 0,
+      "title": "Environment Setup & Toolbox",
+      "objective": "what {username} will have set up and ready by the end of this day",
+      "research_topics": ["GitHub", "Python 3.11", "Git", "Groq API", "specific-tool-N"],
+      "task_description": "step-by-step setup tasks written directly to {username}",
+      "expected_output": "a committed GitHub repo with working environment and all dependencies installed",
+      "evaluation_criteria": "1. specific verifiable check. 2. specific verifiable check. 3. specific verifiable check.",
+      "estimated_hours": 3,
+      "unlock_condition": "Starting day — always unlocked."
+    }},
     {{
       "day_number": 1,
       "title": "...",
-      "objective": "what the learner will be able to do after this day",
-      "research_topics": ["topic 1", "topic 2"],
-      "task_description": "the concrete spec / tasks for the day",
-      "expected_output": "the shippable deliverable expected",
-      "evaluation_criteria": "how a reviewer decides if it passes",
+      "objective": "what {username} will be able to do after this day",
+      "research_topics": ["specific-lib-1", "specific-lib-2", "specific-lib-3"],
+      "task_description": "concrete spec written directly to {username}",
+      "expected_output": "the shippable deliverable {username} must produce",
+      "evaluation_criteria": "1. check one. 2. check two. 3. check three. 4. check four.",
       "estimated_hours": 5,
-      "unlock_condition": "what must be true to unlock this day"
+      "unlock_condition": "Complete Day 0."
     }}
-    // ... days 2 through 15
   ]
 }}
 
 Rules:
-- Output all 15 days.
-- estimated_hours is a number.
-- research_topics is an array of strings.
+- Output all 16 days (day_number 0 through 15). Missing any day is an error.
+- estimated_hours is a number (not a string).
+- research_topics is an array of specific named tools/libraries — no generic descriptions.
+- evaluation_criteria is a numbered list of 3-5 concrete, verifiable checks.
 - No text outside the JSON object.
 """
 
 
-def generate_program(assessment: dict) -> GeneratedProgram:
+def generate_program(assessment: dict, username: str = "learner") -> GeneratedProgram:
     precedent_context = _precedent_context(assessment)
-    user_prompt = build_user_prompt(assessment, precedent_context)
+    user_prompt = build_user_prompt(assessment, precedent_context, username=username)
 
     response = _client.chat.completions.create(
         model=GROQ_MODEL,
@@ -139,7 +186,7 @@ def generate_program(assessment: dict) -> GeneratedProgram:
     except ValidationError as e:
         raise ValueError(f"Program failed validation: {e}") from e
 
-    if len(program.days) != 15:
-        raise ValueError(f"Expected 15 days, got {len(program.days)}")
+    if len(program.days) != 16:
+        raise ValueError(f"Expected 16 days, got {len(program.days)}")
 
     return program

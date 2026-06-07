@@ -12,11 +12,13 @@ export default function Assessment() {
     goals: "",
     background: "",
     hours_per_week: 20,
+    age: "",
   });
   const [error, setError] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [hasProgram, setHasProgram] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     client.get("/assessments/me").then((r) => {
@@ -25,19 +27,39 @@ export default function Assessment() {
     client.get("/programs/me").then((r) => setHasProgram(!!r.data.program));
   }, []);
 
-  const saveAndGenerate = async () => {
+  const validate = () => {
     setError(""); setMsg("");
     if (!form.goals.trim()) {
       setError("Tell us your goals — this drives the whole program.");
-      return;
+      return false;
     }
+    const ageNum = Number(form.age);
+    if (!form.age || ageNum < 10 || ageNum > 100) {
+      setError("Enter a valid age (10–100).");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmitClick = () => {
+    if (!validate()) return;
+    if (hasProgram) {
+      setShowConfirm(true);
+    } else {
+      saveAndGenerate();
+    }
+  };
+
+  const saveAndGenerate = async () => {
+    setShowConfirm(false);
     setBusy(true);
     try {
       await client.post("/assessments", {
         ...form,
         hours_per_week: Number(form.hours_per_week),
+        age: Number(form.age),
       });
-      setMsg("Assessment saved. Generating your personalized 15-day program…");
+      setMsg("Assessment saved. Generating your personalized 16-day program…");
       await client.post("/programs/generate");
       navigate("/program");
     } catch (e) {
@@ -94,6 +116,14 @@ export default function Assessment() {
           onChange={(e) => setForm({ ...form, background: e.target.value })}
         />
 
+        <label>Age</label>
+        <input
+          type="number" min="10" max="100"
+          placeholder="e.g. 22"
+          value={form.age}
+          onChange={(e) => setForm({ ...form, age: e.target.value })}
+        />
+
         <label>Hours available per week</label>
         <input
           type="number" min="1" max="80"
@@ -101,10 +131,50 @@ export default function Assessment() {
           onChange={(e) => setForm({ ...form, hours_per_week: e.target.value })}
         />
 
-        <button className="full" style={{ marginTop: 22 }} onClick={saveAndGenerate} disabled={busy}>
+        <button className="full" style={{ marginTop: 22 }} onClick={handleSubmitClick} disabled={busy}>
           {busy ? <><span className="spinner" /> &nbsp;Generating program…</> : "Save & generate my program"}
         </button>
       </div>
+
+      {showConfirm && (
+        <div
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200,
+          }}
+          onClick={() => setShowConfirm(false)}
+        >
+          <div
+            className="card"
+            style={{ maxWidth: 420, width: "90%", textAlign: "center" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ fontSize: 28, color: "#e74c3c", marginBottom: 10, fontWeight: 700 }}>
+              Delete all progress?
+            </div>
+            <p className="muted" style={{ marginBottom: 8, fontSize: 14 }}>
+              Regenerating your program will permanently erase:
+            </p>
+            <ul style={{ textAlign: "left", color: "var(--muted)", fontSize: 13, marginBottom: 20, paddingLeft: 20 }}>
+              <li>All completed days</li>
+              <li>All submissions</li>
+              <li>All feedback</li>
+            </ul>
+            <p className="muted" style={{ marginBottom: 20, fontSize: 13 }}>
+              This cannot be undone.
+            </p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+              <button className="ghost" onClick={() => setShowConfirm(false)}>Cancel</button>
+              <button
+                style={{ background: "#c0392b", borderColor: "#c0392b" }}
+                onClick={saveAndGenerate}
+              >
+                Yes, delete &amp; regenerate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
