@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr, Field
 from supabase import create_client, Client
+from openai import OpenAI as _GroqFactory
 
 # Load .env from the backend folder (or root if you keep it there)
 load_dotenv(Path(__file__).resolve().parent / ".env")
@@ -54,6 +55,10 @@ if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
     raise ValueError("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+_GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+_GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+_groq_client = _GroqFactory(api_key=_GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
 
 # -----------------------------
 # Logging
@@ -108,6 +113,15 @@ class AssessmentRequest(BaseModel):
 class AdminPassDayRequest(BaseModel):
     score: int = Field(default=7, ge=1, le=10)
     summary: str = Field(..., min_length=1)
+
+
+class CliCheckRequest(BaseModel):
+    project_text: str = Field(..., min_length=1)
+    dry_run: bool = True
+
+
+class CliAskRequest(BaseModel):
+    question: str = Field(..., min_length=1, max_length=2000)
 
 
 # -----------------------------
@@ -683,6 +697,144 @@ def get_my_progress(request: Request):
     p = compute_progress(user_id)
     p["user_id"] = user_id
     return p
+
+
+# -----------------------------
+# CLI
+# -----------------------------
+def _get_current_day(user_id: str):
+    """Return the lowest unlocked+incomplete day for this user, or None."""
+    prog = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
+    if not prog.data:
+        return None, None
+    program_id = prog.data[0]["id"]
+    days = safe_execute(
+        supabase.table("program_days").select("*")
+        .eq("program_id", program_id)
+        .eq("is_unlocked", True)
+        .eq("is_completed", False)
+        .order("day_number")
+    ).data
+    return days[0] if days else None, program_id
+
+
+@app.post("/cli/check")
+def cli_check(request: Request, body: CliCheckRequest):
+    user_id = request.state.user_id
+
+    day, _ = _get_current_day(user_id)
+    if not day:
+        raise HTTPException(status_code=400, detail="No active day to check.")
+
+    try:
+        evaluation = evaluator.evaluate_submission(
+            day=day,
+            submission_text=body.project_text,
+            file_analysis=None,
+        )
+    except Exception as e:
+        log_json({"event": "cli_eval_failed", "user_id": user_id, "error": repr(e)})
+        raise HTTPException(status_code=502, detail="Could not evaluate submission. Please try again.")
+
+    if not body.dry_run:
+        submission = safe_execute(supabase.table("submissions").insert({
+            "user_id": user_id,
+            "program_day_id": day["id"],
+            "day_number": day["day_number"],
+            "content": f"[CLI submission]\n\n{body.project_text[:500]}",
+            "file_url": None,
+            "file_analysis": None,
+        })).data[0]
+
+        safe_execute(supabase.table("submission_feedback").insert({
+            "submission_id": submission["id"],
+            "user_id": user_id,
+            "program_day_id": day["id"],
+            "score": evaluation.score,
+            "passed": evaluation.passed,
+            "summary": evaluation.summary,
+            "strengths": "\n".join(evaluation.strengths),
+            "issues": "\n".join(evaluation.issues),
+            "required_fixes": "\n".join(evaluation.required_fixes),
+            "next_steps": "\n".join(evaluation.next_steps),
+            "raw_feedback": evaluation.model_dump(),
+        }))
+
+        if evaluation.passed:
+            safe_execute(
+                supabase.table("program_days").update({"is_completed": True}).eq("id", day["id"])
+            )
+            next_day = safe_execute(
+                supabase.table("program_days").select("id")
+                .eq("program_id", day["program_id"])
+                .eq("day_number", day["day_number"] + 1)
+            )
+            if next_day.data:
+                safe_execute(
+                    supabase.table("program_days").update({"is_unlocked": True})
+                    .eq("id", next_day.data[0]["id"])
+                )
+
+    return {"evaluation": evaluation.model_dump(), "day_number": day["day_number"], "dry_run": body.dry_run}
+
+
+@app.post("/cli/ask")
+def cli_ask(request: Request, body: CliAskRequest):
+    user_id = request.state.user_id
+
+    progress = compute_progress(user_id)
+    current_day, program_id = _get_current_day(user_id)
+
+    all_days = []
+    if program_id:
+        all_days = safe_execute(
+            supabase.table("program_days").select("day_number,is_completed,is_unlocked")
+            .eq("program_id", program_id).order("day_number")
+        ).data
+
+    days_summary = ", ".join(
+        f"Day {d['day_number']}({'done' if d['is_completed'] else 'active' if d['is_unlocked'] else 'locked'})"
+        for d in all_days
+    )
+
+    if current_day:
+        day_context = (
+            f"Day {current_day['day_number']}: {current_day['title']}\n"
+            f"Objective: {current_day.get('objective', '')}\n"
+            f"Task: {current_day.get('task_description', '')}"
+        )
+    else:
+        day_context = "No active day — all days may be complete or no program generated."
+
+    prompt = (
+        f"You are HyperSensei, an expert AI coding mentor for a self-driving bootcamp.\n"
+        f"The learner's progress: {progress['completed_days']}/{progress['total_days']} days "
+        f"({progress['percentage']}%).\nDays: {days_summary}\n"
+        f"Current task:\n{day_context}\n\n"
+        f"The learner asks: {sanitize_text(body.question)}\n\n"
+        f"Answer directly in second person. Nudge and hint — do NOT give complete solutions. "
+        f"Be concise (under 200 words)."
+    )
+
+    try:
+        resp = _groq_client.chat.completions.create(
+            model=_GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,
+            max_tokens=400,
+        )
+        answer = resp.choices[0].message.content.strip()
+    except Exception as e:
+        log_json({"event": "cli_ask_failed", "user_id": user_id, "error": repr(e)})
+        raise HTTPException(status_code=502, detail="Could not generate answer. Please try again.")
+
+    safe_execute(supabase.table("cli_questions").insert({
+        "user_id": user_id,
+        "question": sanitize_text(body.question),
+        "answer": answer,
+    }))
+
+    return {"answer": answer, "progress": progress, "current_day": current_day}
 
 
 # -----------------------------

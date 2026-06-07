@@ -31,6 +31,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
           <NavLink to="/assessment" className="nav-link" onClick={onClose}>Self-Assessment</NavLink>
           <NavLink to="/program" className="nav-link" onClick={onClose}>My Program</NavLink>
           <NavLink to="/history" className="nav-link" onClick={onClose}>Submission History</NavLink>
+          <NavLink to="/cli" className="nav-link" onClick={onClose}>CLI Tool</NavLink>
         </>
       )}
 

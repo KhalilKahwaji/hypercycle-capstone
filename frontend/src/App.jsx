@@ -14,6 +14,7 @@ import History from "./pages/History";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUserDetail from "./pages/AdminUserDetail";
 import AdminSearch from "./pages/AdminSearch";
+import CliTool from "./pages/CliTool";
 
 function Protected({ children, admin = false }) {
   const { user, loading } = useAuth();
@@ -64,6 +65,7 @@ function Inner() {
       <Route path="/program/day/:dayId" element={<Protected><Shell><CurrentTask /></Shell></Protected>} />
       <Route path="/submit/:dayId" element={<Protected><Shell><SubmitWork /></Shell></Protected>} />
       <Route path="/history" element={<Protected><Shell><History /></Shell></Protected>} />
+      <Route path="/cli" element={<Protected><Shell><CliTool /></Shell></Protected>} />
       <Route path="/admin" element={<Protected admin><Shell><AdminDashboard /></Shell></Protected>} />
       <Route path="/admin/search" element={<Protected admin><Shell><AdminSearch /></Shell></Protected>} />
       <Route path="/admin/user/:userId" element={<Protected admin><Shell><AdminUserDetail /></Shell></Protected>} />

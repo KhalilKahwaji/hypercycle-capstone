@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hypersensei"
+version = "0.1.0"
+description = "HyperSensei CLI — your coding bootcamp companion"
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.28",
+    "colorama>=0.4.6",
+]
+
+[project.scripts]
+hypersensei = "hypersensei.main:main"

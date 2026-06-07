@@ -1,0 +1,14 @@
+README.md
+pyproject.toml
+hypersensei/__init__.py
+hypersensei/api.py
+hypersensei/colors.py
+hypersensei/config.py
+hypersensei/files.py
+hypersensei/main.py
+hypersensei.egg-info/PKG-INFO
+hypersensei.egg-info/SOURCES.txt
+hypersensei.egg-info/dependency_links.txt
+hypersensei.egg-info/entry_points.txt
+hypersensei.egg-info/requires.txt
+hypersensei.egg-info/top_level.txt
