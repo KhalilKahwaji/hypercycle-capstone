@@ -35,6 +35,7 @@ export default function Login() {
     setBusy(true);
     try {
       const data = await login(form.username_or_email.trim(), form.password);
+      sessionStorage.setItem("sensei_pending_event", "login");
       navigate(data.user?.is_admin ? "/admin" : "/dashboard");
     } catch (e) {
       setError(e.message);

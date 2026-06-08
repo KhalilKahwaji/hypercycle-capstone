@@ -790,6 +790,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 .explain-text  { font-size: 13px; line-height: 1.65; color: var(--text); }
 .explain-error { font-size: 12px; color: var(--red); }
 
+/* ── HyperSensei ────────────────────────────── */
+@keyframes sensei-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes sensei-bubble-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
 /* ── Mobile ─────────────────────────────────── */
 @media (max-width: 720px) {
   .app-shell { flex-direction: column; }

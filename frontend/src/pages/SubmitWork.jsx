@@ -4,12 +4,14 @@ import confetti from "canvas-confetti";
 import client from "../api/client";
 import FeedbackCard from "../components/FeedbackCard";
 import BadgeToast from "../components/BadgeToast";
+import { useSensei } from "../context/SenseiContext";
 
 const ACCEPT = ".txt,.md,.py,.json,.pdf";
 
 export default function SubmitWork() {
   const { dayId } = useParams();
   const navigate = useNavigate();
+  const { triggerEvent } = useSensei();
   const [day, setDay] = useState(null);
   const [content, setContent] = useState("");
   const [file, setFile] = useState(null);
@@ -59,6 +61,16 @@ export default function SubmitWork() {
         setNewBadges(earned);
         setTimeout(() => setNewBadges([]), 6000);
       }
+
+      // Sensei reactions
+      const passed = res.data.evaluation?.passed;
+      const score  = res.data.feedback?.score ?? 0;
+      if (passed) {
+        triggerEvent(score >= 10 ? "perfect10" : "pass");
+      } else {
+        triggerEvent("fail");
+      }
+      if (earned.length) setTimeout(() => triggerEvent("badge_earned"), passed ? 8000 : 4000);
     } catch (e) {
       setError(e.message);
     } finally {

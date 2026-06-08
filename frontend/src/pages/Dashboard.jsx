@@ -5,12 +5,17 @@ import {
 } from "recharts";
 import client from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { useSensei } from "../context/SenseiContext";
 import ProgressRing from "../components/ProgressRing";
 import useCountUp from "../hooks/useCountUp";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { triggerRevive } = useSensei();
+  const [senseiDismissed, setSenseiDismissed] = useState(
+    () => { try { return localStorage.getItem("sensei_dismissed") === "1"; } catch { return false; } }
+  );
   const [progress, setProgress] = useState(null);
   const [subs, setSubs] = useState([]);
   const [assessment, setAssessment] = useState(null);
@@ -178,6 +183,19 @@ export default function Dashboard() {
             Go to my program →
           </button>
         </>
+      )}
+
+      {senseiDismissed && (
+        <div style={{ marginTop: 40, paddingTop: 18, borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 14 }}>
+          <span className="muted" style={{ fontSize: 12 }}>HyperSensei is dismissed.</span>
+          <button
+            className="ghost"
+            style={{ fontSize: 12, padding: "6px 14px" }}
+            onClick={() => { setSenseiDismissed(false); triggerRevive(); }}
+          >
+            Summon HyperSensei
+          </button>
+        </div>
       )}
     </div>
   );

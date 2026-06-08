@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { SenseiProvider } from "./context/SenseiContext";
 import Sidebar from "./components/Sidebar";
 import ExplainPopup from "./components/ExplainPopup";
+import HyperSensei from "./components/HyperSensei";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -60,6 +62,7 @@ function Shell({ children }) {
       <Sidebar mobileOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
       <main className="content">{children}</main>
       <ExplainPopup pageContext={pageTitle(location.pathname)} />
+      <HyperSensei />
     </div>
   );
 }
@@ -94,8 +97,10 @@ function Inner() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Inner />
-    </AuthProvider>
+    <SenseiProvider>
+      <AuthProvider>
+        <Inner />
+      </AuthProvider>
+    </SenseiProvider>
   );
 }
