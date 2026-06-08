@@ -64,15 +64,85 @@ SYSTEM_PROMPT = (
 )
 
 
+def _age_rules(age, username: str) -> str:
+    """Return a concrete AGE RULES block to inject into the prompt, or empty string."""
+    try:
+        age = int(age)
+    except (TypeError, ValueError):
+        return ""
+
+    if age < 16:
+        return f"""\
+AGE RULES (strictly enforced — {username} is {age} years old):
+- Cap estimated_hours at 2.0 for every single day, no exceptions.
+- Use warm, encouraging language throughout. Celebrate small wins explicitly.
+- Provide the heaviest possible scaffolding: break every task into numbered sub-steps,
+  explain the purpose of each tool before asking {username} to use it.
+- Avoid jargon without defining it. If you use a term like "environment variable" or
+  "endpoint", explain it in plain language in the same sentence.
+- Keep scope small per day — one concept or one feature per day maximum."""
+
+    if age <= 18:
+        return f"""\
+AGE RULES (strictly enforced — {username} is {age} years old):
+- Cap estimated_hours at 3.0 for every single day.
+- Use encouraging, upbeat language. Acknowledge that balancing school and coding is hard.
+- Provide heavy scaffolding: number every sub-step in task_description, explain the "why"
+  behind each tool choice in one sentence.
+- Avoid dense jargon; define technical terms inline on first use.
+- Keep each day's scope tight — one primary deliverable per day."""
+
+    if age <= 24:
+        return f"""\
+AGE RULES ({username} is {age} years old — student or early-career):
+- estimated_hours up to 5.0 per day is acceptable; scale to hours_per_week.
+- Use direct, peer-level language — treat {username} as capable but still learning.
+- Provide moderate scaffolding: name the files and functions explicitly, but do not
+  explain basic concepts like what a function is.
+- task_description should include "why" for non-obvious design decisions.
+- Scope can expand steadily across days; push toward independence by Day 10+."""
+
+    if age <= 35:
+        return f"""\
+AGE RULES ({username} is {age} years old — early-to-mid career professional):
+- estimated_hours up to 5.0 per day is fine; respect that {username} has professional
+  commitments and keep total program load realistic.
+- Use direct, professional spec language — no hand-holding, no unnecessary encouragement.
+- Scaffolding should be specification-level only: name files, functions, endpoints, and
+  expected behavior. Do not explain fundamentals unless directly relevant to the task.
+- Assume {username} can look up docs independently; point to specific APIs, not concepts.
+- Complexity can ramp quickly; reach advanced topics by Day 5-6."""
+
+    if age <= 50:
+        return f"""\
+AGE RULES ({username} is {age} years old — mid-to-senior career professional):
+- Cap estimated_hours at 4.0 per day — {username} has significant professional and
+  personal commitments; overloading sessions leads to drop-off.
+- Use concise, efficiency-focused language. Every sentence in task_description must
+  earn its place. No filler, no motivational padding.
+- Zero scaffolding for general programming concepts — assume strong fundamentals.
+  Focus spec detail only on the specific APIs, tools, or patterns that are genuinely new.
+- Respect {username}'s existing experience: avoid re-explaining things a senior dev knows.
+- Complexity should start high and stay high; treat Days 1-3 as a fast ramp-up."""
+
+    # age > 50
+    return f"""\
+AGE RULES ({username} is {age} years old):
+- Cap estimated_hours at 3.5 per day — prioritize depth over breadth; fewer, higher-quality
+  sessions beat a dense daily grind.
+- Use respectful, collegial language. No motivational hype; treat {username} as an experienced
+  professional picking up new tools.
+- Assume strong professional fundamentals. Explain only what is genuinely novel (new APIs,
+  new paradigms). Never explain general software concepts.
+- Keep task_description precise and scannable — {username} values clarity over verbosity.
+- Build in explicit reflection moments: "By the end of this day you will understand exactly
+  how X works and why it is used here" — connect new tools to existing mental models."""
+
+
 def build_user_prompt(assessment: dict, precedent_context: str, username: str = "learner") -> str:
     age = assessment.get("age", "")
     age_line = f"- Age: {age}" if age else ""
-    age_pacing = (
-        f"- Consider {username}'s age ({age}) for pacing and tone: younger learners benefit "
-        f"from more scaffolding and encouragement; older/professional learners prefer direct, "
-        f"concise framing."
-        if age else ""
-    )
+    age_block = _age_rules(age, username)
     age_address = " and age" if age else ""
     return f"""
 Design a personalized 16-day AI-development learning program for {username}.
@@ -100,7 +170,7 @@ REQUIREMENTS:
 2. Tailor the entire program to THIS specific learner. Reflect their stated goals and known
    tools directly in day titles and tasks. A beginner gets fundamentals first with heavy
    scaffolding; an advanced learner gets harder tasks and faster ramps.
-{age_pacing}
+{age_block}
 3. Exactly 16 days, day_number 0 through 15.
 4. DAY 0 MUST be an environment and setup day. It must cover:
    - Creating a GitHub account (if needed) and initializing the project repository
@@ -115,12 +185,28 @@ REQUIREMENTS:
 6. Each day's research_topics MUST be an array of specific tool and library names relevant
    to THAT day's work (e.g. ["FastAPI", "Pydantic", "uvicorn"]). Generic strings like
    "documentation" or "AI concepts" are not acceptable — name the actual tools.
-7. Each day's evaluation_criteria MUST be a numbered list of exactly 3-5 concrete, measurable
-   checks that a reviewer can verify as pass/fail. A single vague sentence is not acceptable.
-   Good example: "1. GitHub repo initialized with .gitignore committed. 2. All dependencies
-   install without errors via pip install -r requirements.txt. 3. Project folder matches the
-   specified structure. 4. .env is excluded from git history."
-8. estimated_hours must be realistic given the learner's hours_per_week.
+7. task_description MUST be a detailed, step-by-step specification of at least 5-8 sentences.
+   It MUST include ALL of the following:
+   (a) the exact file(s) to create and their names,
+   (b) specific functions or classes to implement, named explicitly (e.g. "define a function
+       called generate_response(user_input: str) -> str"),
+   (c) exact required behaviors — what inputs the code accepts, what it returns or outputs,
+   (d) any configuration, environment variables, or library calls required for that day,
+   (e) any API endpoints, routes, or UI elements to build, with their exact paths and payloads.
+   A one-sentence or two-sentence task_description is a FAILURE. Write it like a real engineer's
+   ticket — specific enough that {username} knows exactly what to build without guessing.
+8. expected_output MUST be a concrete description (2-4 sentences) of exactly what exists when
+   the day is done: which command runs it, what the user sees or interacts with, which files
+   are committed to the repo. Do NOT write vague phrases like "a working script" or "functional
+   code" — name the file, describe the interaction, describe the visible result.
+9. evaluation_criteria MUST be a numbered list of exactly 3-5 concrete, measurable checks that
+   a reviewer can verify as pass/fail by running a command, opening a file, or interacting with
+   the output. Vague criteria like "code is well-organized" or "agent responds correctly" are
+   NOT acceptable. Good example: "1. Running `uvicorn main:app` starts the server without errors.
+   2. POST /chat with {{\"message\":\"hello\"}} returns a JSON response containing a \"reply\" key.
+   3. The GROQ_API_KEY is loaded from .env and .env is not committed to git.
+   4. The / route returns an HTML page with a visible text input and submit button."
+10. estimated_hours must be realistic given the learner's hours_per_week.
 
 Return JSON in EXACTLY this shape:
 {{
@@ -143,9 +229,9 @@ Return JSON in EXACTLY this shape:
       "title": "...",
       "objective": "what {username} will be able to do after this day",
       "research_topics": ["specific-lib-1", "specific-lib-2", "specific-lib-3"],
-      "task_description": "concrete spec written directly to {username}",
-      "expected_output": "the shippable deliverable {username} must produce",
-      "evaluation_criteria": "1. check one. 2. check two. 3. check three. 4. check four.",
+      "task_description": "Create a file called agent.py. In it, define a function generate_response(user_input: str) -> str that calls the Groq API using the groq Python library and returns the model reply as a plain string. Load your GROQ_API_KEY from a .env file using python-dotenv; raise a clear error if the key is missing. Use the model llama-3.3-70b-versatile and set a max_tokens of 512. Next, create main.py with a FastAPI app. Add a POST endpoint at /chat that accepts a JSON body {{\"message\": \"...\"}} and returns {{\"reply\": \"...\"}} by calling generate_response. Add a GET / route that returns a minimal HTML page containing a text input, a submit button, and a <div id='reply'> — use JavaScript fetch() to call /chat and display the response inside that div. Run the app with uvicorn main:app --reload and verify end-to-end.",
+      "expected_output": "Running `uvicorn main:app --reload` starts the server without errors. Opening http://localhost:8000 shows the HTML page. Typing a message and clicking submit calls /chat and displays the model reply in the page. The files agent.py and main.py are committed to the repo; .env is excluded via .gitignore.",
+      "evaluation_criteria": "1. check one — runnable command or observable behavior. 2. check two. 3. check three. 4. check four.",
       "estimated_hours": 5,
       "unlock_condition": "Complete Day 0."
     }}
@@ -235,7 +321,9 @@ Refine — do NOT replace — the planned next day for {username}. Keep it on th
 - Keep day_number {next_day_current.get('day_number')} unchanged (do not include it in the response).
 - Address {username} in second person throughout all fields.
 - research_topics must list specific tool/library names.
-- evaluation_criteria must be a numbered list of 3-5 concrete, verifiable checks.
+- task_description must be a detailed step-by-step spec (5-8 sentences minimum): name the exact files, functions, endpoints, and behaviors required. Do not write one-liners.
+- expected_output must concretely describe the result: which command runs it, what the user sees, which files are committed.
+- evaluation_criteria must be a numbered list of 3-5 concrete, verifiable checks — each one testable by running a command or observing specific output.
 
 Return JSON in EXACTLY this shape (no day_number field):
 {{

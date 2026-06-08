@@ -1025,6 +1025,74 @@ def define_term(request: Request, body: DefineRequest):
 
 
 # -----------------------------
+# HyperSensei companion lines
+# -----------------------------
+_SENSEI_VOICE = {
+    "sensei": "wise and calm, dry wit, sparing with praise, gently encouraging on failure — never preachy",
+    "hype":   "high-energy enthusiastic cheerleader, genuinely excited, momentum-focused",
+    "drill":  "tough-love drill instructor: gruff and blunt, but never cruel — always pushes forward",
+    "zen":    "serene and minimal, almost poetic, one breath at a time",
+}
+
+_SENSEI_SITUATION = {
+    "dashboard":         "browsing their progress dashboard and seeing their stats",
+    "program":           "looking at their list of program days",
+    "task":              "reading today's task description before starting",
+    "submit":            "on the submission page, about to write up what they built",
+    "profile":           "viewing their profile and earned badges",
+    "empty-no-program":  "on the dashboard but hasn't generated a program yet",
+    "pass":              "just passed a day evaluation",
+    "fail":              "just failed a day evaluation — be constructive and encouraging, never harsh",
+    "perfect10":         "just scored a perfect 10 out of 10 on an evaluation",
+    "badge_earned":      "just earned a new achievement badge",
+    "streak_milestone":  "just hit a consistency streak milestone",
+    "program_complete":  "just completed their entire program",
+    "day_unlocked":      "just unlocked the next day in their program",
+    "login":             "just logged in",
+    "revive":            "just re-summoned the AI companion after previously dismissing it",
+}
+
+
+class SenseiLineRequest(BaseModel):
+    personality: str = "sensei"
+    trigger: str
+    user_name: str = ""
+
+
+@app.post("/sensei/line")
+def sensei_line(request: Request, body: SenseiLineRequest):
+    request.state.user_id  # auth required
+
+    personality = body.personality if body.personality in _SENSEI_VOICE else "sensei"
+    voice       = _SENSEI_VOICE[personality]
+    situation   = _SENSEI_SITUATION.get(body.trigger, body.trigger.replace("_", " "))
+    name_part   = f" Their name is {body.user_name.strip()}." if body.user_name.strip() else ""
+
+    prompt = (
+        f"You are HyperSensei, a compact AI study companion on a self-driving coding bootcamp.{name_part}\n"
+        f"Personality: {voice}.\n"
+        f"Situation: the learner is {situation}.\n"
+        f"Write exactly ONE line to say to them — 1 to 2 short sentences maximum.\n"
+        f"Rules: second person, plain text only, no quotation marks, no em-dashes, no lists, no hashtags. "
+        f"Be concrete and specific to the situation. Match the personality voice precisely."
+    )
+
+    try:
+        resp = _groq_client.chat.completions.create(
+            model=_GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.88,
+            max_tokens=80,
+        )
+        line = resp.choices[0].message.content.strip().strip('"\'')
+    except Exception as e:
+        log_json({"event": "sensei_line_failed", "error": repr(e)})
+        raise HTTPException(status_code=502, detail="Could not generate line.")
+
+    return {"line": line}
+
+
+# -----------------------------
 # Admin
 # -----------------------------
 @app.get("/admin/users")

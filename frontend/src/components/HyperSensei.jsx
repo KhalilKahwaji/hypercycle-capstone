@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useSensei } from "../context/SenseiContext";
+import { useAuth } from "../context/AuthContext";
 import { LINES, PERSONALITIES, PERSONALITY_LABELS, getIdleKey } from "../data/senseiLines";
+import client from "../api/client";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const LS_DISMISSED   = "sensei_dismissed";
@@ -9,7 +11,7 @@ const LS_COLLAPSED   = "sensei_collapsed";
 const LS_PERSONALITY = "sensei_personality";
 const IDLE_DELAY_MS  = 6000;  // wait 6s before first idle line (gives events breathing room)
 const IDLE_COOL_MS   = 20000; // min gap between consecutive idle lines
-const BUBBLE_MS      = 7000;  // how long a bubble stays before auto-dismiss
+const BUBBLE_MS      = 4000;  // how long a bubble stays before auto-dismiss
 
 // ── localStorage helpers ──────────────────────────────────────────────────────
 function ls(key, fallback = null) {
@@ -23,7 +25,7 @@ function lsSet(key, val) {
 const PAL = {
   sensei: { from: "#8b7cff", to: "#4dd0ff" },
   hype:   { from: "#ff6b9d", to: "#ffba35" },
-  drill:  { from: "#f87171", to: "#fca5a5" },
+  drill:  { from: "#00891e", to: "#9e4845" },
   zen:    { from: "#4dd0ff", to: "#80ffdb" },
 };
 
@@ -128,21 +130,24 @@ export default function HyperSensei() {
 
   const location = useLocation();
   const { registerListener, registerRevive } = useSensei();
+  const { user } = useAuth();
 
   // ── Refs ──────────────────────────────────────────────────────────────────
-  const lastIdleAt     = useRef(0);      // FIX: only idle lines set this (events don't)
-  const lastLineRef    = useRef(null);   // last shown text, for dedup
+  const lastIdleAt     = useRef(0);
+  const lastLineRef    = useRef(null);
   const pathnameRef    = useRef(location.pathname);
   const personalityRef = useRef(personality);
+  const userNameRef    = useRef("");
   const bubbleRef      = useRef(null);
   const idleTimerRef   = useRef(null);
   const bubbleTimerRef = useRef(null);
-  const justRevivedRef = useRef(false);  // flag set during revive to trigger greeting
+  const justRevivedRef = useRef(false);
 
-  // Keep refs in sync with state
-  useEffect(() => { pathnameRef.current    = location.pathname; }, [location.pathname]);
-  useEffect(() => { personalityRef.current = personality;       }, [personality]);
-  useEffect(() => { bubbleRef.current      = bubble;            }, [bubble]);
+  // Keep refs in sync with state/props
+  useEffect(() => { pathnameRef.current    = location.pathname;                       }, [location.pathname]);
+  useEffect(() => { personalityRef.current = personality;                             }, [personality]);
+  useEffect(() => { bubbleRef.current      = bubble;                                  }, [bubble]);
+  useEffect(() => { userNameRef.current    = user?.full_name?.split(" ")[0] || "";    }, [user]);
 
   // ── Stable callbacks ──────────────────────────────────────────────────────
   const closeBubble = useCallback(() => {
@@ -150,8 +155,6 @@ export default function HyperSensei() {
     setBubble(null);
   }, []);
 
-  // showLine: display text, auto-dismiss after BUBBLE_MS.
-  // NOTE: does NOT touch lastIdleAt — that's managed by maybeShowIdle only.
   const showLine = useCallback((text) => {
     if (!text) return;
     if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current);
@@ -169,18 +172,32 @@ export default function HyperSensei() {
     return src[Math.floor(Math.random() * src.length)];
   }, []);
 
-  // maybeShowIdle: checks its own cooldown (lastIdleAt), independent of events.
-  const maybeShowIdle = useCallback(() => {
+  // fetchLine: calls Groq via /sensei/line; falls back to static pool on error.
+  const fetchLine = useCallback(async (trigger, staticPool) => {
+    try {
+      const res = await client.post("/sensei/line", {
+        personality: personalityRef.current,
+        trigger,
+        user_name: userNameRef.current,
+      });
+      return res.data.line || pickLine(staticPool);
+    } catch {
+      return pickLine(staticPool);
+    }
+  }, [pickLine]);
+
+  // maybeShowIdle: checks its own cooldown, independent of events.
+  const maybeShowIdle = useCallback(async () => {
     if (Date.now() - lastIdleAt.current < IDLE_COOL_MS) return;
     const key = getIdleKey(pathnameRef.current);
     if (!key) return;
-    const pool = LINES[personalityRef.current]?.idle?.[key];
-    const line = pickLine(pool);
+    const staticPool = LINES[personalityRef.current]?.idle?.[key];
+    const line = await fetchLine(key, staticPool);
     if (line) {
-      lastIdleAt.current = Date.now(); // only idle tracks its own cooldown
+      lastIdleAt.current = Date.now();
       showLine(line);
     }
-  }, [pickLine, showLine]);
+  }, [fetchLine, showLine]);
 
   // ── Effects ───────────────────────────────────────────────────────────────
 
@@ -201,13 +218,13 @@ export default function HyperSensei() {
   useEffect(() => {
     if (dismissed || !justRevivedRef.current) return;
     justRevivedRef.current = false;
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
       const pool = LINES[personalityRef.current]?.events?.revive;
-      const line = pickLine(pool);
+      const line = await fetchLine("revive", pool);
       if (line) showLine(line);
     }, 500);
     return () => clearTimeout(t);
-  }, [dismissed, pickLine, showLine]);
+  }, [dismissed, fetchLine, showLine]);
 
   // Page change → clear bubble, schedule idle line.
   useEffect(() => {
@@ -220,25 +237,25 @@ export default function HyperSensei() {
 
   // Event listener (pass/fail/badge etc.) — no cooldown, fires immediately.
   useEffect(() => {
-    return registerListener((eventKey) => {
+    return registerListener(async (eventKey) => {
       const pool = LINES[personalityRef.current]?.events?.[eventKey];
-      const line = pickLine(pool);
+      const line = await fetchLine(eventKey, pool);
       if (line) showLine(line);
     });
-  }, [registerListener, pickLine, showLine]);
+  }, [registerListener, fetchLine, showLine]);
 
   // Login greeting — set by Login.jsx via sessionStorage before navigating away.
   useEffect(() => {
     const pending = sessionStorage.getItem("sensei_pending_event");
     if (!pending) return;
     sessionStorage.removeItem("sensei_pending_event");
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
       const pool = LINES[personalityRef.current]?.events?.[pending];
-      const line = pickLine(pool);
+      const line = await fetchLine(pending, pool);
       if (line) showLine(line);
     }, 1200);
     return () => clearTimeout(t);
-  }, [pickLine, showLine]);
+  }, [fetchLine, showLine]);
 
   // Occasional idle blink — keeps the orb feeling alive.
   useEffect(() => {
