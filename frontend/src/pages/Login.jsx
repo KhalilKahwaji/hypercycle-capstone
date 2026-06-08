@@ -48,10 +48,21 @@ export default function Login() {
       <NeuralBg />
 
       <div className="card center" style={{ position: "relative", zIndex: 2 }}>
-        <div className="brand" style={{ fontFamily: "var(--display)", fontWeight: 900, fontSize: 30 }}>
-          Hyper<span style={{ color: "var(--amber)" }}>Cycle</span>
+        <div style={{
+          fontFamily: "var(--display)",
+          fontWeight: 900,
+          fontSize: 44,
+          letterSpacing: "-1.5px",
+          lineHeight: 1,
+          marginBottom: 8,
+          background: "linear-gradient(135deg, var(--text) 30%, var(--amber) 80%, var(--cyan) 120%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}>
+          HyperCycle
         </div>
-        <p className="muted" style={{ marginBottom: 18 }}>
+        <p className="muted" style={{ marginBottom: 22, fontSize: 13 }}>
           Sign in to your self-driving bootcamp.
         </p>
 

@@ -53,7 +53,7 @@ export default function Dashboard() {
 
   if (loading)
     return (
-      <div style={{ padding: "60px 0", color: "var(--muted)", display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ padding: "60px 0", color: "var(--muted)", display: "flex", alignItems: "center", gap: 12 }}>
         <span className="spinner" /> loading dashboard…
       </div>
     );
@@ -92,51 +92,84 @@ export default function Dashboard() {
         </div>
       ) : (
         <>
-          {/* Metrics row — 2 count-up cards + progress ring */}
-          <div className="grid grid-3 fade-in-1" style={{ marginBottom: 16 }}>
-            <div className="metric">
-              <div className="label">Completed days</div>
-              <div className="value">{completedCount}</div>
+          {/* Hero zone — progress ring as focal point */}
+          <div className="db-hero fade-in-1">
+            <div className="db-ring-wrap">
+              <ProgressRing pct={progress.percentage} size={160} stroke={12} />
             </div>
-            <div className="metric">
-              <div className="label">Total days</div>
-              <div className="value">{totalCount}</div>
-            </div>
-            <div className="metric" style={{
-              display: "flex", flexDirection: "column",
-              alignItems: "center", justifyContent: "center", gap: 6,
-            }}>
-              <div className="label" style={{ marginBottom: 4 }}>Progress</div>
-              <ProgressRing pct={progress.percentage} size={90} stroke={8} />
+            <div className="db-hero-right">
+              <div className="db-stat-row">
+                <div className="metric">
+                  <div className="label">Days completed</div>
+                  <div className="value">{completedCount}</div>
+                </div>
+                <div className="metric">
+                  <div className="label">Total days</div>
+                  <div className="value">{totalCount}</div>
+                </div>
+              </div>
+              {estimatedFinish && (
+                <div className="db-finish">
+                  Est. completion
+                  <strong>{estimatedFinish}</strong>
+                  <span>based on {assessment?.hours_per_week}h / week</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Estimated finish date */}
-          {estimatedFinish && (
-            <p className="fade-in-2" style={{ fontSize: 13, color: "var(--muted)", marginBottom: 28 }}>
-              Estimated finish:{" "}
-              <span style={{ color: "var(--text)", fontWeight: 700 }}>{estimatedFinish}</span>
-              <span style={{ color: "var(--faint)", fontSize: 11, marginLeft: 8 }}>
-                (based on {assessment.hours_per_week}h/week)
-              </span>
-            </p>
-          )}
-
           <h2 className="section-title fade-in-2">Score by day</h2>
-          <div className="card fade-in-3" style={{ height: 260 }}>
+          <div className="card fade-in-2" style={{ height: 260, padding: "20px 16px 16px" }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="day" stroke="#5d6152" tick={{ fontSize: 11 }} />
-                <YAxis domain={[0, 10]} stroke="#5d6152" tick={{ fontSize: 11 }} />
-                <Tooltip
-                  cursor={{ fill: "#ffffff08" }}
-                  contentStyle={{ background: "#181b15", border: "1px solid #2a2e24", fontFamily: "var(--mono)" }}
+              <BarChart data={chartData} barCategoryGap="35%">
+                <XAxis
+                  dataKey="day"
+                  stroke="rgba(255,255,255,0.12)"
+                  tick={{ fontSize: 11, fill: "var(--faint)", fontFamily: "var(--mono)" }}
+                  axisLine={false}
+                  tickLine={false}
                 />
-                <Bar dataKey="score" radius={[3, 3, 0, 0]}>
+                <YAxis
+                  domain={[0, 10]}
+                  stroke="rgba(255,255,255,0.06)"
+                  tick={{ fontSize: 11, fill: "var(--faint)", fontFamily: "var(--mono)" }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={24}
+                />
+                <Tooltip
+                  cursor={{ fill: "rgba(255,255,255,0.04)", radius: 4 }}
+                  contentStyle={{
+                    background: "rgba(10,11,20,0.95)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 8,
+                    fontFamily: "var(--mono)",
+                    fontSize: 12,
+                    color: "var(--text)",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+                  }}
+                  labelStyle={{ color: "var(--muted)", marginBottom: 4 }}
+                />
+                <Bar dataKey="score" radius={[4, 4, 0, 0]}>
                   {chartData.map((d, i) => (
-                    <Cell key={i} fill={d.score >= 7 ? "#7fce8c" : d.score > 0 ? "#e07a5f" : "#2a2e24"} />
+                    <Cell
+                      key={i}
+                      fill={
+                        d.score >= 7
+                          ? "url(#bar-pass)"
+                          : d.score > 0
+                          ? "rgba(248,113,113,0.7)"
+                          : "rgba(255,255,255,0.06)"
+                      }
+                    />
                   ))}
                 </Bar>
+                <defs>
+                  <linearGradient id="bar-pass" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4dd0ff" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="#6d5efc" stopOpacity={0.8} />
+                  </linearGradient>
+                </defs>
               </BarChart>
             </ResponsiveContainer>
           </div>

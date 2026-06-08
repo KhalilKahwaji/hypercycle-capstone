@@ -45,8 +45,8 @@ function DayDetail({ d }) {
         </div>
       )}
       <div style={{ display: "flex", gap: 24, color: "var(--muted)", fontSize: 12 }}>
-        {d.estimated_hours && <span>⏱ ~{d.estimated_hours} hrs</span>}
-        {d.unlock_condition && <span>🔓 {d.unlock_condition}</span>}
+        {d.estimated_hours && <span>~{d.estimated_hours} hrs estimated</span>}
+        {d.unlock_condition && <span>{d.unlock_condition}</span>}
       </div>
     </div>
   );
@@ -217,7 +217,7 @@ export default function AdminUserDetail() {
             {isOpen && (
               <div style={{ marginTop: 14 }}>
                 <div className="mono-block" style={{ marginBottom: 12 }}>{s.content}</div>
-                {s.file_url && <p style={{ marginBottom: 10 }}>📎 <a href={s.file_url} target="_blank" rel="noreferrer">file</a></p>}
+                {s.file_url && <p style={{ marginBottom: 10 }}><a href={s.file_url} target="_blank" rel="noreferrer">View file</a></p>}
                 {s.feedback && <FeedbackCard feedback={s.feedback} />}
               </div>
             )}

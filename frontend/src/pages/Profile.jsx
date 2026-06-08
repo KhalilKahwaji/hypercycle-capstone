@@ -3,7 +3,6 @@ import client from "../api/client";
 import BadgeIcon from "../components/BadgeIcon";
 import BadgeToast from "../components/BadgeToast";
 
-// Messages that change as the count goes up
 const PRESS_MESSAGES = [
   [150, "Now stop procrastinating and go learn something -.-"],
   [145, "OK OK I'LL ADMIT, THIS IS A TEST BUTTON."],
@@ -17,38 +16,54 @@ const PRESS_MESSAGES = [
 ];
 
 function pickMessage(n) {
-  return PRESS_MESSAGES.find(([threshold]) => n >= threshold)?.[1] ?? `That's ${n}. Keep going, I guess.`;
+  return PRESS_MESSAGES.find(([t]) => n >= t)?.[1] ?? `That's ${n}. Keep going, I guess.`;
 }
-
 function pickIcon(n) {
-  if (n >= 50) return { icon: "Target",  color: "#e07a5f" };
-  if (n >= 20) return { icon: "Zap",     color: "#7fce8c" };
-  if (n >= 10) return { icon: "Star",    color: "#e8b84b" };
-  return               { icon: "Send",   color: "#6fa8dc" };
+  if (n >= 50) return { icon: "Target",  color: "#f87171" };
+  if (n >= 20) return { icon: "Zap",     color: "#4ade80" };
+  if (n >= 10) return { icon: "Star",    color: "#8b7cff" };
+  return               { icon: "Send",   color: "#4dd0ff" };
 }
-
 function pickButtonLabel(n) {
   if (n >= 150) return "It was a test button";
-  if (n >= 50) return "WHY ARE YOU STILL DOING THIS";
-  if (n >= 20) return "Stop. Please.";
-  if (n >= 10) return "okay but why";
-  if (n >= 5)  return "Again?";
-  if (n >= 1)  return "Press me again";
+  if (n >= 50)  return "WHY ARE YOU STILL DOING THIS";
+  if (n >= 20)  return "Stop. Please.";
+  if (n >= 10)  return "okay but why";
+  if (n >= 5)   return "Again?";
+  if (n >= 1)   return "Press me again";
   return "Press me";
 }
 
 function StatPill({ label, value }) {
   return (
     <div style={{
-      background: "#20241a",
-      border: "1px solid var(--border)",
+      background: "rgba(13,15,24,0.72)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      border: "1px solid rgba(255,255,255,0.08)",
       borderRadius: "var(--radius)",
-      padding: "12px 20px",
+      padding: "16px 22px",
       textAlign: "center",
-      minWidth: 120,
+      minWidth: 130,
+      boxShadow: "var(--shadow-md)",
     }}>
-      <div style={{ fontSize: 22, fontWeight: 700, color: "var(--amber)" }}>{value}</div>
-      <div style={{ fontSize: 11, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "1.5px", marginTop: 2 }}>{label}</div>
+      <div style={{
+        fontSize: 26,
+        fontWeight: 900,
+        fontFamily: "var(--display)",
+        background: "linear-gradient(135deg, var(--amber), var(--cyan))",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        lineHeight: 1.1,
+      }}>{value}</div>
+      <div style={{
+        fontSize: 10,
+        color: "var(--faint)",
+        textTransform: "uppercase",
+        letterSpacing: "1.8px",
+        marginTop: 4,
+      }}>{label}</div>
     </div>
   );
 }
@@ -62,15 +77,23 @@ function BadgeCard({ badge }) {
 
   return (
     <div style={{
-      background: earned ? "#1a1f14" : "var(--panel-solid)",
-      border: `1px solid ${earned ? badge.color + "55" : "var(--border)"}`,
+      background: earned
+        ? `rgba(13,15,24,0.8)`
+        : "rgba(13,15,24,0.5)",
+      backdropFilter: "blur(10px)",
+      WebkitBackdropFilter: "blur(10px)",
+      border: `1px solid ${earned ? badge.color + "44" : "rgba(255,255,255,0.07)"}`,
       borderRadius: "var(--radius)",
-      padding: "18px 16px",
-      opacity: earned ? 1 : 0.55,
+      padding: "20px",
+      opacity: earned ? 1 : 0.45,
       display: "flex",
       flexDirection: "column",
-      gap: 10,
-      transition: "opacity 0.15s",
+      gap: 12,
+      transition: "opacity 0.2s, transform 0.2s var(--ease), box-shadow 0.2s",
+      boxShadow: earned
+        ? `0 4px 24px rgba(0,0,0,0.4), 0 0 20px ${badge.color}22`
+        : "var(--shadow-sm)",
+      cursor: earned ? "default" : "default",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <BadgeIcon name={badge.icon} size={28} color={iconColor} />
@@ -79,15 +102,17 @@ function BadgeCard({ badge }) {
             {badge.name}
           </div>
           {earnedDate && (
-            <div style={{ fontSize: 11, color: "var(--faint)", marginTop: 1 }}>{earnedDate}</div>
+            <div style={{ fontSize: 11, color: "var(--faint)", marginTop: 2 }}>{earnedDate}</div>
           )}
         </div>
       </div>
-      <p style={{ margin: 0, fontSize: 12, color: "var(--muted)", lineHeight: 1.5 }}>
+      <p style={{ margin: 0, fontSize: 12, color: "var(--muted)", lineHeight: 1.55 }}>
         {badge.description}
       </p>
       {!earned && (
-        <div style={{ fontSize: 11, color: "var(--faint)", letterSpacing: "1px" }}>LOCKED</div>
+        <div style={{ fontSize: 10, color: "var(--faint)", letterSpacing: "1.5px", textTransform: "uppercase" }}>
+          Locked
+        </div>
       )}
     </div>
   );
@@ -124,8 +149,8 @@ export default function Profile() {
 
   if (error) return <div className="alert err">{error}</div>;
   if (!data) return (
-    <div className="center-screen" style={{ justifyContent: "flex-start", paddingTop: 60 }}>
-      <span className="spinner" /> &nbsp; Loading achievements…
+    <div style={{ padding: "60px 0", color: "var(--muted)", display: "flex", alignItems: "center", gap: 12 }}>
+      <span className="spinner" /> Loading achievements…
     </div>
   );
 
@@ -133,24 +158,25 @@ export default function Profile() {
 
   return (
     <div>
-      <h1 className="page-title">Achievements</h1>
-      <p className="page-sub">
-        {stats.earned}/{stats.total} badges earned
-      </p>
+      <h1 className="page-title fade-in">Achievements</h1>
+      <p className="page-sub fade-in-1">{stats.earned}/{stats.total} badges earned</p>
 
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
+      {/* Stats hero row */}
+      <div className="fade-in-1" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 36 }}>
         <StatPill label="Badges earned" value={`${stats.earned}/${stats.total}`} />
         <StatPill label="Days completed" value={stats.completed_days} />
         <StatPill label="Total submissions" value={stats.total_submissions} />
       </div>
 
       {/* Demo / debug card */}
-      <div style={{
-        border: "1px dashed var(--amber)",
+      <div className="fade-in-2" style={{
+        border: "1px dashed rgba(139,124,255,0.35)",
         borderRadius: "var(--radius)",
-        padding: "16px 18px",
-        marginBottom: 28,
-        background: "#1a1600",
+        padding: "18px 22px",
+        marginBottom: 32,
+        background: "rgba(139,124,255,0.05)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -172,10 +198,11 @@ export default function Profile() {
         </button>
       </div>
 
-      <div style={{
+      {/* Badge grid */}
+      <div className="fade-in-3" style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-        gap: 12,
+        gap: 14,
       }}>
         {badges.map((badge) => (
           <BadgeCard key={badge.key} badge={badge} />

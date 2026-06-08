@@ -77,8 +77,8 @@ export default function CurrentTask() {
         <Field label="Expected output (shippable)" value={day.expected_output} />
         <Field label="Evaluation criteria" value={day.evaluation_criteria} />
         <div style={{ display: "flex", gap: 24 }} className="muted">
-          <span>⏱ ~{day.estimated_hours} hrs</span>
-          <span>🔓 {day.unlock_condition}</span>
+          <span>~{day.estimated_hours} hrs estimated</span>
+          <span>{day.unlock_condition}</span>
         </div>
       </div>
 

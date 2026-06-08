@@ -64,10 +64,24 @@ export default function Register() {
       <NeuralBg />
 
       <div className="card center" style={{ position: "relative", zIndex: 2 }}>
-        <div className="brand" style={{ fontFamily: "var(--display)", fontWeight: 900, fontSize: 30 }}>
+        <div style={{
+          fontFamily: "var(--display)",
+          fontWeight: 900,
+          fontSize: 44,
+          letterSpacing: "-1.5px",
+          lineHeight: 1,
+          marginBottom: 4,
+          background: "linear-gradient(135deg, var(--text) 30%, var(--amber) 80%, var(--cyan) 120%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}>
+          HyperCycle
+        </div>
+        <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, color: "var(--text)" }}>
           Create account
         </div>
-        <p className="muted" style={{ marginBottom: 18 }}>
+        <p className="muted" style={{ marginBottom: 22, fontSize: 13 }}>
           Then we'll assess you and build your program.
         </p>
 

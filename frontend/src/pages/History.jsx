@@ -53,7 +53,7 @@ export default function History() {
               <div style={{ marginTop: 16 }}>
                 {s.file_url && (
                   <p style={{ marginBottom: 10 }}>
-                    📎 <a href={s.file_url} target="_blank" rel="noreferrer">uploaded file</a>
+                    <a href={s.file_url} target="_blank" rel="noreferrer">View uploaded file</a>
                   </p>
                 )}
                 {fb ? <FeedbackCard feedback={fb} /> : <p className="muted">No feedback recorded.</p>}
