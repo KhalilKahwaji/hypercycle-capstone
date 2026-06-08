@@ -29,6 +29,7 @@ import file_processor
 import program_generator
 import evaluator
 import achievements
+import platform_knowledge
 
 # -----------------------------
 # Config
@@ -976,6 +977,51 @@ def cli_ask(request: Request, body: CliAskRequest):
 
     achievements.check_and_award(supabase, user_id, "cli_ask")
     return {"answer": answer, "progress": progress, "current_day": current_day}
+
+
+# -----------------------------
+# Explain (highlight-to-explain)
+# -----------------------------
+class DefineRequest(BaseModel):
+    text: str
+    context: str = ""
+
+
+@app.post("/define")
+def define_term(request: Request, body: DefineRequest):
+    user_id = request.state.user_id  # auth required by middleware
+
+    raw_text = sanitize_text(body.text)[:500]
+    raw_ctx = sanitize_text(body.context)[:200]
+
+    if not raw_text:
+        raise HTTPException(status_code=400, detail="text is required")
+
+    ctx_line = f"\n(Background only, do not mention in your answer: the user is on the page titled \"{raw_ctx}\".)" if raw_ctx else ""
+    prompt = (
+        f"Explain the following highlighted term to the user in 2-4 sentences, second person.\n"
+        f"Explain ONLY this term: \"{raw_text}\"\n"
+        f"Do not mention or quote any context, URLs, ids, or paths in your answer.\n"
+        f"Use the platform knowledge below only if the term is platform-specific "
+        f"(e.g. hypersensei, program day, shippable, push vs check, badge names); "
+        f"otherwise explain it as a general programming or AI concept.\n\n"
+        f"Platform knowledge:\n{platform_knowledge.PLATFORM_INFO}"
+        f"{ctx_line}"
+    )
+
+    try:
+        resp = _groq_client.chat.completions.create(
+            model=_GROQ_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=220,
+        )
+        explanation = resp.choices[0].message.content.strip()
+    except Exception as e:
+        log_json({"event": "define_failed", "user_id": user_id, "error": repr(e)})
+        raise HTTPException(status_code=502, detail="Could not generate explanation. Please try again.")
+
+    return {"explanation": explanation}
 
 
 # -----------------------------

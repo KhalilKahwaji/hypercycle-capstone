@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
+import ExplainPopup from "./components/ExplainPopup";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -31,8 +32,22 @@ function Protected({ children, admin = false }) {
   return children;
 }
 
+function pageTitle(pathname) {
+  if (pathname === "/dashboard") return "Dashboard";
+  if (pathname === "/assessment") return "Self-Assessment";
+  if (pathname === "/program") return "My Program";
+  if (pathname.startsWith("/program/day/")) return "Program Day";
+  if (pathname.startsWith("/submit/")) return "Submit Work";
+  if (pathname === "/history") return "Submission History";
+  if (pathname === "/cli") return "CLI Tool";
+  if (pathname === "/profile") return "Profile / Achievements";
+  if (pathname.startsWith("/admin")) return "Admin";
+  return "";
+}
+
 function Shell({ children }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const location = useLocation();
   return (
     <div className="app-shell">
       <header className="mobile-topbar">
@@ -44,6 +59,7 @@ function Shell({ children }) {
       {drawerOpen && <div className="drawer-overlay" onClick={() => setDrawerOpen(false)} />}
       <Sidebar mobileOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
       <main className="content">{children}</main>
+      <ExplainPopup pageContext={pageTitle(location.pathname)} />
     </div>
   );
 }
