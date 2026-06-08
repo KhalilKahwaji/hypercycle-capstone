@@ -93,11 +93,31 @@ create table if not exists public.submission_feedback (
     created_at      timestamptz not null default now()
 );
 
+-- ---------- ACHIEVEMENTS (gamification) --------------------------------
+create table if not exists public.achievements (
+    id          uuid primary key default gen_random_uuid(),
+    user_id     uuid not null references public.users(id) on delete cascade,
+    badge_key   text not null,
+    earned_at   timestamptz not null default now(),
+    unique (user_id, badge_key)
+);
+
+-- ---------- SUBMISSIONS: source column --------------------------------
+-- Tracks whether a submission came from the web UI or the CLI.
+alter table public.submissions add column if not exists source text not null default 'web';
+
+-- Also add age to self_assessments (added in Feature 1).
+alter table public.self_assessments add column if not exists age int;
+
+-- submission_feedback: make submission_id nullable (admin passes have no submission).
+alter table public.submission_feedback alter column submission_id drop not null;
+
 -- ---------- INDEXES ---------------------------------------------------
 create index if not exists idx_program_days_program on public.program_days(program_id);
 create index if not exists idx_submissions_user on public.submissions(user_id);
 create index if not exists idx_submissions_day on public.submissions(program_day_id);
 create index if not exists idx_feedback_user on public.submission_feedback(user_id);
+create index if not exists idx_achievements_user on public.achievements(user_id);
 
 -- ---------- ROW LEVEL SECURITY ---------------------------------------
 -- Service role bypasses these. They protect against accidental anon access.

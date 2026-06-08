@@ -161,6 +161,124 @@ Rules:
 """
 
 
+class AdaptedDay(BaseModel):
+    """Same fields as GeneratedDay but no day_number — used for the adaptation response."""
+    title: str
+    objective: str
+    research_topics: List[str] = Field(default_factory=list)
+    task_description: str
+    expected_output: str
+    evaluation_criteria: str
+    estimated_hours: float = Field(..., ge=0)
+    unlock_condition: str
+
+
+def adapt_next_day(
+    program_title: str,
+    program_summary: str,
+    next_day_current: dict,
+    prev_day: dict,
+    prev_submission_text: str,
+    prev_feedback: dict,
+    username: str = "learner",
+) -> dict:
+    """
+    Refine the next day's content based on how the user actually performed.
+    Returns a dict matching AdaptedDay fields (no day_number).
+    Raises ValueError on invalid/unparseable model output.
+    """
+    score = prev_feedback.get("score", "?")
+    passed = prev_feedback.get("passed", True)
+    feedback_summary = prev_feedback.get("summary", "")
+    strengths = prev_feedback.get("strengths", [])
+    issues = prev_feedback.get("issues", [])
+    required_fixes = prev_feedback.get("required_fixes", [])
+
+    def _bullets(items):
+        return "\n".join(f"- {x}" for x in items) if items else "None."
+
+    prompt = f"""You are refining an upcoming day in {username}'s personalized AI-development program.
+
+PROGRAM: {program_title}
+{program_summary}
+
+PREVIOUS DAY (just completed by {username}):
+- Day {prev_day.get('day_number')}: {prev_day.get('title')}
+- Objective: {prev_day.get('objective')}
+
+EVALUATION RESULT (score {score}/10, {'PASSED' if passed else 'FAILED'}):
+{feedback_summary}
+Strengths:
+{_bullets(strengths)}
+Issues:
+{_bullets(issues)}
+Required fixes:
+{_bullets(required_fixes)}
+
+SUBMISSION EXCERPT ({username}'s actual work, first 800 chars):
+{prev_submission_text[:800]}
+
+CURRENTLY PLANNED NEXT DAY (Day {next_day_current.get('day_number')}):
+Title: {next_day_current.get('title')}
+Objective: {next_day_current.get('objective')}
+Task: {next_day_current.get('task_description')}
+Expected output: {next_day_current.get('expected_output')}
+Evaluation criteria: {next_day_current.get('evaluation_criteria')}
+Research topics: {next_day_current.get('research_topics')}
+Estimated hours: {next_day_current.get('estimated_hours')}
+Unlock condition: {next_day_current.get('unlock_condition')}
+
+INSTRUCTIONS:
+Refine — do NOT replace — the planned next day for {username}. Keep it on the same topic and in the same sequence position. Adjust it based on their actual performance:
+- If they struggled (low score, multiple issues): add more scaffolding, reduce scope, explicitly address weak points.
+- If they excelled (high score, few issues): add a small stretch challenge or remove unnecessary hand-holding.
+- Keep day_number {next_day_current.get('day_number')} unchanged (do not include it in the response).
+- Address {username} in second person throughout all fields.
+- research_topics must list specific tool/library names.
+- evaluation_criteria must be a numbered list of 3-5 concrete, verifiable checks.
+
+Return JSON in EXACTLY this shape (no day_number field):
+{{
+  "title": "...",
+  "objective": "what {username} will be able to do after this day",
+  "research_topics": ["specific-tool-1", "specific-lib-2"],
+  "task_description": "concrete spec written directly to {username}",
+  "expected_output": "the shippable deliverable",
+  "evaluation_criteria": "1. check. 2. check. 3. check.",
+  "estimated_hours": 5,
+  "unlock_condition": "..."
+}}
+
+No text outside the JSON object.
+"""
+
+    response = _client.chat.completions.create(
+        model=GROQ_MODEL,
+        messages=[
+            {"role": "system", "content": (
+                "You are an expert AI-development curriculum designer. "
+                "You return STRICT JSON only. No markdown, no commentary."
+            )},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.4,
+        response_format={"type": "json_object"},
+    )
+    content = response.choices[0].message.content
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Adaptation returned invalid JSON: {content}") from e
+
+    try:
+        adapted = AdaptedDay.model_validate(data)
+    except ValidationError as e:
+        raise ValueError(f"Adapted day failed validation: {e}") from e
+
+    return adapted.model_dump()
+
+
 def generate_program(assessment: dict, username: str = "learner") -> GeneratedProgram:
     precedent_context = _precedent_context(assessment)
     user_prompt = build_user_prompt(assessment, precedent_context, username=username)

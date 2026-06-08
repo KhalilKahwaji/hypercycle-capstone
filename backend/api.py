@@ -28,6 +28,7 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 import file_processor
 import program_generator
 import evaluator
+import achievements
 
 # -----------------------------
 # Config
@@ -458,6 +459,7 @@ def generate_user_program(request: Request):
         })
     safe_execute(supabase.table("program_days").insert(day_rows))
 
+    achievements.check_and_award(supabase, user_id, "program_generated")
     return {"message": "Program generated.", "program": prog_row}
 
 
@@ -551,6 +553,7 @@ def complete_setup_day(request: Request, day_id: str):
                 .eq("id", next_day.data[0]["id"])
             )
 
+    achievements.check_and_award(supabase, user_id, "setup_complete")
     return {"message": "Setup day completed.", "day_id": day_id}
 
 
@@ -646,16 +649,85 @@ async def create_submission(
             .eq("day_number", day["day_number"] + 1)
         )
         if next_day.data:
+            next_day_id = next_day.data[0]["id"]
             safe_execute(
                 supabase.table("program_days").update({"is_unlocked": True})
-                .eq("id", next_day.data[0]["id"])
+                .eq("id", next_day_id)
             )
+            # Best-effort: adapt the next day's content based on actual performance.
+            # Any failure here is logged and swallowed — it must never break the pass.
+            try:
+                next_day_full = safe_execute(
+                    supabase.table("program_days").select("*").eq("id", next_day_id)
+                ).data
+                if next_day_full and not next_day_full[0].get("is_completed"):
+                    next_day_row = next_day_full[0]
+                    # Don't overwrite a day the user already started.
+                    already_submitted = safe_execute(
+                        supabase.table("submissions").select("id")
+                        .eq("program_day_id", next_day_id).limit(1)
+                    ).data
+                    if not already_submitted:
+                        prog_meta = safe_execute(
+                            supabase.table("programs").select("title,summary")
+                            .eq("id", day["program_id"])
+                        ).data
+                        user_for_adapt = find_user_by_id(user_id)
+                        uname = (
+                            user_for_adapt.get("username", "learner")
+                            if user_for_adapt else "learner"
+                        )
+                        adapted = program_generator.adapt_next_day(
+                            program_title=prog_meta[0]["title"] if prog_meta else "",
+                            program_summary=prog_meta[0]["summary"] if prog_meta else "",
+                            next_day_current=next_day_row,
+                            prev_day=day,
+                            prev_submission_text=clean_content,
+                            prev_feedback={
+                                "score": evaluation.score,
+                                "passed": evaluation.passed,
+                                "summary": evaluation.summary,
+                                "strengths": evaluation.strengths,
+                                "issues": evaluation.issues,
+                                "required_fixes": evaluation.required_fixes,
+                            },
+                            username=uname,
+                        )
+                        safe_execute(
+                            supabase.table("program_days").update({
+                                "title": adapted["title"],
+                                "objective": adapted["objective"],
+                                "research_topics": "\n".join(adapted["research_topics"]),
+                                "task_description": adapted["task_description"],
+                                "expected_output": adapted["expected_output"],
+                                "evaluation_criteria": adapted["evaluation_criteria"],
+                                "estimated_hours": adapted["estimated_hours"],
+                                "unlock_condition": adapted["unlock_condition"],
+                            }).eq("id", next_day_id)
+                        )
+                        log_json({
+                            "event": "day_adapted", "user_id": user_id,
+                            "day_id": next_day_id,
+                            "day_number": next_day_row["day_number"],
+                        })
+            except Exception as _adapt_err:
+                log_json({
+                    "event": "adaptation_failed", "user_id": user_id,
+                    "error": repr(_adapt_err),
+                })
 
+    new_badges = achievements.check_and_award(supabase, user_id, "web_submission", {
+        "score": evaluation.score,
+        "passed": evaluation.passed,
+        "day_number": day["day_number"],
+        "program_day_id": program_day_id,
+    })
     return {
         "message": "Submission evaluated.",
         "submission": submission,
         "feedback": feedback_row,
         "evaluation": evaluation.model_dump(),
+        "new_badges": new_badges,
     }
 
 
@@ -700,6 +772,60 @@ def get_my_progress(request: Request):
 
 
 # -----------------------------
+# Achievements
+# -----------------------------
+@app.get("/achievements/me")
+def get_my_achievements(request: Request):
+    user_id = request.state.user_id
+
+    # Guard: if the achievements table doesn't exist yet, return zeroed data.
+    try:
+        earned_res = safe_execute(
+            supabase.table("achievements").select("badge_key,earned_at").eq("user_id", user_id)
+        )
+        earned_by_key = {r["badge_key"]: r["earned_at"] for r in (earned_res.data or [])}
+    except Exception as _e:
+        log_json({"event": "achievements_table_missing", "error": repr(_e)})
+        earned_by_key = {}
+
+    prog_res = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
+    completed_days = 0
+    if prog_res.data:
+        done_res = safe_execute(
+            supabase.table("program_days")
+            .select("id", count="exact")
+            .eq("program_id", prog_res.data[0]["id"])
+            .eq("is_completed", True)
+        )
+        completed_days = done_res.count or 0
+
+    total_subs = (
+        safe_execute(
+            supabase.table("submissions").select("id", count="exact").eq("user_id", user_id)
+        ).count or 0
+    )
+
+    all_badges = [
+        {
+            **b,
+            "earned": b["key"] in earned_by_key,
+            "earned_at": earned_by_key.get(b["key"]),
+        }
+        for b in achievements.BADGES
+    ]
+
+    return {
+        "badges": all_badges,
+        "stats": {
+            "earned": len(earned_by_key),
+            "total": len(achievements.BADGES),
+            "completed_days": completed_days,
+            "total_submissions": total_subs,
+        },
+    }
+
+
+# -----------------------------
 # CLI
 # -----------------------------
 def _get_current_day(user_id: str):
@@ -736,6 +862,7 @@ def cli_check(request: Request, body: CliCheckRequest):
         log_json({"event": "cli_eval_failed", "user_id": user_id, "error": repr(e)})
         raise HTTPException(status_code=502, detail="Could not evaluate submission. Please try again.")
 
+    new_badges = []
     if not body.dry_run:
         submission = safe_execute(supabase.table("submissions").insert({
             "user_id": user_id,
@@ -744,6 +871,7 @@ def cli_check(request: Request, body: CliCheckRequest):
             "content": f"[CLI submission]\n\n{body.project_text[:500]}",
             "file_url": None,
             "file_analysis": None,
+            "source": "cli",
         })).data[0]
 
         safe_execute(supabase.table("submission_feedback").insert({
@@ -775,7 +903,19 @@ def cli_check(request: Request, body: CliCheckRequest):
                     .eq("id", next_day.data[0]["id"])
                 )
 
-    return {"evaluation": evaluation.model_dump(), "day_number": day["day_number"], "dry_run": body.dry_run}
+        new_badges = achievements.check_and_award(supabase, user_id, "cli_submission", {
+            "score": evaluation.score,
+            "passed": evaluation.passed,
+            "day_number": day["day_number"],
+            "program_day_id": day["id"],
+        })
+
+    return {
+        "evaluation": evaluation.model_dump(),
+        "day_number": day["day_number"],
+        "dry_run": body.dry_run,
+        "new_badges": new_badges,
+    }
 
 
 @app.post("/cli/ask")
@@ -834,6 +974,7 @@ def cli_ask(request: Request, body: CliAskRequest):
         "answer": answer,
     }))
 
+    achievements.check_and_award(supabase, user_id, "cli_ask")
     return {"answer": answer, "progress": progress, "current_day": current_day}
 
 

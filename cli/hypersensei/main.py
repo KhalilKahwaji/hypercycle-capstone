@@ -176,6 +176,10 @@ def cmd_push(args):
     if ev.get("passed"):
         print(c.green("Next day unlocked — run `hypersensei status` to see your progress."))
         print()
+    for badge in data.get("new_badges", []):
+        print(c.bold(c.yellow(f"  Badge unlocked: {badge['name']}")))
+        print(c.dim(f"  {badge['description']}"))
+        print()
 
 
 # ---------------------------------------------------------------------------

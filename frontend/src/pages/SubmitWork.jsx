@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import client from "../api/client";
 import FeedbackCard from "../components/FeedbackCard";
+import BadgeToast from "../components/BadgeToast";
 
 const ACCEPT = ".txt,.md,.py,.json,.pdf";
 
@@ -14,6 +15,7 @@ export default function SubmitWork() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
+  const [newBadges, setNewBadges] = useState([]);
 
   useEffect(() => {
     client.get(`/program-days/${dayId}`).then((r) => setDay(r.data.day)).catch((e) => setError(e.message));
@@ -32,11 +34,16 @@ export default function SubmitWork() {
       fd.append("content", content);
       if (file) fd.append("file", file);
 
-      // File analysis + Groq evaluation happen server-side in one call.
       const res = await client.post("/submissions", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResult(res.data);
+
+      const earned = res.data.new_badges || [];
+      if (earned.length) {
+        setNewBadges(earned);
+        setTimeout(() => setNewBadges([]), 6000);
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -107,6 +114,8 @@ export default function SubmitWork() {
           </div>
         </>
       )}
+
+      <BadgeToast badges={newBadges} onDismiss={() => setNewBadges([])} />
     </div>
   );
 }
