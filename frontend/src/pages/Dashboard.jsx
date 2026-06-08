@@ -1,18 +1,25 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, Tooltip,
 } from "recharts";
 import client from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import ProgressRing from "../components/ProgressRing";
+import useCountUp from "../hooks/useCountUp";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [progress, setProgress] = useState(null);
   const [subs, setSubs] = useState([]);
+  const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Hooks must be called unconditionally before any early return.
+  const completedCount = useCountUp(progress?.completed_days ?? 0);
+  const totalCount = useCountUp(progress?.total_days ?? 0);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -20,10 +27,12 @@ export default function Dashboard() {
     Promise.all([
       client.get("/progress/me"),
       client.get("/submissions/me"),
+      client.get("/assessments/me"),
     ])
-      .then(([p, s]) => {
+      .then(([p, s, a]) => {
         setProgress(p.data);
         setSubs(s.data.submissions);
+        setAssessment(a.data.assessment ?? null);
       })
       .catch((e) => setError(e.message || "Failed to load dashboard."))
       .finally(() => setLoading(false));
@@ -31,8 +40,23 @@ export default function Dashboard() {
 
   useEffect(() => { load(); }, [load]);
 
+  const estimatedFinish = useMemo(() => {
+    if (!progress?.has_program || !assessment?.hours_per_week) return null;
+    const daysLeft = (progress.total_days ?? 16) - (progress.completed_days ?? 0);
+    if (daysLeft <= 0) return "All done!";
+    const weeksNeeded = (daysLeft * 5) / assessment.hours_per_week;
+    const calDays = Math.ceil(weeksNeeded * 7);
+    const d = new Date();
+    d.setDate(d.getDate() + calDays);
+    return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  }, [progress, assessment]);
+
   if (loading)
-    return <div><span className="spinner" /> loading dashboard…</div>;
+    return (
+      <div style={{ padding: "60px 0", color: "var(--muted)", display: "flex", alignItems: "center", gap: 10 }}>
+        <span className="spinner" /> loading dashboard…
+      </div>
+    );
 
   if (error)
     return (
@@ -45,7 +69,6 @@ export default function Dashboard() {
       </div>
     );
 
-  // Best score per day_number for the chart.
   const byDay = {};
   subs.forEach((s) => {
     const score = s.feedback?.score ?? 0;
@@ -59,37 +82,48 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="page-title">Welcome, {user?.full_name?.split(" ")[0]}.</h1>
-      <p className="page-sub">Here's where you stand.</p>
+      <h1 className="page-title fade-in">Welcome, {user?.full_name?.split(" ")[0]}.</h1>
+      <p className="page-sub fade-in-1">Here's where you stand.</p>
 
       {!progress?.has_program ? (
-        <div className="alert info">
+        <div className="alert info fade-in-1">
           You don't have a program yet.{" "}
           <Link to="/assessment">Take the self-assessment</Link> to generate one.
         </div>
       ) : (
         <>
-          <div className="grid grid-3" style={{ marginBottom: 24 }}>
+          {/* Metrics row — 2 count-up cards + progress ring */}
+          <div className="grid grid-3 fade-in-1" style={{ marginBottom: 16 }}>
             <div className="metric">
               <div className="label">Completed days</div>
-              <div className="value">{progress.completed_days}</div>
+              <div className="value">{completedCount}</div>
             </div>
             <div className="metric">
               <div className="label">Total days</div>
-              <div className="value">{progress.total_days}</div>
+              <div className="value">{totalCount}</div>
             </div>
-            <div className="metric">
-              <div className="label">Progress</div>
-              <div className="value">{progress.percentage}%</div>
+            <div className="metric" style={{
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center", gap: 6,
+            }}>
+              <div className="label" style={{ marginBottom: 4 }}>Progress</div>
+              <ProgressRing pct={progress.percentage} size={90} stroke={8} />
             </div>
           </div>
 
-          <div className="progress-track">
-            <div className="progress-fill" style={{ width: `${progress.percentage}%` }} />
-          </div>
+          {/* Estimated finish date */}
+          {estimatedFinish && (
+            <p className="fade-in-2" style={{ fontSize: 13, color: "var(--muted)", marginBottom: 28 }}>
+              Estimated finish:{" "}
+              <span style={{ color: "var(--text)", fontWeight: 700 }}>{estimatedFinish}</span>
+              <span style={{ color: "var(--faint)", fontSize: 11, marginLeft: 8 }}>
+                (based on {assessment.hours_per_week}h/week)
+              </span>
+            </p>
+          )}
 
-          <h2 className="section-title">Score by day</h2>
-          <div className="card" style={{ height: 260 }}>
+          <h2 className="section-title fade-in-2">Score by day</h2>
+          <div className="card fade-in-3" style={{ height: 260 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <XAxis dataKey="day" stroke="#5d6152" tick={{ fontSize: 11 }} />
@@ -107,7 +141,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          <button onClick={() => navigate("/program")} style={{ marginTop: 8 }}>
+          <button className="fade-in-3" onClick={() => navigate("/program")} style={{ marginTop: 8 }}>
             Go to my program →
           </button>
         </>

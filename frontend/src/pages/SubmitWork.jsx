@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import confetti from "canvas-confetti";
 import client from "../api/client";
 import FeedbackCard from "../components/FeedbackCard";
 import BadgeToast from "../components/BadgeToast";
@@ -38,6 +39,20 @@ export default function SubmitWork() {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResult(res.data);
+
+      if (res.data.evaluation?.passed) {
+        const dayNum = day?.day_number ?? 0;
+        if (dayNum >= 15) {
+          // Big celebration for final days — three volleys from both sides
+          const fire = (origin) =>
+            confetti({ particleCount: 90, spread: 70, origin, startVelocity: 45 });
+          fire({ x: 0.25, y: 0.65 });
+          setTimeout(() => fire({ x: 0.75, y: 0.65 }), 180);
+          setTimeout(() => fire({ x: 0.5, y: 0.6 }), 360);
+        } else {
+          confetti({ particleCount: 55, spread: 60, origin: { y: 0.7 } });
+        }
+      }
 
       const earned = res.data.new_badges || [];
       if (earned.length) {
