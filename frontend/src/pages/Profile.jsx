@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { GitBranch, Upload, X, ChevronDown, ChevronUp, Save } from "lucide-react";
 import client from "../api/client";
 import BadgeIcon from "../components/BadgeIcon";
 import BadgeToast from "../components/BadgeToast";
@@ -118,6 +119,199 @@ function BadgeCard({ badge }) {
   );
 }
 
+function OptionalBadge() {
+  return (
+    <span style={{
+      fontSize: 10, fontWeight: 600, letterSpacing: "0.8px",
+      padding: "2px 7px", borderRadius: 20,
+      background: "rgba(77,208,255,0.1)", color: "var(--cyan, #4dd0ff)",
+      border: "1px solid rgba(77,208,255,0.2)", textTransform: "uppercase",
+      marginLeft: 8, verticalAlign: "middle",
+    }}>optional</span>
+  );
+}
+
+function OnboardingCard() {
+  const fileRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [fields, setFields] = useState({
+    github_username: "",
+    preferred_learning_style: "",
+    focus_area: "",
+    target_outcome: "",
+    prior_experience_notes: "",
+  });
+  const [cvFile, setCvFile] = useState(null);
+  const [currentCvUrl, setCurrentCvUrl] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    client.get("/onboarding/me").then((r) => {
+      const a = r.data.assessment;
+      if (!a) return;
+      setFields({
+        github_username: a.github_username || "",
+        preferred_learning_style: a.preferred_learning_style || "",
+        focus_area: a.focus_area || "",
+        target_outcome: a.target_outcome || "",
+        prior_experience_notes: a.prior_experience_notes || "",
+      });
+      setCurrentCvUrl(a.cv_file_url || null);
+    }).catch(() => {});
+  }, []);
+
+  const setF = (k, v) => setFields((f) => ({ ...f, [k]: v }));
+
+  const handleCvChange = (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const ext = f.name.split(".").pop().toLowerCase();
+    if (!["pdf", "txt", "md"].includes(ext)) { setErr("CV must be PDF, TXT, or MD."); return; }
+    if (f.size > 5 * 1024 * 1024) { setErr("CV file must be under 5 MB."); return; }
+    setErr(""); setCvFile(f);
+  };
+
+  const save = async () => {
+    setMsg(""); setErr(""); setBusy(true);
+    try {
+      const fd = new FormData();
+      if (cvFile) fd.append("cv_file", cvFile);
+      Object.entries(fields).forEach(([k, v]) => { if (v.trim()) fd.append(k, v.trim()); });
+      const r = await client.post("/onboarding", fd);
+      setMsg("Saved. This will apply the next time you regenerate your program.");
+      setCvFile(null);
+      if (r.data.assessment?.cv_file_url) setCurrentCvUrl(r.data.assessment.cv_file_url);
+      if (fileRef.current) fileRef.current.value = "";
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="fade-in" style={{ marginBottom: 32 }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "14px 18px", borderRadius: "var(--radius)",
+          background: "rgba(13,15,24,0.72)", backdropFilter: "blur(12px)",
+          border: "1px solid rgba(255,255,255,0.08)", cursor: "pointer",
+          color: "var(--text)", textAlign: "left",
+          boxShadow: "var(--shadow-sm)",
+        }}
+      >
+        <div>
+          <span style={{ fontWeight: 700, fontSize: 14 }}>Profile &amp; CV</span>
+          <span style={{ fontSize: 12, color: "var(--muted)", marginLeft: 10 }}>
+            GitHub, CV, learning preferences
+          </span>
+        </div>
+        {open ? <ChevronUp size={16} style={{ opacity: 0.5 }} /> : <ChevronDown size={16} style={{ opacity: 0.5 }} />}
+      </button>
+
+      {open && (
+        <div className="card" style={{ marginTop: 4, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+          {err && <div className="alert err" style={{ marginBottom: 14 }}>{err}</div>}
+          {msg && <div className="alert ok" style={{ marginBottom: 14 }}>{msg}</div>}
+
+          <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <GitBranch size={14} style={{ opacity: 0.7 }} /> GitHub username <OptionalBadge />
+          </label>
+          <input
+            placeholder="e.g. khalilkahwaji"
+            value={fields.github_username}
+            onChange={(e) => setF("github_username", e.target.value)}
+          />
+          <p className="muted" style={{ fontSize: 12, marginTop: -8, marginBottom: 14 }}>
+            Public profile only — no OAuth, no private data.
+          </p>
+
+          <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <Upload size={14} style={{ opacity: 0.7 }} /> CV / Résumé <OptionalBadge />
+          </label>
+          <input ref={fileRef} type="file" accept=".pdf,.txt,.md" style={{ display: "none" }} onChange={handleCvChange} />
+          {cvFile ? (
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "10px 14px", borderRadius: "var(--radius-sm)",
+              background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)", marginBottom: 14,
+            }}>
+              <span style={{ fontSize: 13, color: "var(--text)", wordBreak: "break-all" }}>{cvFile.name}</span>
+              <button type="button"
+                onClick={() => { setCvFile(null); if (fileRef.current) fileRef.current.value = ""; }}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted)", padding: 4 }}>
+                <X size={14} />
+              </button>
+            </div>
+          ) : (
+            <button type="button" onClick={() => fileRef.current?.click()}
+              style={{
+                width: "100%", padding: "11px 14px", marginBottom: 4,
+                background: "rgba(255,255,255,0.03)", border: "1px dashed var(--border)",
+                borderRadius: "var(--radius-sm)", color: "var(--muted)", cursor: "pointer",
+                fontSize: 13, textAlign: "left",
+              }}
+            >
+              {currentCvUrl ? "Replace current CV (PDF, TXT, or MD)" : "Upload CV (PDF, TXT, or MD) — max 5 MB"}
+            </button>
+          )}
+          {currentCvUrl && !cvFile && (
+            <p className="muted" style={{ fontSize: 11, marginBottom: 14 }}>
+              CV on file.{" "}
+              <a href={currentCvUrl} target="_blank" rel="noreferrer" style={{ color: "var(--cyan, #4dd0ff)" }}>View</a>
+            </p>
+          )}
+
+          <label>Preferred learning style <OptionalBadge /></label>
+          <input
+            placeholder="e.g. hands-on projects, reading then building, guided steps"
+            value={fields.preferred_learning_style}
+            onChange={(e) => setF("preferred_learning_style", e.target.value)}
+          />
+
+          <label>What you most want to build / focus on <OptionalBadge /></label>
+          <textarea
+            placeholder="e.g. I'm mainly interested in NLP and want to build a chatbot product."
+            value={fields.focus_area}
+            onChange={(e) => setF("focus_area", e.target.value)}
+            style={{ minHeight: 64 }}
+          />
+
+          <label>What success looks like for you <OptionalBadge /></label>
+          <input
+            placeholder="e.g. Land a junior ML engineer role in 3 months."
+            value={fields.target_outcome}
+            onChange={(e) => setF("target_outcome", e.target.value)}
+          />
+
+          <label>Additional background notes <OptionalBadge /></label>
+          <textarea
+            placeholder="e.g. I took Andrew Ng's ML course but never shipped to production."
+            value={fields.prior_experience_notes}
+            onChange={(e) => setF("prior_experience_notes", e.target.value)}
+            style={{ minHeight: 64 }}
+          />
+
+          <button onClick={save} disabled={busy} style={{ marginTop: 10 }}>
+            {busy
+              ? <><span className="spinner" />&nbsp; Saving…</>
+              : <><Save size={13} style={{ display: "inline", verticalAlign: "middle", marginRight: 6 }} />Save profile</>
+            }
+          </button>
+          <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>
+            Changes apply the next time you regenerate your program from the Assessment page.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Profile() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -158,8 +352,10 @@ export default function Profile() {
 
   return (
     <div>
-      <h1 className="page-title fade-in">Achievements</h1>
+      <h1 className="page-title fade-in">Profile &amp; Achievements</h1>
       <p className="page-sub fade-in-1">{stats.earned}/{stats.total} badges earned</p>
+
+      <OnboardingCard />
 
       {/* Stats hero row */}
       <div className="fade-in-1" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 36 }}>

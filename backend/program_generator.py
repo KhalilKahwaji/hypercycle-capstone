@@ -139,11 +139,51 @@ AGE RULES ({username} is {age} years old):
   how X works and why it is used here" — connect new tools to existing mental models."""
 
 
+def _optional_enrichment_block(assessment: dict) -> str:
+    """Build an ADDITIONAL CONTEXT section from optional onboarding fields, or return ''."""
+    parts = []
+
+    cv_text = (assessment.get("cv_text") or "").strip()
+    if cv_text:
+        parts.append(f"CV / Resume (use to calibrate actual skill level — takes priority over stated level):\n{cv_text[:2000]}")
+
+    github_summary = (assessment.get("github_summary") or "").strip()
+    if github_summary:
+        parts.append(f"GitHub: {github_summary}")
+
+    learning_style = (assessment.get("preferred_learning_style") or "").strip()
+    if learning_style:
+        parts.append(f"Preferred learning style: {learning_style}")
+
+    focus_area = (assessment.get("focus_area") or "").strip()
+    if focus_area:
+        parts.append(f"What they most want to build/focus on: {focus_area}")
+
+    target_outcome = (assessment.get("target_outcome") or "").strip()
+    if target_outcome:
+        parts.append(f"What success looks like for them: {target_outcome}")
+
+    experience_notes = (assessment.get("prior_experience_notes") or "").strip()
+    if experience_notes:
+        parts.append(f"Additional background notes: {experience_notes}")
+
+    if not parts:
+        return ""
+
+    return (
+        "\nADDITIONAL CONTEXT — use these to calibrate difficulty and tailor topics. "
+        "Where they conflict with the stated experience level, prefer this richer signal:\n"
+        + "\n".join(parts)
+        + "\n"
+    )
+
+
 def build_user_prompt(assessment: dict, precedent_context: str, username: str = "learner") -> str:
     age = assessment.get("age", "")
     age_line = f"- Age: {age}" if age else ""
     age_block = _age_rules(age, username)
     age_address = " and age" if age else ""
+    enrichment_block = _optional_enrichment_block(assessment)
     return f"""
 Design a personalized 16-day AI-development learning program for {username}.
 
@@ -155,6 +195,7 @@ LEARNER PROFILE:
 - Background: {assessment.get('background', 'unknown')}
 - Hours available per week: {assessment.get('hours_per_week', 'unknown')}
 {age_line}
+{enrichment_block}
 
 PRECEDENT PROGRAMS — LOOSE structural inspiration ONLY. DO NOT copy their topics or structure:
 {precedent_context}

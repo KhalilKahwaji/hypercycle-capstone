@@ -3,6 +3,8 @@ import time
 import json
 import logging
 import re
+import urllib.request
+import urllib.error
 from pathlib import Path
 from uuid import uuid4
 from typing import Optional
@@ -268,6 +270,60 @@ def upload_submission_file(user_id: str, filename: str, file_bytes: bytes, conte
     return supabase.storage.from_("submissions").get_public_url(storage_path)
 
 
+def upload_cv_file(user_id: str, filename: str, file_bytes: bytes, content_type: str) -> str:
+    ext = Path(filename).suffix.lower() if filename else ".bin"
+    storage_path = f"{user_id}/cv{ext}"
+    supabase.storage.from_("cvs").upload(
+        path=storage_path,
+        file=file_bytes,
+        file_options={
+            "content-type": content_type or "application/octet-stream",
+            "upsert": "true",
+        },
+    )
+    return supabase.storage.from_("cvs").get_public_url(storage_path)
+
+
+def fetch_github_summary(username: str) -> Optional[str]:
+    """Call the public GitHub REST API and return a short text summary, or None on failure."""
+    if not username:
+        return None
+    github_token = os.getenv("GITHUB_TOKEN")
+    headers_map = {
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "AI-Buddy/1.0",
+    }
+    if github_token:
+        headers_map["Authorization"] = f"Bearer {github_token}"
+    try:
+        url = f"https://api.github.com/users/{username}/repos?per_page=30&sort=updated"
+        req = urllib.request.Request(url, headers=headers_map)
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            repos = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+    if not repos or not isinstance(repos, list):
+        return None
+
+    lang_count: dict = {}
+    for repo in repos:
+        lang = repo.get("language")
+        if lang:
+            lang_count[lang] = lang_count.get(lang, 0) + 1
+    top_langs = [l for l, _ in sorted(lang_count.items(), key=lambda x: x[1], reverse=True)][:4]
+
+    non_fork = [r for r in repos if not r.get("fork")]
+    non_fork.sort(key=lambda r: r.get("stargazers_count", 0), reverse=True)
+    top_names = [r["name"] for r in non_fork[:4]]
+
+    parts = [f"Public GitHub ({username}): {len(repos)} public repos"]
+    if top_langs:
+        parts.append(f"primarily {', '.join(top_langs)}")
+    if top_names:
+        parts.append(f"notable projects: {', '.join(top_names)}")
+    return ". ".join(parts) + "."
+
+
 def safe_execute(query, retries=3):
     last_err = None
     for _ in range(retries):
@@ -448,6 +504,89 @@ def get_my_assessment(request: Request):
 
 
 # -----------------------------
+# Onboarding (optional enrichment)
+# -----------------------------
+_CV_SUPPORTED = {".pdf", ".txt", ".md"}
+_CV_MAX_CHARS = 4000
+
+
+@app.post("/onboarding", status_code=status.HTTP_201_CREATED)
+async def create_or_update_onboarding(
+    request: Request,
+    cv_file: Optional[UploadFile] = File(None),
+    github_username: Optional[str] = Form(None),
+    preferred_learning_style: Optional[str] = Form(None),
+    focus_area: Optional[str] = Form(None),
+    target_outcome: Optional[str] = Form(None),
+    prior_experience_notes: Optional[str] = Form(None),
+):
+    user_id = request.state.user_id
+    payload: dict = {"user_id": user_id}
+
+    # CV file handling
+    if cv_file is not None and cv_file.filename:
+        file_bytes = await cv_file.read()
+        if len(file_bytes) > MAX_FILE_SIZE_BYTES:
+            raise HTTPException(status_code=413, detail="CV file too large. Maximum 5 MB.")
+        ext = Path(cv_file.filename).suffix.lower()
+        if ext not in _CV_SUPPORTED:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported CV format '{ext}'. Use PDF, TXT, or MD.",
+            )
+        try:
+            if ext == ".pdf":
+                raw_text = file_processor.extract_text_from_pdf(file_bytes)
+            else:
+                raw_text = file_processor.extract_text_from_plain_file(file_bytes)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Could not read CV: {e}")
+        payload["cv_text"] = raw_text.strip()[:_CV_MAX_CHARS]
+        try:
+            payload["cv_file_url"] = upload_cv_file(
+                user_id, cv_file.filename, file_bytes, cv_file.content_type or ""
+            )
+        except Exception as e:
+            log_json({"event": "cv_upload_failed", "user_id": user_id, "error": repr(e)})
+            # Non-fatal: text is already extracted; file URL is a bonus
+
+    # Text fields
+    if github_username is not None:
+        payload["github_username"] = sanitize_text(github_username)[:39]
+    if preferred_learning_style is not None:
+        payload["preferred_learning_style"] = sanitize_text(preferred_learning_style)[:500]
+    if focus_area is not None:
+        payload["focus_area"] = sanitize_text(focus_area)[:1000]
+    if target_outcome is not None:
+        payload["target_outcome"] = sanitize_text(target_outcome)[:1000]
+    if prior_experience_notes is not None:
+        payload["prior_experience_notes"] = sanitize_text(prior_experience_notes)[:2000]
+
+    result = safe_execute(
+        supabase.table("self_assessments").upsert(payload, on_conflict="user_id")
+    )
+
+    # Return live GitHub summary if username was just set/updated
+    gh_username = payload.get("github_username", "")
+    github_summary = fetch_github_summary(gh_username) if gh_username else None
+
+    return {
+        "message": "Onboarding saved.",
+        "assessment": result.data[0] if result.data else None,
+        "github_summary": github_summary,
+    }
+
+
+@app.get("/onboarding/me")
+def get_my_onboarding(request: Request):
+    r = safe_execute(
+        supabase.table("self_assessments").select("*").eq("user_id", request.state.user_id)
+    )
+    assessment = r.data[0] if r.data else None
+    return {"assessment": assessment}
+
+
+# -----------------------------
 # Programs
 # -----------------------------
 @app.post("/programs/generate", status_code=status.HTTP_201_CREATED)
@@ -461,6 +600,14 @@ def generate_user_program(request: Request):
 
     user = find_user_by_id(user_id)
     username = user.get("username", "learner") if user else "learner"
+
+    # Enrich assessment with live GitHub summary if a username is stored.
+    gh_username = (assessment.get("github_username") or "").strip()
+    if gh_username:
+        gh_summary = fetch_github_summary(gh_username)
+        if gh_summary:
+            assessment = dict(assessment)
+            assessment["github_summary"] = gh_summary
 
     # Purge all prior progress before regenerating (FK order: feedback → submissions → program).
     existing = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))

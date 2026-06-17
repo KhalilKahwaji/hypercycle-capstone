@@ -19,6 +19,7 @@ import AdminUserDetail from "./pages/AdminUserDetail";
 import AdminSearch from "./pages/AdminSearch";
 import CliTool from "./pages/CliTool";
 import Profile from "./pages/Profile";
+import Onboarding from "./pages/Onboarding";
 
 function Protected({ children, admin = false }) {
   const { user, loading } = useAuth();
@@ -42,6 +43,7 @@ function pageTitle(pathname) {
   if (pathname.startsWith("/submit/")) return "Submit Work";
   if (pathname === "/history") return "Submission History";
   if (pathname === "/cli") return "CLI Tool";
+  if (pathname === "/onboarding") return "Set Up Your Profile";
   if (pathname === "/profile") return "Profile / Achievements";
   if (pathname.startsWith("/admin")) return "Admin";
   return "";
@@ -79,6 +81,7 @@ function Inner() {
         path="/register"
         element={user && !loading ? <Navigate to={user.is_admin ? "/admin" : "/dashboard"} replace /> : <Register />}
       />
+      <Route path="/onboarding" element={<Protected><Shell><Onboarding /></Shell></Protected>} />
       <Route path="/dashboard" element={<Protected><Shell><Dashboard /></Shell></Protected>} />
       <Route path="/assessment" element={<Protected><Shell><Assessment /></Shell></Protected>} />
       <Route path="/program" element={<Protected><Shell><MyProgram /></Shell></Protected>} />

@@ -51,7 +51,7 @@ export default function Register() {
         full_name: form.full_name.trim(),
         password: form.password,
       });
-      navigate("/assessment");
+      navigate("/onboarding");
     } catch (e) {
       setError(e.message);
     } finally {
