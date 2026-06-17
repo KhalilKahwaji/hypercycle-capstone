@@ -1,11 +1,11 @@
-# HyperCycle — Self-Driving AI Bootcamp
+# AI Buddy — Self-Driving AI Bootcamp
 
 A full-stack AI learning platform. A user signs up, fills a self-assessment, and an
 LLM generates a **personalized 15-day program**. They work through it day by day,
 submit work (text + optional file), and an LLM evaluates each submission, scores it,
 and unlocks the next day if they pass. Admins can see every user and their progress.
 
-This is the HyperCycle 15-day capstone, built on the tools from Days 1–9.
+This is the AI Buddy 15-day capstone, built on the tools from Days 1–9.
 
 ## Stack
 

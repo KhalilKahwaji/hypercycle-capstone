@@ -6,7 +6,7 @@ const INSTALL_CMD =
 const COMMANDS = [
   {
     cmd: "hypersensei login",
-    desc: "Authenticate with the HyperCycle API. Saves your token to ~/.hypersensei/config.json.",
+    desc: "Authenticate with the AI Buddy API. Saves your token to ~/.hypersensei/config.json.",
     example: "hypersensei login\nhypersensei login --api-url https://custom.example.com",
   },
   {
@@ -78,7 +78,7 @@ export default function CliTool() {
         <p className="muted" style={{ fontSize: 12 }}>
           Then run{" "}
           <code style={{ color: "var(--amber)", fontSize: 12 }}>hypersensei login</code>{" "}
-          to authenticate with your HyperCycle account.
+          to authenticate with your AI Buddy account.
         </p>
       </div>
 

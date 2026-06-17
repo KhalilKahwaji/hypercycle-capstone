@@ -11,7 +11,7 @@ const LS_COLLAPSED   = "sensei_collapsed";
 const LS_PERSONALITY = "sensei_personality";
 const IDLE_DELAY_MS  = 6000;  // wait 6s before first idle line (gives events breathing room)
 const IDLE_COOL_MS   = 20000; // min gap between consecutive idle lines
-const BUBBLE_MS      = 4000;  // how long a bubble stays before auto-dismiss
+const BUBBLE_MS      = 7000;  // how long a bubble stays before auto-dismiss
 
 // ── localStorage helpers ──────────────────────────────────────────────────────
 function ls(key, fallback = null) {
@@ -60,39 +60,85 @@ function IconExpand() {
   );
 }
 
-// ── Orb SVG character ─────────────────────────────────────────────────────────
+// ── Logo SVG character (LED dot-matrix M panel + robot body) ─────────────────
 function SenseiOrb({ personality, blinking, size = 52 }) {
-  const c = PAL[personality] || PAL.sensei;
+  const c   = PAL[personality] || PAL.sensei;
+  const p   = personality;           // short alias for unique SVG IDs
+  const led = "#ff8c00";             // orange LEDs stay constant across personalities
+  const h   = Math.round(size * 1.32); // taller to include robot body below panel
+
   return (
-    <svg width={size} height={size} viewBox="0 0 52 52" fill="none" aria-hidden="true">
+    <svg
+      width={size} height={h}
+      viewBox="0 0 80 106"
+      fill="none" aria-hidden="true"
+      style={{ opacity: blinking ? 0.55 : 1, transition: "opacity 0.08s" }}
+    >
       <defs>
-        <radialGradient id="sn-body" cx="35%" cy="28%" r="65%">
-          <stop offset="0%"   stopColor="#fff"   stopOpacity="0.24"/>
-          <stop offset="45%"  stopColor={c.from} stopOpacity="0.92"/>
-          <stop offset="100%" stopColor={c.to}   stopOpacity="0.55"/>
-        </radialGradient>
-        <radialGradient id="sn-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stopColor={c.from} stopOpacity="0.45"/>
+        {/* LED dot grid — 3.6 px pitch */}
+        <pattern id={`sl-led-${p}`} x="1" y="1" width="3.6" height="3.6" patternUnits="userSpaceOnUse">
+          <circle cx="1.8" cy="1.8" r="1.25" fill={led} opacity="0.93"/>
+        </pattern>
+
+        {/* Mask: white = show dots, black = carve out M */}
+        <mask id={`sl-mask-${p}`}>
+          <rect width="80" height="80" fill="white"/>
+          {/* Bold block-letter M */}
+          <path
+            d="M10 70 L10 12 L23 12 L40 37 L57 12 L70 12
+               L70 70 L57 70 L57 47 L40 57 L23 47 L23 70 Z"
+            fill="black"
+          />
+        </mask>
+
+        {/* Personality-tinted halo */}
+        <radialGradient id={`sl-halo-${p}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor={c.from} stopOpacity="0.28"/>
           <stop offset="100%" stopColor={c.from} stopOpacity="0"/>
         </radialGradient>
       </defs>
-      <circle cx="26" cy="26" r="25" fill="url(#sn-glow)"/>
-      <circle cx="26" cy="26" r="17" fill="url(#sn-body)"/>
-      <circle cx="26" cy="26" r="17" stroke="rgba(255,255,255,0.2)" strokeWidth="0.75"/>
-      <ellipse cx="19.5" cy="18.5" rx="4.5" ry="3" fill="rgba(255,255,255,0.22)"/>
-      {blinking ? (
-        <>
-          <rect x="18"   y="27.5" width="5.5" height="1" rx="0.5" fill="rgba(255,255,255,0.65)"/>
-          <rect x="28.5" y="27.5" width="5.5" height="1" rx="0.5" fill="rgba(255,255,255,0.65)"/>
-        </>
-      ) : (
-        <>
-          <circle cx="21.5" cy="28"   r="1.9"  fill="rgba(255,255,255,0.72)"/>
-          <circle cx="30.5" cy="28"   r="1.9"  fill="rgba(255,255,255,0.72)"/>
-          <circle cx="22"   cy="28.5" r="0.85" fill="rgba(20,20,50,0.5)"/>
-          <circle cx="31"   cy="28.5" r="0.85" fill="rgba(20,20,50,0.5)"/>
-        </>
-      )}
+
+      {/* ── Head panel ──────────────────────────────── */}
+      {/* Personality halo behind panel */}
+      <rect x="0" y="0" width="80" height="80" rx="14" fill={`url(#sl-halo-${p})`}/>
+      {/* Dark panel background */}
+      <rect x="2" y="2" width="76" height="76" rx="11" fill="#08090e"/>
+      {/* LED dots with M carved out */}
+      <rect x="2" y="2" width="76" height="76" rx="11"
+            fill={`url(#sl-led-${p})`} mask={`url(#sl-mask-${p})`}/>
+      {/* Panel edge */}
+      <rect x="2" y="2" width="76" height="76" rx="11"
+            stroke={led} strokeWidth="0.6" strokeOpacity="0.25" fill="none"/>
+
+      {/* ── Robot body below panel ───────────────────── */}
+      {/* Left leg block */}
+      <rect x="11" y="78" width="17" height="12" rx="3" fill="#08090e"/>
+      <rect x="11" y="78" width="17" height="12" rx="3" fill={`url(#sl-led-${p})`} opacity="0.88"/>
+      {/* Right leg block */}
+      <rect x="52" y="78" width="17" height="12" rx="3" fill="#08090e"/>
+      <rect x="52" y="78" width="17" height="12" rx="3" fill={`url(#sl-led-${p})`} opacity="0.88"/>
+      {/* Centre connector */}
+      <rect x="30" y="78" width="20" height="7" rx="2" fill="#08090e"/>
+      <rect x="30" y="78" width="20" height="7" rx="2" fill={`url(#sl-led-${p})`} opacity="0.75"/>
+
+      {/* Left lower prongs */}
+      <rect x="12" y="91" width="6"  height="9" rx="2" fill="#08090e"/>
+      <rect x="12" y="91" width="6"  height="9" rx="2" fill={`url(#sl-led-${p})`} opacity="0.82"/>
+      <rect x="21" y="91" width="6"  height="9" rx="2" fill="#08090e"/>
+      <rect x="21" y="91" width="6"  height="9" rx="2" fill={`url(#sl-led-${p})`} opacity="0.82"/>
+      {/* Right lower prongs */}
+      <rect x="53" y="91" width="6"  height="9" rx="2" fill="#08090e"/>
+      <rect x="53" y="91" width="6"  height="9" rx="2" fill={`url(#sl-led-${p})`} opacity="0.82"/>
+      <rect x="62" y="91" width="6"  height="9" rx="2" fill="#08090e"/>
+      <rect x="62" y="91" width="6"  height="9" rx="2" fill={`url(#sl-led-${p})`} opacity="0.82"/>
+
+      {/* Foot tips */}
+      <rect x="11" y="101" width="4" height="4" rx="1" fill={led} opacity="0.65"/>
+      <rect x="17" y="101" width="4" height="4" rx="1" fill={led} opacity="0.65"/>
+      <rect x="23" y="101" width="4" height="4" rx="1" fill={led} opacity="0.65"/>
+      <rect x="53" y="101" width="4" height="4" rx="1" fill={led} opacity="0.65"/>
+      <rect x="59" y="101" width="4" height="4" rx="1" fill={led} opacity="0.65"/>
+      <rect x="65" y="101" width="4" height="4" rx="1" fill={led} opacity="0.65"/>
     </svg>
   );
 }

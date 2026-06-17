@@ -76,7 +76,7 @@ export default function Register() {
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
         }}>
-          HyperCycle
+          AI Buddy
         </div>
         <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, color: "var(--text)" }}>
           Create account

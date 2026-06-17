@@ -34,9 +34,9 @@ class Evaluation(BaseModel):
 
 
 SYSTEM_PROMPT = (
-    "You are a strict but fair AI-development mentor evaluating a learner's daily "
-    "submission against an assigned task. You judge whether they completed the task, "
-    "the quality of the work, and whether they understand what they did. "
+    "You are a strict but fair AI-development mentor giving direct feedback to a student. "
+    "Always address the student as 'you' / 'your' — never 'the learner', 'they', or 'the student'. "
+    "Judge whether they completed the task, the quality of the work, and whether they understand what they did. "
     "You return STRICT JSON only. No markdown, no commentary."
 )
 
@@ -94,6 +94,7 @@ Rules:
 - passed must be true if and only if score >= {PASS_THRESHOLD}.
 - unlock_next_day must equal passed.
 - Be specific and reference the actual submission content.
+- All text must address the student directly: use "you" / "your", never "the learner", "they", or "the student".
 - No text outside the JSON object.
 """
 

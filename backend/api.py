@@ -47,6 +47,8 @@ MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 
+ENABLE_SIMULATE = os.getenv("ENABLE_SIMULATE", "false").lower() == "true"
+
 PUBLIC_PATHS = {
     "/", "/health", "/users/register", "/users/login",
     "/docs", "/openapi.json", "/redoc",
@@ -66,7 +68,7 @@ _groq_client = _GroqFactory(api_key=_GROQ_API_KEY, base_url="https://api.groq.co
 # Logging
 # -----------------------------
 logging.basicConfig(level=logging.INFO, format="%(message)s")
-logger = logging.getLogger("hypercycle_api")
+logger = logging.getLogger("ai_buddy_api")
 
 
 def log_json(data: dict):
@@ -76,7 +78,7 @@ def log_json(data: dict):
 # -----------------------------
 # App
 # -----------------------------
-app = FastAPI(title="HyperCycle Capstone API")
+app = FastAPI(title="AI Buddy API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -122,6 +124,38 @@ class CliCheckRequest(BaseModel):
     dry_run: bool = True
 
 
+class SimulateTaskInput(BaseModel):
+    title: str = Field(..., min_length=1)
+    objective: str = Field(default="")
+    task_description: str = Field(..., min_length=1)
+    expected_output: str = Field(default="")
+    evaluation_criteria: str = Field(default="")
+    day_number: int = Field(default=1)
+    research_topics: str = Field(default="")
+    estimated_hours: float = Field(default=5.0)
+    unlock_condition: str = Field(default="")
+
+
+class SimulateEvaluateRequest(BaseModel):
+    task: SimulateTaskInput
+    submission_text: str = Field(..., min_length=1)
+    file_analysis: Optional[dict] = None
+
+
+class SimulateSubmitRequest(BaseModel):
+    """
+    Mirrors the real /submissions flow: evaluate the day, then adapt the next
+    day based on performance. No database reads or writes.
+    """
+    program_title: str = Field(default="")
+    program_summary: str = Field(default="")
+    username: str = Field(default="learner")
+    day: SimulateTaskInput                        # current day (e.g. Day 1)
+    next_day_draft: Optional[SimulateTaskInput] = None  # Day 2 pre-adaptation
+    submission_text: str = Field(..., min_length=1)
+    file_analysis: Optional[dict] = None
+
+
 class CliAskRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000)
 
@@ -162,7 +196,11 @@ def get_token_from_header(request: Request) -> Optional[str]:
 
 
 def is_public_path(path: str) -> bool:
-    return path in PUBLIC_PATHS or path.startswith("/docs")
+    if path in PUBLIC_PATHS or path.startswith("/docs"):
+        return True
+    if ENABLE_SIMULATE and path.startswith("/simulate"):
+        return True
+    return False
 
 
 def check_rate_limit(user_id: str):
@@ -327,7 +365,7 @@ async def auth_logging_rate_limit_middleware(request: Request, call_next):
 # -----------------------------
 @app.get("/")
 def root():
-    return {"message": "HyperCycle Capstone API is running", "docs": "/docs"}
+    return {"message": "AI Buddy API is running", "docs": "/docs"}
 
 
 @app.get("/health")
@@ -1090,6 +1128,120 @@ def sensei_line(request: Request, body: SenseiLineRequest):
         raise HTTPException(status_code=502, detail="Could not generate line.")
 
     return {"line": line}
+
+
+# -----------------------------
+# Simulate (test harness — ENABLE_SIMULATE=true required)
+# -----------------------------
+@app.post("/simulate/evaluate")
+def simulate_evaluate(body: SimulateEvaluateRequest):
+    """
+    Run the evaluation engine against an arbitrary task + submission.
+    No database reads or writes. Enabled only when ENABLE_SIMULATE=true.
+    """
+    if not ENABLE_SIMULATE:
+        raise HTTPException(status_code=404, detail="Not found.")
+
+    day = {
+        "title":               body.task.title,
+        "objective":           body.task.objective,
+        "task_description":    body.task.task_description,
+        "expected_output":     body.task.expected_output,
+        "evaluation_criteria": body.task.evaluation_criteria,
+    }
+
+    try:
+        evaluation = evaluator.evaluate_submission(
+            day=day,
+            submission_text=body.submission_text,
+            file_analysis=body.file_analysis,
+            file_raw_text=None,
+        )
+    except Exception as e:
+        log_json({"event": "simulate_eval_failed", "error": repr(e)})
+        raise HTTPException(
+            status_code=502,
+            detail=f"Evaluation engine error: {type(e).__name__}: {str(e)[:200]}",
+        )
+
+    return evaluation.model_dump()
+
+
+@app.post("/simulate/submit")
+def simulate_submit(body: SimulateSubmitRequest):
+    """
+    Full submission simulation: evaluate Day N, then adapt Day N+1.
+    Mirrors /submissions exactly — no database touched.
+    Requires ENABLE_SIMULATE=true.
+    """
+    if not ENABLE_SIMULATE:
+        raise HTTPException(status_code=404, detail="Not found.")
+
+    day_dict = body.day.model_dump()
+
+    # ── Step 1: evaluate (same as /simulate/evaluate) ────────────────────────
+    try:
+        evaluation = evaluator.evaluate_submission(
+            day=day_dict,
+            submission_text=body.submission_text,
+            file_analysis=body.file_analysis,
+            file_raw_text=None,
+        )
+    except Exception as e:
+        log_json({"event": "simulate_submit_eval_failed", "error": repr(e)})
+        raise HTTPException(
+            status_code=502,
+            detail=f"Evaluation error: {type(e).__name__}: {str(e)[:200]}",
+        )
+
+    # ── Step 2: generate/adapt next day (only if passed) ─────────────────────
+    adapted_day = None
+    if evaluation.passed:
+        next_day_number = (day_dict.get("day_number") or 1) + 1
+        feedback = {
+            "score":          evaluation.score,
+            "passed":         evaluation.passed,
+            "summary":        evaluation.summary,
+            "strengths":      evaluation.strengths,
+            "issues":         evaluation.issues,
+            "required_fixes": evaluation.required_fixes,
+        }
+        try:
+            if body.next_day_draft:
+                # Refine the existing draft (mirrors real /submissions behaviour)
+                adapted_day = program_generator.adapt_next_day(
+                    program_title=body.program_title,
+                    program_summary=body.program_summary,
+                    next_day_current=body.next_day_draft.model_dump(),
+                    prev_day=day_dict,
+                    prev_submission_text=body.submission_text,
+                    prev_feedback=feedback,
+                    username=body.username,
+                )
+            else:
+                # No draft available — generate Day N+1 from scratch
+                adapted_day = program_generator.generate_next_day(
+                    program_title=body.program_title,
+                    program_summary=body.program_summary,
+                    prev_day=day_dict,
+                    prev_submission_text=body.submission_text,
+                    prev_feedback=feedback,
+                    next_day_number=next_day_number,
+                    username=body.username,
+                )
+        except Exception as e:
+            log_json({"event": "simulate_next_day_failed", "error": repr(e)})
+            raise HTTPException(
+                status_code=502,
+                detail=f"Next-day generation error: {type(e).__name__}: {str(e)[:200]}",
+            )
+
+    return {
+        "evaluation": evaluation.model_dump(),
+        "adapted_day": adapted_day,
+        "adapted": adapted_day is not None,
+        "generated_fresh": evaluation.passed and body.next_day_draft is None,
+    }
 
 
 # -----------------------------

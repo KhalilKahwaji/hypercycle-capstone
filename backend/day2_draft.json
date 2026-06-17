@@ -1,0 +1,11 @@
+{
+  "day_number": 2,
+  "title": "Wrap the Fraud Model in a FastAPI REST API",
+  "objective": "Save your trained model to disk and serve it through a FastAPI endpoint so any client can send a transaction and receive a fraud prediction — decoupling the model from the UI.",
+  "task_description": "Building on the fraud detection model from Day 1, create a production-style REST API using FastAPI:\n1. Serialize your trained RandomForest model and any preprocessing objects (scaler, column list) to disk with joblib — save as fraud_model.pkl and fraud_artifacts.pkl.\n2. Create api.py with a FastAPI app. Define a POST /predict endpoint that accepts a JSON body with the 28 V-features plus Amount, runs the model, and returns {prediction: 0|1, label: 'Legit'|'Fraud', confidence: float}.\n3. Add a GET /health endpoint that returns {status: 'ok', model_loaded: true}.\n4. Validate the request body with a Pydantic model — reject inputs with missing or non-numeric fields with a clear 422 error.\n5. Test the endpoint manually with curl or the /docs Swagger UI.",
+  "expected_output": "Running uvicorn api:app, POST /predict with valid feature values returns a JSON fraud prediction with a confidence score. GET /health returns 200. The /docs Swagger UI is accessible.",
+  "evaluation_criteria": "1. fraud_model.pkl and fraud_artifacts.pkl exist and load correctly.\n2. POST /predict returns {prediction, label, confidence} for valid input.\n3. POST /predict returns 422 for malformed input (missing fields, wrong types).\n4. GET /health returns 200 with model_loaded: true.\n5. The API runs without errors via uvicorn api:app.",
+  "research_topics": ["FastAPI", "Pydantic BaseModel", "joblib model serialization", "uvicorn", "REST API design"],
+  "estimated_hours": 5,
+  "unlock_condition": "POST /predict returns a fraud prediction with confidence score and GET /health returns 200."
+}

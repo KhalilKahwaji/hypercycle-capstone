@@ -1,0 +1,16 @@
+{
+  "program_title": "Khalil's AI & ML Engineering Program",
+  "program_summary": "A 16-day hands-on program building real ML and AI applications — from data pipelines and model training to deployed Streamlit apps and REST APIs. Each day ends with a shippable artifact.",
+  "username": "Khalil",
+  "day": {
+    "day_number": 1,
+    "title": "Build a Credit Card Fraud Detection App",
+    "objective": "Load and clean a real transaction dataset, train a machine-learning classifier to detect fraudulent transactions, and wrap it in a simple interactive Streamlit app that predicts whether a new transaction is fraud or legitimate.",
+    "task_description": "Using the creditcard_2023.csv dataset, build a Streamlit application that:\n1. Loads the dataset with pandas and performs basic data-quality checks (missing values, duplicates, invalid labels).\n2. Cleans the data appropriately (drop the id column, handle duplicates/bad rows).\n3. Trains a classification model (e.g. Random Forest) on the V1-V28 and Amount features to predict the Class label (0 = legit, 1 = fraud), using a train/test split.\n4. Provides a form where the user can enter transaction feature values and get a prediction (Fraud or Legit) with a confidence score.\n5. Reports model performance (precision, recall, or F1 on a held-out test set), keeping in mind the dataset is imbalanced.",
+    "expected_output": "A running Streamlit app that loads the data, trains a fraud-detection model, and lets the user submit a transaction and receive a fraud/legit prediction with a confidence score, along with some view of the model's performance.",
+    "evaluation_criteria": "1. The data is loaded and cleaned correctly, with data-quality checks performed.\n2. A classification model is trained properly on a train/test split, and class imbalance is acknowledged or handled.\n3. The app produces predictions with confidence scores through a working Streamlit interface.\n4. Model performance is reported using appropriate metrics (precision/recall/F1, not just accuracy, given the imbalance).\n5. The code is well-structured and runs without errors.",
+    "research_topics": "pandas data loading and cleaning\nscikit-learn classifiers (Random Forest) and train/test split\nhandling imbalanced datasets (class_weight, precision/recall vs accuracy)\nStreamlit forms, widgets, and layout",
+    "estimated_hours": 5,
+    "unlock_condition": "Streamlit app runs, makes predictions with confidence scores, and reports F1/precision/recall."
+  }
+}

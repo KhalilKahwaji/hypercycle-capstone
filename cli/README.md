@@ -1,6 +1,6 @@
 # HyperSensei CLI
 
-A thin command-line client for your HyperCycle coding bootcamp.
+A thin command-line client for your AI Buddy coding bootcamp.
 
 ## Install
 

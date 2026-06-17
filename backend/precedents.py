@@ -13,9 +13,9 @@ With four full programs the combined text is large, so enabling USE_RAG is the
 recommended way to keep the generation prompt within the context window.
 """
  
-# 1. Advanced, product-building full-stack sprint (MarkCoffee's HyperCycle).
-HYPERCYCLE_PRECEDENT = """
-PROGRAM: HyperCycle - 15-Day Advanced Sprint (by MarkCoffee). LEVEL: advanced.
+# 1. Advanced, product-building full-stack sprint (MarkCoffee's AI Buddy).
+AIBUDDY_PRECEDENT = """
+PROGRAM: AI Buddy - 15-Day Advanced Sprint (by MarkCoffee). LEVEL: advanced.
 SCHEDULE: 4-5 days/week, 5 hrs/day. PHILOSOPHY: each day starts with a Spec and
 ends with a Shippable. For someone who already builds agents/workflows and now
 learns to build and DEPLOY full-stack AI PRODUCTS. Three phases that build up.
@@ -40,7 +40,7 @@ STRUCTURAL LESSONS: spec+shippable daily; progressive reuse; phased difficulty;
 ELIAS_PRECEDENT = """
 PROGRAM: AI Agents Curriculum - 15 Days, Python + ML + AI Agents (intern: Elias,
 supervisor: MarkCoffee). LEVEL: beginner-to-intermediate, self-learning with support.
-Heavier scaffolding and a slower ramp than HyperCycle. Daily: document work in a
+Heavier scaffolding and a slower ramp than AI Buddy. Daily: document work in a
 Google Doc + push code to GitHub; weekly PDF submissions; final capstone presentation.
 PHASE 1 - Python Foundations (Days 1-4): D1 environment + Python basics (lists,
 dicts, functions, file I/O, first Groq call); D2 classes + error handling + loguru
@@ -114,7 +114,7 @@ production automation; capstone is a practical end-to-end automation.
 """
  
 ALL_PRECEDENTS = [
-    HYPERCYCLE_PRECEDENT,
+    AIBUDDY_PRECEDENT,
     ELIAS_PRECEDENT,
     HYPERPG_PRECEDENT,
     N8N_PRECEDENT,

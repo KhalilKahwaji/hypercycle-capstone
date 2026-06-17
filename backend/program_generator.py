@@ -367,6 +367,101 @@ No text outside the JSON object.
     return adapted.model_dump()
 
 
+def generate_next_day(
+    program_title: str,
+    program_summary: str,
+    prev_day: dict,
+    prev_submission_text: str,
+    prev_feedback: dict,
+    next_day_number: int,
+    username: str = "learner",
+) -> dict:
+    """
+    Generate a brand-new next day from scratch when no draft exists.
+    Used by the simulation harness when day2_draft.json is not provided.
+    Returns a dict matching AdaptedDay fields (no day_number — caller adds it).
+    """
+    score = prev_feedback.get("score", "?")
+    passed = prev_feedback.get("passed", True)
+    feedback_summary = prev_feedback.get("summary", "")
+    strengths = prev_feedback.get("strengths", [])
+    issues = prev_feedback.get("issues", [])
+
+    def _bullets(items):
+        return "\n".join(f"- {x}" for x in items) if items else "None."
+
+    prompt = f"""You are designing Day {next_day_number} of {username}'s personalized AI-development program.
+
+PROGRAM: {program_title}
+{program_summary}
+
+PREVIOUS DAY COMPLETED (Day {prev_day.get('day_number')}): {prev_day.get('title')}
+Objective: {prev_day.get('objective')}
+
+HOW {username} DID (score {score}/10, {'PASSED' if passed else 'FAILED'}):
+{feedback_summary}
+Strengths:
+{_bullets(strengths)}
+Issues:
+{_bullets(issues)}
+
+SUBMISSION EXCERPT (first 800 chars of actual work):
+{prev_submission_text[:800]}
+
+INSTRUCTIONS:
+Create Day {next_day_number} — the natural continuation of Day {prev_day.get('day_number')}.
+- Build directly on what {username} shipped, introducing one new concept or layer.
+- If they struggled: add scaffolding and address weak points explicitly.
+- If they excelled: add a stretch challenge.
+- Address {username} in second person throughout.
+- task_description must be 5-8 sentences: name exact files, functions, endpoints, and behaviors.
+- expected_output must name the command to run it and what the user sees.
+- evaluation_criteria must be 3-5 numbered, verifiable checks.
+- research_topics must list specific tool/library names.
+
+Return JSON in EXACTLY this shape (no day_number field):
+{{
+  "title": "...",
+  "objective": "what {username} will be able to do after this day",
+  "research_topics": ["specific-tool-1", "specific-lib-2"],
+  "task_description": "concrete spec written directly to {username}",
+  "expected_output": "the shippable deliverable",
+  "evaluation_criteria": "1. check. 2. check. 3. check.",
+  "estimated_hours": 5,
+  "unlock_condition": "..."
+}}
+
+No text outside the JSON object.
+"""
+
+    response = _client.chat.completions.create(
+        model=GROQ_MODEL,
+        messages=[
+            {"role": "system", "content": (
+                "You are an expert AI-development curriculum designer. "
+                "You return STRICT JSON only. No markdown, no commentary."
+            )},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.4,
+        response_format={"type": "json_object"},
+    )
+    content = response.choices[0].message.content
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"generate_next_day returned invalid JSON: {content}") from e
+
+    try:
+        generated = AdaptedDay.model_validate(data)
+    except ValidationError as e:
+        raise ValueError(f"Generated next day failed validation: {e}") from e
+
+    result = generated.model_dump()
+    result["day_number"] = next_day_number
+    return result
+
 def generate_program(assessment: dict, username: str = "learner") -> GeneratedProgram:
     precedent_context = _precedent_context(assessment)
     user_prompt = build_user_prompt(assessment, precedent_context, username=username)

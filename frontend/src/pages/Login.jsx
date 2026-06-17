@@ -61,7 +61,7 @@ export default function Login() {
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
         }}>
-          HyperCycle
+          AI Buddy
         </div>
         <p className="muted" style={{ marginBottom: 22, fontSize: 13 }}>
           Sign in to your self-driving bootcamp.

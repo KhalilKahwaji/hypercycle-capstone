@@ -1,8 +1,77 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import client from "../api/client";
 
 const LEVELS = ["beginner", "intermediate", "advanced"];
+
+function LevelPicker({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%", textAlign: "left",
+          background: "rgba(255,255,255,0.03)",
+          border: `1px solid ${open ? "var(--amber)" : "var(--border)"}`,
+          borderRadius: "var(--radius-sm)",
+          padding: "11px 36px 11px 13px",
+          color: "var(--text)",
+          fontFamily: "var(--mono)",
+          fontSize: 14,
+          cursor: "pointer",
+          boxShadow: open ? "0 0 0 3px rgba(139,124,255,0.14)" : "none",
+          letterSpacing: 0,
+          fontWeight: "normal",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}
+      >
+        <span>{value}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{ opacity: 0.5, flexShrink: 0 }}>
+          <path d="M2 4l4 4 4-4"/>
+        </svg>
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 50,
+          background: "var(--panel-solid, #13141f)",
+          border: "1px solid var(--border)",
+          borderRadius: "var(--radius-sm)",
+          overflow: "hidden",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
+        }}>
+          {LEVELS.map((l) => (
+            <div
+              key={l}
+              onMouseDown={() => { onChange(l); setOpen(false); }}
+              style={{
+                padding: "10px 13px",
+                fontFamily: "var(--mono)",
+                fontSize: 14,
+                cursor: "pointer",
+                color: l === value ? "var(--amber)" : "var(--text)",
+                background: l === value ? "rgba(255,255,255,0.06)" : "transparent",
+                transition: "background 0.1s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = l === value ? "rgba(255,255,255,0.06)" : "transparent"; }}
+            >
+              {l}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Assessment() {
   const navigate = useNavigate();
@@ -93,14 +162,10 @@ export default function Assessment() {
         />
 
         <label>Experience level</label>
-        <select
+        <LevelPicker
           value={form.experience_level}
-          onChange={(e) => setForm({ ...form, experience_level: e.target.value })}
-        >
-          {LEVELS.map((l) => (
-            <option key={l} value={l}>{l}</option>
-          ))}
-        </select>
+          onChange={(l) => setForm({ ...form, experience_level: l })}
+        />
 
         <label>What do you want to learn or build? (goals)</label>
         <textarea

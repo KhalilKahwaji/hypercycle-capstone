@@ -1,5 +1,5 @@
 PLATFORM_INFO = '''
-HyperCycle is an AI-powered learning platform / self-driving coding bootcamp.
+AI Buddy is an AI-powered learning platform / self-driving coding bootcamp.
 - A user signs up, completes a self-assessment (goals, known languages, experience
   level, age, hours per week), and an LLM generates a personalized program.
 - A program has a Day 0 (environment/tools/GitHub setup, completed without AI review)
@@ -15,7 +15,7 @@ HyperCycle is an AI-powered learning platform / self-driving coding bootcamp.
 
 hypersensei is the platform\'s command-line tool (installed via pip). It is a terminal
 companion that talks to the same backend. Commands:
-- hypersensei login: log in with your HyperCycle account; stores a token locally.
+- hypersensei login: log in with your AI Buddy account; stores a token locally.
 - hypersensei status: shows your progress and the list of days (done/unlocked/locked).
 - hypersensei task: prints your current day\'s task, objective, expected output, and
   evaluation criteria.
