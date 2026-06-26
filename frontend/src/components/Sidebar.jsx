@@ -29,6 +29,7 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
           <div className="nav-section-label">Learn</div>
           <NavLink to="/dashboard" className="nav-link" onClick={onClose}>Dashboard</NavLink>
           <NavLink to="/assessment" className="nav-link" onClick={onClose}>Self-Assessment</NavLink>
+          <NavLink to="/programs" end className="nav-link" onClick={onClose}>My Programs</NavLink>
           <NavLink to="/program" className="nav-link" onClick={onClose}>My Program</NavLink>
           <NavLink to="/history" className="nav-link" onClick={onClose}>Submission History</NavLink>
           <NavLink to="/cli" className="nav-link" onClick={onClose}>CLI Tool</NavLink>

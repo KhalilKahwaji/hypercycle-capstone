@@ -87,14 +87,22 @@ export default function Assessment() {
   const [error, setError] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
-  const [hasProgram, setHasProgram] = useState(false);
+  const [programs, setPrograms] = useState([]);
+  const [maxPrograms, setMaxPrograms] = useState(3);
   const [showConfirm, setShowConfirm] = useState(false);
+  const programCount = programs.length;
+  const atMax = programCount >= maxPrograms;
 
   useEffect(() => {
     client.get("/assessments/me").then((r) => {
       if (r.data.assessment) setForm((f) => ({ ...f, ...r.data.assessment }));
     });
-    client.get("/programs/me").then((r) => setHasProgram(!!r.data.program));
+    client.get("/programs/mine")
+      .then((r) => {
+        setPrograms(r.data.programs || []);
+        if (r.data.max_programs) setMaxPrograms(r.data.max_programs);
+      })
+      .catch(() => {});
   }, []);
 
   const validate = () => {
@@ -113,7 +121,11 @@ export default function Assessment() {
 
   const handleSubmitClick = () => {
     if (!validate()) return;
-    if (hasProgram) {
+    if (atMax) {
+      setError(`You have the maximum of ${maxPrograms} programs. Delete one on My Programs to create a new one.`);
+      return;
+    }
+    if (programCount > 0) {
       setShowConfirm(true);
     } else {
       saveAndGenerate();
@@ -146,11 +158,23 @@ export default function Assessment() {
         Be honest — the LLM builds a program tailored to exactly where you are.
       </p>
 
-      {hasProgram && (
+      {atMax ? (
         <div className="alert info">
-          You already have a program. Saving this again will <b>regenerate</b> it from scratch.
+          You have the maximum of {maxPrograms} programs.{" "}
+          <span
+            style={{ textDecoration: "underline", cursor: "pointer" }}
+            onClick={() => navigate("/programs")}
+          >
+            Manage your programs
+          </span>{" "}
+          to delete one before creating another.
         </div>
-      )}
+      ) : programCount > 0 ? (
+        <div className="alert info">
+          You have {programCount} of {maxPrograms} programs. Saving will{" "}
+          <b>create a new program</b> and make it active — your existing programs are kept.
+        </div>
+      ) : null}
       {error && <div className="alert err">{error}</div>}
       {msg && <div className="alert ok">{msg}</div>}
 
@@ -215,27 +239,20 @@ export default function Assessment() {
             style={{ maxWidth: 420, width: "90%", textAlign: "center" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ fontSize: 28, color: "#e74c3c", marginBottom: 10, fontWeight: 700 }}>
-              Delete all progress?
+            <div style={{ fontSize: 24, color: "var(--cyan)", marginBottom: 10, fontWeight: 700 }}>
+              Create a new program?
             </div>
             <p className="muted" style={{ marginBottom: 8, fontSize: 14 }}>
-              Regenerating your program will permanently erase:
+              This saves your assessment and generates a new program, which becomes your
+              active one. You'll have {programCount + 1} of {maxPrograms} programs.
             </p>
-            <ul style={{ textAlign: "left", color: "var(--muted)", fontSize: 13, marginBottom: 20, paddingLeft: 20 }}>
-              <li>All completed days</li>
-              <li>All submissions</li>
-              <li>All feedback</li>
-            </ul>
             <p className="muted" style={{ marginBottom: 20, fontSize: 13 }}>
-              This cannot be undone.
+              Your existing programs and their progress are kept.
             </p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
               <button className="ghost" onClick={() => setShowConfirm(false)}>Cancel</button>
-              <button
-                style={{ background: "#c0392b", borderColor: "#c0392b" }}
-                onClick={saveAndGenerate}
-              >
-                Yes, delete &amp; regenerate
+              <button onClick={saveAndGenerate}>
+                Create new program
               </button>
             </div>
           </div>

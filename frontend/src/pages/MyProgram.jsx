@@ -2,59 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import client from "../api/client";
 
-function RegenModal({ onConfirm, onCancel, busy }) {
-  return (
-    <div style={{
-      position: "fixed", inset: 0, background: "rgba(0,0,0,0.78)",
-      zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
-      padding: 20,
-    }}>
-      <div className="card fade-in" style={{ maxWidth: 420, margin: 0, width: "100%" }}>
-        <h3 style={{ marginBottom: 12, color: "var(--red)" }}>Regenerate program?</h3>
-        <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 10 }}>
-          This permanently deletes:
-        </p>
-        <ul style={{ listStyle: "disc", paddingLeft: 20, fontSize: 13, lineHeight: 1.9, color: "var(--text)" }}>
-          <li>Your current program and all days</li>
-          <li>All submission history</li>
-          <li>All AI feedback</li>
-          <li>All progress and completed-day records</li>
-        </ul>
-        <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 12 }}>
-          A new program will be generated from your saved assessment. This cannot be undone.
-        </p>
-        <div style={{ display: "flex", gap: 12, marginTop: 20 }}>
-          <button
-            className="ghost"
-            onClick={onCancel}
-            disabled={busy}
-            style={{ flex: 1 }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={busy}
-            style={{ flex: 1, background: "var(--red)", color: "#fff" }}
-          >
-            {busy
-              ? <><span className="spinner" /> &nbsp;Generating…</>
-              : "Delete all & regenerate"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function MyProgram() {
   const navigate = useNavigate();
   const [program, setProgram] = useState(null);
   const [days, setDays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showRegen, setShowRegen] = useState(false);
-  const [regenBusy, setRegenBusy] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -69,20 +22,6 @@ export default function MyProgram() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
-
-  const handleRegen = async () => {
-    setRegenBusy(true);
-    try {
-      await client.post("/programs/generate");
-      setShowRegen(false);
-      load();
-    } catch (e) {
-      setError(e.message || "Regeneration failed.");
-      setShowRegen(false);
-    } finally {
-      setRegenBusy(false);
-    }
-  };
 
   if (loading)
     return (
@@ -115,7 +54,7 @@ export default function MyProgram() {
 
   return (
     <div>
-      {/* Header row with title + regenerate button */}
+      {/* Header row with title + manage-programs button */}
       <div style={{
         display: "flex", alignItems: "flex-start",
         justifyContent: "space-between", gap: 16, flexWrap: "wrap",
@@ -126,10 +65,10 @@ export default function MyProgram() {
         </div>
         <button
           className="ghost fade-in"
-          onClick={() => setShowRegen(true)}
+          onClick={() => navigate("/programs")}
           style={{ flexShrink: 0, marginTop: 6 }}
         >
-          Regenerate program
+          Manage programs
         </button>
       </div>
 
@@ -158,14 +97,6 @@ export default function MyProgram() {
           </div>
         );
       })}
-
-      {showRegen && (
-        <RegenModal
-          onConfirm={handleRegen}
-          onCancel={() => setShowRegen(false)}
-          busy={regenBusy}
-        />
-      )}
     </div>
   );
 }

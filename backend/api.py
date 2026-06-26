@@ -50,6 +50,7 @@ JWT_EXPIRE_MINUTES = 60 * 24
 MAX_REQUESTS_PER_MINUTE = 100
 RATE_LIMIT_WINDOW_SECONDS = 60
 MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
+MAX_PROGRAMS_PER_USER = 3
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 
@@ -360,14 +361,36 @@ def safe_execute(query, retries=3):
     raise last_err
 
 
+def get_active_program(user_id: str, columns: str = "*"):
+    """Return the user's single ACTIVE program row (is_active=true), or None.
+
+    A user may own up to 3 programs but exactly one is active; every place that
+    needs "the user's program" resolves it through here. Endpoints that already
+    know a specific program (via a program_day_id) must NOT use this — they act on
+    that day's owning program, active or not.
+    """
+    # Order newest-first so that even if the single-active invariant is ever violated
+    # (e.g. a partial write failure), resolution is deterministic and matches the
+    # "most recent" program that delete_program would re-activate.
+    res = safe_execute(
+        supabase.table("programs").select(columns)
+        .eq("user_id", user_id).eq("is_active", True)
+        .order("created_at", desc=True).limit(1)
+    )
+    return res.data[0] if res.data else None
+
+
 def bulk_compute_progress(users: list) -> dict:
     """Returns {user_id: progress_dict} for a list of user dicts."""
     if not users:
         return {}
     user_ids = [u["id"] for u in users]
     programs = safe_execute(
-        supabase.table("programs").select("id,user_id,total_days").in_("user_id", user_ids)
+        supabase.table("programs").select("id,user_id,total_days,created_at")
+        .in_("user_id", user_ids).eq("is_active", True).order("created_at")
     ).data
+    # With is_active=true each user maps to exactly one program. Ascending created_at means
+    # that if two were ever active, the newest wins (last write), matching get_active_program.
     prog_by_user = {p["user_id"]: p for p in programs}
     prog_ids = [p["id"] for p in programs]
 
@@ -816,12 +839,15 @@ def generate_user_program(request: Request):
             assessment = dict(assessment)
             assessment["github_summary"] = gh_summary
 
-    # Purge all prior progress before regenerating (FK order: feedback → submissions → program).
+    # Multi-program model: CREATE a new program and make it active. Existing programs
+    # and their progress are preserved. Enforce the cap of 3 programs per user.
     existing = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
-    if existing.data:
-        safe_execute(supabase.table("submission_feedback").delete().eq("user_id", user_id))
-        safe_execute(supabase.table("submissions").delete().eq("user_id", user_id))
-        safe_execute(supabase.table("programs").delete().eq("user_id", user_id))
+    if existing.data and len(existing.data) >= MAX_PROGRAMS_PER_USER:
+        raise HTTPException(
+            status_code=400,
+            detail=f"You have the maximum of {MAX_PROGRAMS_PER_USER} programs. "
+                   "Delete one to create a new one.",
+        )
 
     try:
         program = program_generator.generate_program(assessment, username=username)
@@ -829,10 +855,23 @@ def generate_user_program(request: Request):
         log_json({"event": "program_generation_failed", "user_id": user_id, "error": repr(e)})
         raise HTTPException(status_code=502, detail="Could not generate program. Please try again.")
 
+    # Insert the new program inactive, deactivate the user's other programs, then activate
+    # the new one last. This keeps the single-active invariant (and its partial unique index
+    # uq_programs_one_active) satisfied at every step, and leaves the previously-active
+    # program untouched until the new one is fully created.
     prog_row = safe_execute(supabase.table("programs").insert({
         "user_id": user_id, "title": program.title,
         "summary": program.summary, "total_days": 16,
+        "is_active": False,
     })).data[0]
+    safe_execute(
+        supabase.table("programs").update({"is_active": False})
+        .eq("user_id", user_id).neq("id", prog_row["id"])
+    )
+    safe_execute(
+        supabase.table("programs").update({"is_active": True}).eq("id", prog_row["id"])
+    )
+    prog_row["is_active"] = True
 
     day_rows = []
     for d in program.days:
@@ -852,29 +891,134 @@ def generate_user_program(request: Request):
         })
     safe_execute(supabase.table("program_days").insert(day_rows))
 
+    # program_generated is a GLOBAL badge (earned once ever).
     achievements.check_and_award(supabase, user_id, "program_generated")
     return {"message": "Program generated.", "program": prog_row}
 
 
 @app.get("/programs/me")
 def get_my_program(request: Request):
-    r = safe_execute(supabase.table("programs").select("*").eq("user_id", request.state.user_id))
-    return {"program": r.data[0] if r.data else None}
+    """The user's ACTIVE program (singular). Kept for backward compatibility."""
+    prog = get_active_program(request.state.user_id)
+    return {"program": prog}
 
 
 @app.get("/programs/me/days")
 def get_my_program_days(request: Request):
-    prog = safe_execute(
-        supabase.table("programs").select("id").eq("user_id", request.state.user_id)
-    )
-    if not prog.data:
+    prog = get_active_program(request.state.user_id, "id")
+    if not prog:
         return {"days": []}
     days = safe_execute(
         supabase.table("program_days").select("*")
-        .eq("program_id", prog.data[0]["id"])
+        .eq("program_id", prog["id"])
         .order("day_number")
     )
     return {"days": days.data}
+
+
+@app.get("/programs/mine")
+def list_my_programs(request: Request):
+    """All of the user's programs (up to 3), each with progress and the active marker."""
+    user_id = request.state.user_id
+    progs = safe_execute(
+        supabase.table("programs").select("*").eq("user_id", user_id).order("created_at")
+    ).data or []
+    if not progs:
+        return {"programs": [], "max_programs": MAX_PROGRAMS_PER_USER}
+
+    prog_ids = [p["id"] for p in progs]
+    days = safe_execute(
+        supabase.table("program_days").select("program_id,is_completed").in_("program_id", prog_ids)
+    ).data or []
+    completed_by_prog: dict = {}
+    counted_by_prog: dict = {}
+    for d in days:
+        counted_by_prog[d["program_id"]] = counted_by_prog.get(d["program_id"], 0) + 1
+        if d["is_completed"]:
+            completed_by_prog[d["program_id"]] = completed_by_prog.get(d["program_id"], 0) + 1
+
+    out = []
+    for p in progs:
+        total = p.get("total_days") or counted_by_prog.get(p["id"], 0) or 16
+        completed = completed_by_prog.get(p["id"], 0)
+        pct = round((completed / total) * 100) if total else 0
+        out.append({
+            "id": p["id"],
+            "title": p["title"],
+            "summary": p.get("summary"),
+            "is_active": p.get("is_active", False),
+            "created_at": p.get("created_at"),
+            "total_days": total,
+            "completed_days": completed,
+            "percentage": pct,
+        })
+    return {"programs": out, "max_programs": MAX_PROGRAMS_PER_USER}
+
+
+@app.post("/programs/{program_id}/activate")
+def activate_program(request: Request, program_id: str):
+    """Make one of the user's programs active, deactivating the others."""
+    user_id = request.state.user_id
+    prog = safe_execute(
+        supabase.table("programs").select("id,user_id").eq("id", program_id)
+    ).data
+    if not prog or prog[0]["user_id"] != user_id:
+        raise HTTPException(status_code=404, detail="Program not found.")
+
+    # Deactivate the user's other programs first, then activate the target last, so the
+    # single-active partial unique index (uq_programs_one_active) is never violated mid-update.
+    safe_execute(
+        supabase.table("programs").update({"is_active": False})
+        .eq("user_id", user_id).neq("id", program_id)
+    )
+    safe_execute(
+        supabase.table("programs").update({"is_active": True}).eq("id", program_id)
+    )
+    log_json({"event": "program_activated", "user_id": user_id, "program_id": program_id})
+    return {"message": "Program activated.", "program_id": program_id}
+
+
+@app.delete("/programs/{program_id}")
+def delete_program(request: Request, program_id: str):
+    """Delete a program and its days/submissions/feedback/program-specific achievements.
+
+    If the deleted program was active, the most recent remaining program becomes
+    active so there is always exactly one active program when any exist.
+    """
+    user_id = request.state.user_id
+    prog = safe_execute(
+        supabase.table("programs").select("id,user_id,is_active").eq("id", program_id)
+    ).data
+    if not prog or prog[0]["user_id"] != user_id:
+        raise HTTPException(status_code=404, detail="Program not found.")
+    was_active = prog[0].get("is_active", False)
+
+    # Submissions / feedback are keyed by program_day_id (no program_id column), so
+    # scope their deletion to this program's day ids. Order: feedback → submissions →
+    # days → program, plus this program's program-specific achievements.
+    day_ids = [
+        d["id"] for d in (safe_execute(
+            supabase.table("program_days").select("id").eq("program_id", program_id)
+        ).data or [])
+    ]
+    if day_ids:
+        safe_execute(supabase.table("submission_feedback").delete().in_("program_day_id", day_ids))
+        safe_execute(supabase.table("submissions").delete().in_("program_day_id", day_ids))
+    safe_execute(supabase.table("achievements").delete().eq("program_id", program_id))
+    safe_execute(supabase.table("program_days").delete().eq("program_id", program_id))
+    safe_execute(supabase.table("programs").delete().eq("id", program_id))
+
+    if was_active:
+        remaining = safe_execute(
+            supabase.table("programs").select("id").eq("user_id", user_id)
+            .order("created_at", desc=True).limit(1)
+        ).data
+        if remaining:
+            safe_execute(
+                supabase.table("programs").update({"is_active": True}).eq("id", remaining[0]["id"])
+            )
+    log_json({"event": "program_deleted", "user_id": user_id, "program_id": program_id})
+    return {"message": "Program deleted.", "program_id": program_id}
 
 
 @app.get("/program-days/{day_id}")
@@ -1323,7 +1467,7 @@ async def create_submission(
         "passed": evaluation.passed,
         "day_number": day["day_number"],
         "program_day_id": program_day_id,
-    })
+    }, program_id=day["program_id"])
     return {
         "message": "Submission evaluated.",
         "submission": submission,
@@ -1368,16 +1512,18 @@ def link_repo(request: Request, body: LinkRepoRequest):
     except Exception:
         raise HTTPException(status_code=400, detail="Could not access the repository. Make sure it exists and is accessible.")
 
-    prog = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
-    if not prog.data:
+    prog = get_active_program(user_id, "id")
+    if not prog:
         raise HTTPException(status_code=404, detail="No program found. Generate your program first.")
 
+    # Scope the update to the active program only — never blanket-update all the
+    # user's programs.
     safe_execute(
         supabase.table("programs").update({
             "github_owner": owner,
             "github_repo": repo_name,
             "github_subfolder": subfolder,
-        }).eq("user_id", user_id)
+        }).eq("id", prog["id"])
     )
     log_json({"event": "repo_linked", "user_id": user_id, "owner": owner, "repo": repo_name})
     return {
@@ -1440,19 +1586,27 @@ def create_github_submission(request: Request, body: GitHubSubmitRequest):
         log_json({"event": "github_fetch_failed", "user_id": user_id, "error": repr(e)})
         raise HTTPException(status_code=502, detail="Could not read the GitHub repository. Please try again.")
 
-    # Get prior repo summary from the most recent passed feedback for this program
+    # Get prior repo summary from the most recent passed feedback for THIS program.
+    # Scope by this program's day ids so a different program's repo summary never leaks in.
     prior_summary = None
     try:
-        prior_fb = safe_execute(
-            supabase.table("submission_feedback")
-            .select("repo_summary")
-            .eq("user_id", user_id)
-            .eq("passed", True)
-            .order("created_at", desc=True)
-            .limit(1)
-        )
-        if prior_fb.data and prior_fb.data[0].get("repo_summary"):
-            prior_summary = prior_fb.data[0]["repo_summary"]
+        prog_day_ids = [
+            d["id"] for d in (safe_execute(
+                supabase.table("program_days").select("id").eq("program_id", day["program_id"])
+            ).data or [])
+        ]
+        if prog_day_ids:
+            prior_fb = safe_execute(
+                supabase.table("submission_feedback")
+                .select("repo_summary")
+                .eq("user_id", user_id)
+                .eq("passed", True)
+                .in_("program_day_id", prog_day_ids)
+                .order("created_at", desc=True)
+                .limit(1)
+            )
+            if prior_fb.data and prior_fb.data[0].get("repo_summary"):
+                prior_summary = prior_fb.data[0]["repo_summary"]
     except Exception as e:
         log_json({"event": "prior_summary_fetch_failed", "user_id": user_id, "error": repr(e)})
 
@@ -1514,7 +1668,7 @@ def create_github_submission(request: Request, body: GitHubSubmitRequest):
         "passed": evaluation.passed,
         "day_number": day["day_number"],
         "program_day_id": body.program_day_id,
-    })
+    }, program_id=day["program_id"])
     log_json({"event": "github_submission_evaluated", "user_id": user_id,
               "day_number": day["day_number"], "passed": evaluation.passed,
               "score": evaluation.score})
@@ -1529,9 +1683,22 @@ def create_github_submission(request: Request, body: GitHubSubmitRequest):
 
 @app.get("/submissions/me")
 def get_my_submissions(request: Request):
+    """Submissions for the user's ACTIVE program (Dashboard/History follow the active one)."""
     user_id = request.state.user_id
+    active = get_active_program(user_id, "id")
+    if not active:
+        return {"submissions": []}
+    day_ids = [
+        d["id"] for d in (safe_execute(
+            supabase.table("program_days").select("id").eq("program_id", active["id"])
+        ).data or [])
+    ]
+    if not day_ids:
+        return {"submissions": []}
     subs = safe_execute(
-        supabase.table("submissions").select("*").eq("user_id", user_id).order("created_at", desc=True)
+        supabase.table("submissions").select("*")
+        .eq("user_id", user_id).in_("program_day_id", day_ids)
+        .order("created_at", desc=True)
     )
     fb = safe_execute(
         supabase.table("submission_feedback").select("*").eq("user_id", user_id)
@@ -1546,12 +1713,12 @@ def get_my_submissions(request: Request):
 # Progress
 # -----------------------------
 def compute_progress(user_id: str) -> dict:
-    prog = safe_execute(supabase.table("programs").select("id,total_days").eq("user_id", user_id))
-    if not prog.data:
+    prog = get_active_program(user_id, "id,total_days")
+    if not prog:
         return {"completed_days": 0, "total_days": 16, "percentage": 0, "has_program": False}
-    total = prog.data[0]["total_days"]
+    total = prog["total_days"]
     days = safe_execute(
-        supabase.table("program_days").select("is_completed").eq("program_id", prog.data[0]["id"])
+        supabase.table("program_days").select("is_completed").eq("program_id", prog["id"])
     )
     completed = sum(1 for d in days.data if d["is_completed"])
     pct = round((completed / total) * 100) if total else 0
@@ -1574,59 +1741,84 @@ def get_my_progress(request: Request):
 def get_my_achievements(request: Request):
     user_id = request.state.user_id
 
-    # Guard: if the achievements table doesn't exist yet, return zeroed data.
+    active = get_active_program(user_id, "id")
+    active_program_id = active["id"] if active else None
+
+    # Earned badges: global badges (program_id NULL) are always shown; program-specific
+    # badges are shown for the ACTIVE program, so switching programs changes which ones
+    # appear earned.
+    global_earned: dict = {}
+    active_earned: dict = {}
     try:
         earned_res = safe_execute(
-            supabase.table("achievements").select("badge_key,earned_at").eq("user_id", user_id)
+            supabase.table("achievements").select("badge_key,program_id,earned_at").eq("user_id", user_id)
         )
-        earned_by_key = {r["badge_key"]: r["earned_at"] for r in (earned_res.data or [])}
+        for r in (earned_res.data or []):
+            if r.get("program_id") is None:
+                global_earned[r["badge_key"]] = r["earned_at"]
+            elif r.get("program_id") == active_program_id:
+                active_earned[r["badge_key"]] = r["earned_at"]
     except Exception as _e:
         log_json({"event": "achievements_table_missing", "error": repr(_e)})
-        earned_by_key = {}
 
-    prog_res = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
     completed_days = 0
-    if prog_res.data:
+    if active_program_id:
         done_res = safe_execute(
             supabase.table("program_days")
             .select("id", count="exact")
-            .eq("program_id", prog_res.data[0]["id"])
+            .eq("program_id", active_program_id)
             .eq("is_completed", True)
         )
         completed_days = done_res.count or 0
 
-    total_subs = (
-        safe_execute(
-            supabase.table("submissions").select("id", count="exact").eq("user_id", user_id)
-        ).count or 0
-    )
+    # Stats reflect the ACTIVE program (consistent with the badges and /submissions/me).
+    day_ids = []
+    if active_program_id:
+        day_ids = [
+            d["id"] for d in (safe_execute(
+                supabase.table("program_days").select("id").eq("program_id", active_program_id)
+            ).data or [])
+        ]
+    active_subs = []
+    if day_ids:
+        active_subs = safe_execute(
+            supabase.table("submissions").select("id,created_at")
+            .eq("user_id", user_id).in_("program_day_id", day_ids)
+        ).data or []
+    total_subs = len(active_subs)
+    active_sub_ids = {s["id"] for s in active_subs}
+
+    def _earned_at(b):
+        src = global_earned if achievements.is_global_badge(b["key"]) else active_earned
+        return src.get(b["key"])
 
     all_badges = [
         {
             **b,
-            "earned": b["key"] in earned_by_key,
-            "earned_at": earned_by_key.get(b["key"]),
+            "earned": _earned_at(b) is not None,
+            "earned_at": _earned_at(b),
         }
         for b in achievements.BADGES
     ]
 
-    # avg score from submission feedback
+    # avg score from the active program's submission feedback
     try:
         fb_res = safe_execute(
-            supabase.table("submission_feedback").select("score").eq("user_id", user_id)
+            supabase.table("submission_feedback").select("score,submission_id").eq("user_id", user_id)
         )
-        score_vals = [r["score"] for r in (fb_res.data or []) if r.get("score") is not None]
+        score_vals = [
+            r["score"] for r in (fb_res.data or [])
+            if r.get("submission_id") in active_sub_ids and r.get("score") is not None
+        ]
         avg_score = round(sum(score_vals) / len(score_vals), 1) if score_vals else None
     except Exception:
         avg_score = None
 
     # streak: consecutive calendar days ending today (or yesterday) with ≥1 submission
+    # in the active program.
     try:
-        sub_dt_res = safe_execute(
-            supabase.table("submissions").select("created_at").eq("user_id", user_id)
-        )
         sub_day_set: set = set()
-        for r in (sub_dt_res.data or []):
+        for r in active_subs:
             ts = r.get("created_at")
             if ts:
                 sub_day_set.add(str(ts)[:10])
@@ -1643,7 +1835,7 @@ def get_my_achievements(request: Request):
     return {
         "badges": all_badges,
         "stats": {
-            "earned": len(earned_by_key),
+            "earned": sum(1 for b in all_badges if b["earned"]),
             "total": len(achievements.BADGES),
             "completed_days": completed_days,
             "total_submissions": total_subs,
@@ -1657,11 +1849,11 @@ def get_my_achievements(request: Request):
 # CLI
 # -----------------------------
 def _get_current_day(user_id: str):
-    """Return the lowest unlocked+incomplete day for this user, or None."""
-    prog = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
-    if not prog.data:
+    """Return the lowest unlocked+incomplete day in the ACTIVE program, or None."""
+    prog = get_active_program(user_id, "id")
+    if not prog:
         return None, None
-    program_id = prog.data[0]["id"]
+    program_id = prog["id"]
     days = safe_execute(
         supabase.table("program_days").select("*")
         .eq("program_id", program_id)
@@ -1676,7 +1868,7 @@ def _get_current_day(user_id: str):
 def cli_check(request: Request, body: CliCheckRequest):
     user_id = request.state.user_id
 
-    day, _ = _get_current_day(user_id)
+    day, active_program_id = _get_current_day(user_id)
     if not day:
         raise HTTPException(status_code=400, detail="No active day to check.")
 
@@ -1736,7 +1928,7 @@ def cli_check(request: Request, body: CliCheckRequest):
             "passed": evaluation.passed,
             "day_number": day["day_number"],
             "program_day_id": day["id"],
-        })
+        }, program_id=active_program_id)
 
     return {
         "evaluation": evaluation.model_dump(),
@@ -2105,13 +2297,11 @@ def admin_search_users(request: Request, q: str = ""):
 def admin_user_progress(request: Request, user_id: str):
     require_admin(request.state.user_id)
     days = []
-    prog = safe_execute(
-        supabase.table("programs").select("id").eq("user_id", user_id)
-    )
-    if prog.data:
+    prog = get_active_program(user_id, "id")
+    if prog:
         days = safe_execute(
             supabase.table("program_days").select("*")
-            .eq("program_id", prog.data[0]["id"])
+            .eq("program_id", prog["id"])
             .order("day_number")
         ).data
     summary = compute_progress(user_id)

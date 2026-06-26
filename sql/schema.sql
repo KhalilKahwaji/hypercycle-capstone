@@ -25,14 +25,15 @@ create table if not exists public.self_assessments (
 );
 
 -- ---------- PROGRAMS --------------------------------------------------
+-- Multiple programs per user (up to 3, enforced in the backend), exactly one active.
 create table if not exists public.programs (
     id          uuid primary key default gen_random_uuid(),
     user_id     uuid not null references public.users(id) on delete cascade,
     title       text not null,
     summary     text,
     total_days  int not null default 15,
-    created_at  timestamptz not null default now(),
-    unique (user_id)                 -- one active program per user
+    is_active   boolean not null default true,
+    created_at  timestamptz not null default now()
 );
 
 -- ---------- PROGRAM DAYS ---------------------------------------------
@@ -94,12 +95,15 @@ create table if not exists public.submission_feedback (
 );
 
 -- ---------- ACHIEVEMENTS (gamification) --------------------------------
+-- program_id NULL  => GLOBAL badge (account/CLI-level, earned once per user).
+-- program_id set   => PROGRAM-specific badge (re-earnable per program).
 create table if not exists public.achievements (
     id          uuid primary key default gen_random_uuid(),
     user_id     uuid not null references public.users(id) on delete cascade,
     badge_key   text not null,
+    program_id  uuid references public.programs(id) on delete cascade,
     earned_at   timestamptz not null default now(),
-    unique (user_id, badge_key)
+    unique (user_id, badge_key, program_id)
 );
 
 -- ---------- SUBMISSIONS: source column --------------------------------
@@ -112,12 +116,53 @@ alter table public.self_assessments add column if not exists age int;
 -- submission_feedback: make submission_id nullable (admin passes have no submission).
 alter table public.submission_feedback alter column submission_id drop not null;
 
+-- ---------- MULTIPLE PROGRAMS PER USER (Feature: up to 3, one active) -----
+-- Safe to re-run. programs: drop the old one-per-user constraint, add is_active.
+alter table public.programs add column if not exists is_active boolean not null default true;
+do $$
+begin
+    if exists (select 1 from pg_constraint where conname = 'programs_user_id_key') then
+        alter table public.programs drop constraint programs_user_id_key;
+    end if;
+end $$;
+
+-- Enforce the single-active invariant at the DB level: at most one active program per
+-- user. The backend deactivates others before activating a program so this is never
+-- violated mid-update. (Existing data has exactly one program per user, so this is safe
+-- to add.)
+create unique index if not exists uq_programs_one_active
+    on public.programs (user_id) where is_active;
+
+-- achievements: add program_id (NULL = global badge) and switch the uniqueness to
+-- (user_id, badge_key, program_id).
+alter table public.achievements
+    add column if not exists program_id uuid references public.programs(id) on delete cascade;
+do $$
+begin
+    if exists (select 1 from pg_constraint where conname = 'achievements_user_id_badge_key_key') then
+        alter table public.achievements drop constraint achievements_user_id_badge_key_key;
+    end if;
+    if not exists (select 1 from pg_constraint where conname = 'achievements_user_id_badge_key_program_id_key') then
+        alter table public.achievements
+            add constraint achievements_user_id_badge_key_program_id_key
+            unique (user_id, badge_key, program_id);
+    end if;
+end $$;
+
+-- Postgres treats NULLs as distinct in unique constraints, so the constraint above
+-- does NOT dedupe GLOBAL badges (program_id IS NULL). This partial index does.
+create unique index if not exists uq_achievements_global
+    on public.achievements (user_id, badge_key)
+    where program_id is null;
+
 -- ---------- INDEXES ---------------------------------------------------
 create index if not exists idx_program_days_program on public.program_days(program_id);
 create index if not exists idx_submissions_user on public.submissions(user_id);
 create index if not exists idx_submissions_day on public.submissions(program_day_id);
 create index if not exists idx_feedback_user on public.submission_feedback(user_id);
 create index if not exists idx_achievements_user on public.achievements(user_id);
+create index if not exists idx_achievements_program on public.achievements(program_id);
+create index if not exists idx_programs_user_active on public.programs(user_id, is_active);
 
 -- ---------- ROW LEVEL SECURITY ---------------------------------------
 -- Service role bypasses these. They protect against accidental anon access.

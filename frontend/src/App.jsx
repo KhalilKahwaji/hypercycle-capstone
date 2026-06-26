@@ -12,6 +12,7 @@ import GitHubCallback from "./pages/GitHubCallback";
 import Dashboard from "./pages/Dashboard";
 import Assessment from "./pages/Assessment";
 import MyProgram from "./pages/MyProgram";
+import MyPrograms from "./pages/MyPrograms";
 import CurrentTask from "./pages/CurrentTask";
 import SubmitWork from "./pages/SubmitWork";
 import History from "./pages/History";
@@ -39,6 +40,7 @@ function Protected({ children, admin = false }) {
 function pageTitle(pathname) {
   if (pathname === "/dashboard") return "Dashboard";
   if (pathname === "/assessment") return "Self-Assessment";
+  if (pathname === "/programs") return "My Programs";
   if (pathname === "/program") return "My Program";
   if (pathname.startsWith("/program/day/")) return "Program Day";
   if (pathname.startsWith("/submit/")) return "Submit Work";
@@ -86,6 +88,7 @@ function Inner() {
       <Route path="/onboarding" element={<Protected><Onboarding /></Protected>} />
       <Route path="/dashboard" element={<Protected><Shell><Dashboard /></Shell></Protected>} />
       <Route path="/assessment" element={<Protected><Shell><Assessment /></Shell></Protected>} />
+      <Route path="/programs" element={<Protected><Shell><MyPrograms /></Shell></Protected>} />
       <Route path="/program" element={<Protected><Shell><MyProgram /></Shell></Protected>} />
       <Route path="/program/day/:dayId" element={<Protected><Shell><CurrentTask /></Shell></Protected>} />
       <Route path="/submit/:dayId" element={<Protected><Shell><SubmitWork /></Shell></Protected>} />

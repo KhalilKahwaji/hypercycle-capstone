@@ -136,30 +136,86 @@ BADGE_BY_KEY: dict[str, dict] = {b["key"]: b for b in BADGES}
 
 
 # ---------------------------------------------------------------------------
+# Badge scope (multiple-programs model)
+# ---------------------------------------------------------------------------
+# GLOBAL badges are account/CLI-level: earned once ever (program_id = NULL) and
+# they survive switching/deleting programs. PROGRAM badges are earned per program
+# (program_id set) and can be re-earned independently in each of the user's programs.
+GLOBAL_BADGES: set[str] = {
+    "program_generated",
+    "setup_complete",
+    "question_asker",
+    "cli_debut",
+    "cli_veteran",
+}
+PROGRAM_BADGES: set[str] = {b["key"] for b in BADGES} - GLOBAL_BADGES
+
+
+def is_global_badge(badge_key: str) -> bool:
+    """True for account-level badges stored with program_id = NULL."""
+    return badge_key in GLOBAL_BADGES
+
+
+# ---------------------------------------------------------------------------
 # Core API
 # ---------------------------------------------------------------------------
 
-def award_badge(supabase, user_id: str, badge_key: str) -> dict | None:
+def award_badge(
+    supabase, user_id: str, badge_key: str, program_id: str | None = None
+) -> dict | None:
     """
-    Award a badge if not already earned.
+    Award a badge if not already earned. Idempotent and best-effort (never raises).
 
-    Uses upsert with ignore_duplicates=True so the call is idempotent:
-    - New award  → row inserted, result.data has the row → returns badge dict.
-    - Already earned → conflict ignored, result.data is empty  → returns None.
-    - Any DB error (e.g. table missing) → logged at WARNING, returns None.
+    Scope rules:
+    - GLOBAL badges are always stored with program_id = NULL (any passed program_id
+      is ignored) and are earned once per user.
+    - PROGRAM badges are stored with the given program_id; if none is supplied the
+      award is skipped (we never write a mis-scoped program badge).
+
+    Idempotency note: unique(user_id, badge_key, program_id) does NOT dedupe rows
+    where program_id IS NULL (Postgres treats NULLs as distinct), so we check for an
+    existing row first for both scopes rather than relying on an upsert conflict.
     """
     if badge_key not in BADGE_BY_KEY:
         logger.warning("award_badge: unknown key %r", badge_key)
         return None
+
+    if badge_key in GLOBAL_BADGES:
+        program_id = None
+    elif program_id is None:
+        # Program-scoped badge with no program to attribute it to — skip rather than
+        # write a NULL-scoped row that would collide with the global semantics.
+        logger.debug("award_badge: skipping program badge %r with no program_id", badge_key)
+        return None
+
     try:
-        result = supabase.table("achievements").upsert(
-            {"user_id": user_id, "badge_key": badge_key},
-            on_conflict="user_id,badge_key",
-            ignore_duplicates=True,
-        ).execute()
+        existing_q = (
+            supabase.table("achievements")
+            .select("id")
+            .eq("user_id", user_id)
+            .eq("badge_key", badge_key)
+        )
+        existing_q = (
+            existing_q.is_("program_id", "null")
+            if program_id is None
+            else existing_q.eq("program_id", program_id)
+        )
+        if existing_q.execute().data:
+            return None  # already earned in this scope
+
+        result = supabase.table("achievements").insert({
+            "user_id": user_id,
+            "badge_key": badge_key,
+            "program_id": program_id,
+        }).execute()
         if result.data:
             earned_at = result.data[0].get("earned_at")
-            return {**BADGE_BY_KEY[badge_key], "earned": True, "earned_at": earned_at}
+            return {
+                **BADGE_BY_KEY[badge_key],
+                "earned": True,
+                "earned_at": earned_at,
+                "program_id": program_id,
+            }
     except Exception as e:
         logger.warning("award_badge failed (key=%r, user=%s): %r", badge_key, user_id, e)
     return None
@@ -170,10 +226,15 @@ def check_and_award(
     user_id: str,
     event: str,
     ctx: dict[str, Any] | None = None,
+    program_id: str | None = None,
 ) -> list[dict]:
     """
     Check which badges apply to this event and award any not yet earned.
     Returns a list of newly-earned badge dicts (may be empty). Never raises.
+
+    `program_id` scopes program-specific badges. Global events
+    (program_generated, setup_complete, cli_ask) ignore it; submission events
+    award their program-specific badges against it.
     """
     ctx = ctx or {}
     new_badges: list[dict] = []
@@ -189,7 +250,7 @@ def check_and_award(
             _try_award(supabase, user_id, "question_asker", new_badges)
 
         elif event in ("web_submission", "cli_submission"):
-            _check_submission_badges(supabase, user_id, event, ctx, new_badges)
+            _check_submission_badges(supabase, user_id, event, ctx, new_badges, program_id)
 
     except Exception as exc:
         logger.warning(
@@ -203,42 +264,53 @@ def check_and_award(
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _try_award(supabase, user_id: str, key: str, out: list) -> None:
-    b = award_badge(supabase, user_id, key)
+def _try_award(
+    supabase, user_id: str, key: str, out: list, program_id: str | None = None
+) -> None:
+    b = award_badge(supabase, user_id, key, program_id)
     if b:
         out.append(b)
 
 
 def _check_submission_badges(
-    supabase, user_id: str, event: str, ctx: dict, out: list
+    supabase, user_id: str, event: str, ctx: dict, out: list, program_id: str | None = None
 ) -> None:
     score = ctx.get("score", 0)
     passed = ctx.get("passed", False)
     program_day_id = ctx.get("program_day_id", "")
 
-    # First submission ever (count is already >= 1 since insert happened before this call)
-    total_res = (
-        supabase.table("submissions")
-        .select("id", count="exact")
-        .eq("user_id", user_id)
-        .execute()
-    )
-    total_subs = total_res.count or 0
-    if total_subs <= 1:
-        _try_award(supabase, user_id, "first_submission", out)
+    # Resolve this program's day ids so the program-specific counts
+    # (first_submission, consistent) reflect THIS program only — submissions has no
+    # program_id column, only program_day_id.
+    program_day_ids: list[str] = []
+    if program_id:
+        pd_res = (
+            supabase.table("program_days")
+            .select("id")
+            .eq("program_id", program_id)
+            .execute()
+        )
+        program_day_ids = [r["id"] for r in (pd_res.data or [])]
 
-    # Consistent: submitted for 5+ distinct days
-    all_subs = (
-        supabase.table("submissions")
-        .select("program_day_id")
-        .eq("user_id", user_id)
-        .execute()
-    )
-    distinct_days = len(set(r["program_day_id"] for r in (all_subs.data or [])))
-    if distinct_days >= 5:
-        _try_award(supabase, user_id, "consistent", out)
+    # PROGRAM-SPECIFIC: first submission and 5-distinct-days within this program.
+    if program_day_ids:
+        prog_subs = (
+            supabase.table("submissions")
+            .select("program_day_id", count="exact")
+            .eq("user_id", user_id)
+            .in_("program_day_id", program_day_ids)
+            .execute()
+        )
+        prog_sub_rows = prog_subs.data or []
+        prog_sub_count = prog_subs.count if prog_subs.count is not None else len(prog_sub_rows)
+        # The triggering submission is already inserted before this call, so <= 1 means first.
+        if prog_sub_count <= 1:
+            _try_award(supabase, user_id, "first_submission", out, program_id)
+        distinct_days = len(set(r["program_day_id"] for r in prog_sub_rows if r.get("program_day_id")))
+        if distinct_days >= 5:
+            _try_award(supabase, user_id, "consistent", out, program_id)
 
-    # CLI-specific
+    # GLOBAL: CLI usage counts across all of the user's programs.
     if event == "cli_submission":
         cli_res = (
             supabase.table("submissions")
@@ -254,12 +326,14 @@ def _check_submission_badges(
             _try_award(supabase, user_id, "cli_veteran", out)
 
     if passed:
+        # PROGRAM-SPECIFIC quality badges.
         if score >= 10:
-            _try_award(supabase, user_id, "perfect_score", out)
+            _try_award(supabase, user_id, "perfect_score", out, program_id)
         if score >= 9:
-            _try_award(supabase, user_id, "high_achiever", out)
+            _try_award(supabase, user_id, "high_achiever", out, program_id)
 
-        # First-try vs comeback: count submissions for this specific day
+        # First-try vs comeback: count submissions for this specific day (already
+        # program-scoped via the day id).
         if program_day_id:
             day_subs = (
                 supabase.table("submissions")
@@ -270,31 +344,25 @@ def _check_submission_badges(
             )
             day_sub_count = day_subs.count or 0
             if day_sub_count <= 1:
-                _try_award(supabase, user_id, "first_pass", out)
+                _try_award(supabase, user_id, "first_pass", out, program_id)
             else:
-                _try_award(supabase, user_id, "comeback_kid", out)
+                _try_award(supabase, user_id, "comeback_kid", out, program_id)
 
-        # Milestone badges: count completed days in the user's program
-        prog_res = (
-            supabase.table("programs")
-            .select("id")
-            .eq("user_id", user_id)
-            .execute()
-        )
-        if prog_res.data:
+        # PROGRAM-SPECIFIC milestone badges: completed days in THIS program.
+        if program_id:
             done_res = (
                 supabase.table("program_days")
                 .select("id", count="exact")
-                .eq("program_id", prog_res.data[0]["id"])
+                .eq("program_id", program_id)
                 .eq("is_completed", True)
                 .execute()
             )
             completed = done_res.count or 0
             if completed >= 5:
-                _try_award(supabase, user_id, "day_5_done", out)
+                _try_award(supabase, user_id, "day_5_done", out, program_id)
             if completed >= 8:
-                _try_award(supabase, user_id, "halfway", out)
+                _try_award(supabase, user_id, "halfway", out, program_id)
             if completed >= 10:
-                _try_award(supabase, user_id, "day_10_done", out)
+                _try_award(supabase, user_id, "day_10_done", out, program_id)
             if completed >= 16:
-                _try_award(supabase, user_id, "graduation", out)
+                _try_award(supabase, user_id, "graduation", out, program_id)
