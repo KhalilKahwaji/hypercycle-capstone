@@ -32,6 +32,7 @@ function LevelPicker({ value, onChange }) {
           letterSpacing: 0,
           fontWeight: "normal",
           display: "flex", alignItems: "center", justifyContent: "space-between",
+          transform: "none",
         }}
       >
         <span>{value}</span>
@@ -125,7 +126,7 @@ export default function Assessment() {
     try {
       await client.post("/assessments", {
         ...form,
-        hours_per_week: Number(form.hours_per_week),
+        hours_per_week: Math.max(1, Number(form.hours_per_week) || 20),
         age: Number(form.age),
       });
       setMsg("Assessment saved. Generating your personalized 16-day program…");

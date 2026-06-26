@@ -503,32 +503,63 @@ No text outside the JSON object.
     result["day_number"] = next_day_number
     return result
 
+def _normalize_days(data: dict) -> dict:
+    """
+    Fix the common LLM mistake of numbering days 1–16 instead of 0–15.
+    Mutates and returns the data dict.
+    """
+    days = data.get("days")
+    if not isinstance(days, list) or not days:
+        return data
+    # If all days appear to use 1-based numbering (first day == 1, last == 16)
+    day_numbers = [d.get("day_number") for d in days if isinstance(d, dict) and "day_number" in d]
+    if day_numbers and min(day_numbers) == 1 and max(day_numbers) <= 16:
+        for d in days:
+            if isinstance(d, dict) and "day_number" in d:
+                d["day_number"] = d["day_number"] - 1
+    return data
+
+
 def generate_program(assessment: dict, username: str = "learner") -> GeneratedProgram:
     precedent_context = _precedent_context(assessment)
     user_prompt = build_user_prompt(assessment, precedent_context, username=username)
 
-    response = _client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=0.6,  # some variety so programs differ per person
-        response_format={"type": "json_object"},
-    )
-    content = response.choices[0].message.content
+    last_err: Exception = ValueError("Program generation failed after all retries.")
+    for attempt in range(3):
+        try:
+            response = _client.chat.completions.create(
+                model=GROQ_MODEL,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.6,
+                response_format={"type": "json_object"},
+            )
+        except Exception as e:
+            last_err = e
+            continue
 
-    try:
-        data = json.loads(content)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Program generation returned invalid JSON: {content}") from e
+        content = response.choices[0].message.content
 
-    try:
-        program = GeneratedProgram.model_validate(data)
-    except ValidationError as e:
-        raise ValueError(f"Program failed validation: {e}") from e
+        try:
+            data = json.loads(content)
+        except json.JSONDecodeError:
+            last_err = ValueError(f"Invalid JSON on attempt {attempt + 1}: {content[:200]}")
+            continue
 
-    if len(program.days) != 16:
-        raise ValueError(f"Expected 16 days, got {len(program.days)}")
+        data = _normalize_days(data)
 
-    return program
+        try:
+            program = GeneratedProgram.model_validate(data)
+        except ValidationError as e:
+            last_err = ValueError(f"Validation failed on attempt {attempt + 1}: {e}")
+            continue
+
+        if len(program.days) != 16:
+            last_err = ValueError(f"Expected 16 days, got {len(program.days)} on attempt {attempt + 1}")
+            continue
+
+        return program
+
+    raise last_err

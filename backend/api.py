@@ -1000,6 +1000,36 @@ def get_my_achievements(request: Request):
         for b in achievements.BADGES
     ]
 
+    # avg score from submission feedback
+    try:
+        fb_res = safe_execute(
+            supabase.table("submission_feedback").select("score").eq("user_id", user_id)
+        )
+        score_vals = [r["score"] for r in (fb_res.data or []) if r.get("score") is not None]
+        avg_score = round(sum(score_vals) / len(score_vals), 1) if score_vals else None
+    except Exception:
+        avg_score = None
+
+    # streak: consecutive calendar days ending today (or yesterday) with ≥1 submission
+    try:
+        sub_dt_res = safe_execute(
+            supabase.table("submissions").select("created_at").eq("user_id", user_id)
+        )
+        sub_day_set: set = set()
+        for r in (sub_dt_res.data or []):
+            ts = r.get("created_at")
+            if ts:
+                sub_day_set.add(str(ts)[:10])
+        _today = datetime.now(timezone.utc).date()
+        _start = _today if str(_today) in sub_day_set else _today - timedelta(days=1)
+        streak = 0
+        _d = _start
+        while str(_d) in sub_day_set:
+            streak += 1
+            _d -= timedelta(days=1)
+    except Exception:
+        streak = 0
+
     return {
         "badges": all_badges,
         "stats": {
@@ -1007,6 +1037,8 @@ def get_my_achievements(request: Request):
             "total": len(achievements.BADGES),
             "completed_days": completed_days,
             "total_submissions": total_subs,
+            "avg_score": avg_score,
+            "streak": streak,
         },
     }
 
