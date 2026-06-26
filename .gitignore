@@ -11,3 +11,4 @@ backend/test_capstone_api.py
 groq api.txt
 todo.txt
 dummy/
+HyperObsidian/

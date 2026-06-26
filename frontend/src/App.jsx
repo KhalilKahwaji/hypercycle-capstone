@@ -8,6 +8,7 @@ import HyperSensei from "./components/HyperSensei";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import GitHubCallback from "./pages/GitHubCallback";
 import Dashboard from "./pages/Dashboard";
 import Assessment from "./pages/Assessment";
 import MyProgram from "./pages/MyProgram";
@@ -81,6 +82,7 @@ function Inner() {
         path="/register"
         element={user && !loading ? <Navigate to={user.is_admin ? "/admin" : "/dashboard"} replace /> : <Register />}
       />
+      <Route path="/auth/callback" element={<GitHubCallback />} />
       <Route path="/onboarding" element={<Protected><Onboarding /></Protected>} />
       <Route path="/dashboard" element={<Protected><Shell><Dashboard /></Shell></Protected>} />
       <Route path="/assessment" element={<Protected><Shell><Assessment /></Shell></Protected>} />

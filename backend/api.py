@@ -1,4 +1,5 @@
 import os
+import hmac as _hmac
 import secrets
 import time
 import json
@@ -62,6 +63,7 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 PUBLIC_PATHS = {
     "/", "/health", "/users/register", "/users/login",
     "/docs", "/openapi.json", "/redoc",
+    "/auth/github/login-start",
 }
 START_TIME = time.time()
 
@@ -480,8 +482,14 @@ def login_user(request: LoginRequest):
     user = find_user_by_username_or_email(sanitize_text(request.username_or_email))
     if not user:
         raise HTTPException(status_code=401, detail="Invalid username/email or password.")
-    password_hash = user.get("password_hash")
-    if not password_hash or not verify_password(request.password, password_hash):
+    password_hash = user.get("password_hash") or ""
+    # Sentinel "!..." means the account was created via GitHub OAuth (no password set)
+    if not password_hash or not password_hash.startswith("$"):
+        raise HTTPException(
+            status_code=401,
+            detail="This account uses GitHub sign-in. Use the 'Sign in with GitHub' button.",
+        )
+    if not verify_password(request.password, password_hash):
         raise HTTPException(status_code=401, detail="Invalid username/email or password.")
     safe_user = remove_password_hash(user)
     token = create_access_token(user["id"])
@@ -500,9 +508,32 @@ def get_me(request: Request):
 # -----------------------------
 # GitHub OAuth
 # -----------------------------
+@app.get("/auth/github/login-start")
+def github_login_start():
+    """
+    Public — starts the GitHub OAuth flow for login/signup.
+    Uses an HMAC-signed self-contained state (no DB row needed).
+    Requests repo + user:email scopes so a single authorization covers
+    both identity/login AND repo-based submissions.
+    """
+    if not GITHUB_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="GitHub OAuth is not configured on this server.")
+    state = _make_login_state()
+    params = urllib.parse.urlencode({
+        "client_id": GITHUB_CLIENT_ID,
+        "redirect_uri": GITHUB_CALLBACK_URL,
+        "scope": "repo user:email",
+        "state": state,
+    })
+    return {"auth_url": f"https://github.com/login/oauth/authorize?{params}"}
+
+
 @app.get("/auth/github/start")
 def github_oauth_start(request: Request):
-    """Return the GitHub authorize URL. Frontend redirects the user there."""
+    """
+    Requires JWT — starts the GitHub OAuth flow for CONNECTING to an existing account.
+    State is stored in the user's DB row for CSRF protection.
+    """
     if not GITHUB_CLIENT_ID:
         raise HTTPException(status_code=503, detail="GitHub OAuth is not configured on this server.")
     user_id = request.state.user_id
@@ -525,36 +556,90 @@ def github_oauth_callback(
 ):
     """
     GitHub redirects here after the user authorizes (or denies) the app.
-    Public path — verified by the `state` param instead of a JWT.
+    Public path — security comes from the state check, not a JWT.
+    Detects context from the state prefix:
+      - "ghlogin:..." → login/signup flow (HMAC-signed, no DB lookup needed)
+      - anything else → connect flow (DB state lookup for logged-in user)
     Always redirects back to the frontend; never returns raw data.
     """
     front = FRONTEND_URL
+    is_login_ctx = (state or "").startswith(_LOGIN_STATE_PREFIX + ":")
 
     if error:
-        return RedirectResponse(url=f"{front}/profile?github=error&reason=denied", status_code=302)
+        dest = "/login" if is_login_ctx else "/profile"
+        return RedirectResponse(url=f"{front}{dest}?github=error&reason=denied", status_code=302)
 
     if not code or not state:
-        return RedirectResponse(url=f"{front}/profile?github=error&reason=invalid_request", status_code=302)
+        dest = "/login" if is_login_ctx else "/profile"
+        return RedirectResponse(url=f"{front}{dest}?github=error&reason=invalid_request", status_code=302)
 
+    # ── LOGIN / SIGNUP context ──────────────────────────────────────────────
+    if is_login_ctx:
+        if not _verify_login_state(state):
+            return RedirectResponse(
+                url=f"{front}/login?github=error&reason=state_mismatch", status_code=302
+            )
+
+        try:
+            access_token = _exchange_github_code(code)
+        except Exception as e:
+            log_json({"event": "github_login_exchange_failed", "error": repr(e)})
+            return RedirectResponse(
+                url=f"{front}/login?github=error&reason=token_exchange_failed", status_code=302
+            )
+
+        try:
+            gh_username, gh_email = _get_github_profile(access_token)
+        except Exception as e:
+            log_json({"event": "github_login_profile_failed", "error": repr(e)})
+            return RedirectResponse(
+                url=f"{front}/login?github=error&reason=user_fetch_failed", status_code=302
+            )
+
+        try:
+            user, is_new = _find_or_create_github_user(gh_username, gh_email, access_token)
+        except Exception as e:
+            log_json({"event": "github_login_user_error", "error": repr(e)})
+            return RedirectResponse(
+                url=f"{front}/login?github=error&reason=account_error", status_code=302
+            )
+
+        app_jwt = create_access_token(user["id"])
+        log_json({"event": "github_login", "user_id": user["id"],
+                  "github_username": gh_username, "is_new": is_new})
+        # Deliver our app JWT via redirect — GitHubCallback page consumes it immediately
+        return RedirectResponse(
+            url=f"{front}/auth/callback?token={urllib.parse.quote(app_jwt, safe='')}"
+                f"&new={'true' if is_new else 'false'}",
+            status_code=302,
+        )
+
+    # ── CONNECT context (existing logged-in user) ───────────────────────────
     user_res = safe_execute(
         supabase.table("users").select("id").eq("github_oauth_state", state)
     )
     if not user_res.data:
-        return RedirectResponse(url=f"{front}/profile?github=error&reason=state_mismatch", status_code=302)
+        return RedirectResponse(
+            url=f"{front}/profile?github=error&reason=state_mismatch", status_code=302
+        )
 
     user_id = user_res.data[0]["id"]
 
     try:
         access_token = _exchange_github_code(code)
     except Exception as e:
-        log_json({"event": "github_oauth_exchange_failed", "user_id": user_id, "error": repr(e)})
-        return RedirectResponse(url=f"{front}/profile?github=error&reason=token_exchange_failed", status_code=302)
+        log_json({"event": "github_connect_exchange_failed", "user_id": user_id, "error": repr(e)})
+        return RedirectResponse(
+            url=f"{front}/profile?github=error&reason=token_exchange_failed", status_code=302
+        )
 
     try:
-        gh_username = _get_github_user(access_token)
+        gh_username, _ = _get_github_profile(access_token)
     except Exception as e:
-        log_json({"event": "github_oauth_user_failed", "user_id": user_id, "error": repr(e)})
-        return RedirectResponse(url=f"{front}/profile?github=error&reason=user_fetch_failed", status_code=302)
+        log_json({"event": "github_connect_profile_failed", "user_id": user_id, "error": repr(e)})
+        return RedirectResponse(
+            url=f"{front}/profile?github=error&reason=user_fetch_failed", status_code=302
+        )
 
     safe_execute(supabase.table("users").update({
         "github_access_token": access_token,
@@ -913,16 +998,18 @@ def _exchange_github_code(code: str) -> str:
     return token
 
 
-def _get_github_user(token: str) -> str:
-    """Fetch the authenticated GitHub username for the given token."""
-    req = urllib.request.Request(
-        "https://api.github.com/user",
-        headers={
-            "Accept": "application/vnd.github.v3+json",
-            "Authorization": f"Bearer {token}",
-            "User-Agent": "HyperCycle/1.0",
-        },
-    )
+def _get_github_profile(token: str) -> tuple:
+    """
+    Fetch GitHub username and primary email for the token owner.
+    Falls back to /user/emails when the public email is not set.
+    Returns (username: str, email: str | None).
+    """
+    gh_headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"Bearer {token}",
+        "User-Agent": "HyperCycle/1.0",
+    }
+    req = urllib.request.Request("https://api.github.com/user", headers=gh_headers)
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -931,7 +1018,104 @@ def _get_github_user(token: str) -> str:
     username = data.get("login")
     if not username:
         raise ValueError("Could not retrieve GitHub username from token.")
-    return username
+    email: Optional[str] = data.get("email") or None
+    # If public email not set, try /user/emails (requires user:email scope)
+    if not email:
+        try:
+            req2 = urllib.request.Request("https://api.github.com/user/emails", headers=gh_headers)
+            with urllib.request.urlopen(req2, timeout=10) as resp2:
+                emails = json.loads(resp2.read().decode("utf-8"))
+            for entry in emails:
+                if entry.get("primary") and entry.get("verified"):
+                    email = entry.get("email") or None
+                    break
+        except Exception:
+            pass
+    return username, email
+
+
+# -----------------------------
+# GitHub login-context helpers (HMAC-signed self-contained state — no DB row needed)
+# -----------------------------
+_LOGIN_STATE_PREFIX = "ghlogin"
+
+
+def _make_login_state() -> str:
+    """Create a tamper-proof state for the GitHub login OAuth flow."""
+    nonce = secrets.token_hex(24)
+    payload = f"{_LOGIN_STATE_PREFIX}:{nonce}"
+    mac = _hmac.new(JWT_SECRET_KEY.encode("utf-8"), payload.encode("utf-8"), "sha256").hexdigest()[:32]
+    return f"{payload}:{mac}"
+
+
+def _verify_login_state(state: str) -> bool:
+    """Return True if the state was produced by _make_login_state and was not tampered with."""
+    parts = state.split(":")
+    if len(parts) != 3 or parts[0] != _LOGIN_STATE_PREFIX:
+        return False
+    prefix, nonce, mac = parts
+    payload = f"{prefix}:{nonce}"
+    expected = _hmac.new(JWT_SECRET_KEY.encode("utf-8"), payload.encode("utf-8"), "sha256").hexdigest()[:32]
+    return _hmac.compare_digest(mac, expected)
+
+
+def _find_or_create_github_user(gh_username: str, gh_email: Optional[str], access_token: str) -> tuple:
+    """
+    Find an existing user by email (merge rule) or by github_username, or create a new one.
+    Attaches the GitHub connection in all cases.
+    Returns (user_dict, is_new_account: bool).
+    """
+    user = None
+
+    # 1. Merge by email — same email = same person
+    if gh_email:
+        user = find_user_by_email(gh_email.lower())
+
+    # 2. Find by github_username — handles reconnects and prior GitHub logins
+    if not user:
+        r = safe_execute(supabase.table("users").select("*").eq("github_username", gh_username))
+        if r.data:
+            user = r.data[0]
+
+    if user:
+        safe_execute(
+            supabase.table("users").update({
+                "github_access_token": access_token,
+                "github_username": gh_username,
+                "github_connected_at": datetime.now(timezone.utc).isoformat(),
+                "github_oauth_state": None,
+            }).eq("id", user["id"])
+        )
+        refreshed = find_user_by_id(user["id"])
+        return refreshed or user, False
+
+    # 3. Create new social-only account
+    base_un = re.sub(r"[^a-zA-Z0-9_-]", "", gh_username) or "user"
+    final_un = base_un
+    suffix = 1
+    while safe_execute(supabase.table("users").select("id").eq("username", final_un)).data:
+        final_un = f"{base_un}{suffix}"
+        suffix += 1
+
+    # Use real email if available; otherwise a deterministic GitHub noreply placeholder
+    final_email = (gh_email or "").lower() or f"{gh_username}@users.noreply.github.com"
+    if not gh_email and find_user_by_email(final_email):
+        # Placeholder already taken — add entropy
+        final_email = f"{gh_username}+{secrets.token_hex(4)}@users.noreply.github.com"
+
+    result = safe_execute(
+        supabase.table("users").insert({
+            "email": final_email,
+            "username": final_un,
+            "full_name": gh_username,
+            "password_hash": "!github_oauth",   # sentinel: social-only, never matches bcrypt verify
+            "github_access_token": access_token,
+            "github_username": gh_username,
+            "github_connected_at": datetime.now(timezone.utc).isoformat(),
+            "github_oauth_state": None,
+        })
+    )
+    return result.data[0], True
 
 
 # -----------------------------

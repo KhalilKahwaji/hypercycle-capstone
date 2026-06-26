@@ -40,6 +40,13 @@ export function AuthProvider({ children }) {
     return res.data;
   };
 
+  const loginWithToken = async (token) => {
+    localStorage.setItem("hc_token", token);
+    const res = await client.get("/users/me");
+    setUser(res.data.user);
+    return res.data.user;
+  };
+
   const logout = () => {
     localStorage.removeItem("hc_token");
     setUser(null);
@@ -52,7 +59,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, refreshUser }}
+      value={{ user, loading, login, register, loginWithToken, logout, refreshUser }}
     >
       {children}
     </AuthContext.Provider>
