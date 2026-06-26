@@ -46,6 +46,7 @@ def build_user_prompt(
     submission_text: str,
     file_analysis: Optional[dict],
     file_raw_text: Optional[str],
+    prior_summary: Optional[str] = None,
 ) -> str:
     file_block = "No file was uploaded."
     if file_analysis:
@@ -54,6 +55,15 @@ def build_user_prompt(
         )
         if file_raw_text:
             file_block += f"FILE RAW TEXT (truncated):\n{file_raw_text}"
+
+    prior_block = ""
+    if prior_summary:
+        prior_block = (
+            "\nPRIOR STATE OF LEARNER'S PROJECT (recorded from last passed submission):\n"
+            f"{prior_summary}\n"
+            "\nUse this as context for what EXISTED BEFORE today's task. "
+            "Judge whether this day's specific objective was completed ON TOP of that baseline.\n"
+        )
 
     return f"""
 Evaluate this submission against the assigned day.
@@ -64,7 +74,7 @@ ASSIGNED DAY:
 - Task description: {day.get('task_description')}
 - Expected output: {day.get('expected_output')}
 - Evaluation criteria: {day.get('evaluation_criteria')}
-
+{prior_block}
 LEARNER'S TEXT SUBMISSION:
 {submission_text}
 
@@ -104,8 +114,9 @@ def evaluate_submission(
     submission_text: str,
     file_analysis: Optional[dict] = None,
     file_raw_text: Optional[str] = None,
+    prior_summary: Optional[str] = None,
 ) -> Evaluation:
-    user_prompt = build_user_prompt(day, submission_text, file_analysis, file_raw_text)
+    user_prompt = build_user_prompt(day, submission_text, file_analysis, file_raw_text, prior_summary)
 
     response = _client.chat.completions.create(
         model=GROQ_MODEL,

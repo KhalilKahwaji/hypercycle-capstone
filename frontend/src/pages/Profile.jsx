@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
   GitBranch, Upload, X, Save, ChevronDown, ChevronUp,
-  ExternalLink, FileText, Pencil,
+  ExternalLink, FileText, Pencil, Link2, Unlink2, CheckCircle, AlertCircle,
 } from "lucide-react";
 import client from "../api/client";
 import BadgeIcon from "../components/BadgeIcon";
@@ -262,6 +262,162 @@ function CategoryGroup({ label, badges }) {
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(226px, 1fr))", gap: 12 }}>
         {badges.map((b) => <BadgeCard key={b.key} badge={b} />)}
+      </div>
+    </div>
+  );
+}
+
+// ─── GitHub connection card ───────────────────────────────────────────────────
+function GitHubConnectionCard() {
+  const [status, setStatus] = useState(null);
+  const [urlMsg, setUrlMsg] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const github = params.get("github");
+    const reason = params.get("reason");
+    if (github === "connected") {
+      setUrlMsg({ ok: true, text: "GitHub account connected." });
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (github === "error") {
+      const msg =
+        reason === "denied" ? "GitHub authorization was denied." :
+        reason === "state_mismatch" ? "Security check failed — please try connecting again." :
+        "Could not connect GitHub account. Please try again.";
+      setUrlMsg({ ok: false, text: msg });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    client.get("/auth/github/status")
+      .then((r) => setStatus(r.data))
+      .catch(() => setStatus({ connected: false, github_username: null }));
+  }, []);
+
+  const connect = async () => {
+    setBusy(true); setErr("");
+    try {
+      const r = await client.get("/auth/github/start");
+      window.location.href = r.data.auth_url;
+    } catch (e) {
+      setErr(e.response?.data?.detail || e.message);
+      setBusy(false);
+    }
+  };
+
+  const disconnect = async () => {
+    if (!window.confirm("Disconnect GitHub? Repo submissions will revert to public-only.")) return;
+    setBusy(true); setErr("");
+    try {
+      await client.post("/auth/github/disconnect");
+      setStatus({ connected: false, github_username: null });
+      setUrlMsg(null);
+    } catch (e) {
+      setErr(e.response?.data?.detail || e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const connected = status?.connected;
+
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{
+        background: "rgba(13,15,24,0.76)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: `1px solid ${connected ? "rgba(77,208,255,0.22)" : "var(--border)"}`,
+        borderRadius: "var(--radius)",
+        padding: "18px 22px",
+        transition: "border-color 0.2s",
+      }}>
+        <div style={{
+          display: "flex", alignItems: "center",
+          justifyContent: "space-between", flexWrap: "wrap", gap: 12,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: "var(--radius-sm)", flexShrink: 0,
+              background: connected ? "rgba(77,208,255,0.1)" : "rgba(255,255,255,0.04)",
+              border: `1px solid ${connected ? "rgba(77,208,255,0.25)" : "rgba(255,255,255,0.08)"}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "all 0.2s",
+            }}>
+              <GitBranch size={17} color={connected ? "var(--cyan)" : "var(--faint)"} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 13, color: "var(--text)", marginBottom: 3 }}>
+                GitHub Connection
+              </div>
+              {status == null ? (
+                <span style={{ fontSize: 12, color: "var(--faint)" }}>Loading…</span>
+              ) : connected ? (
+                <span style={{ fontSize: 12, color: "var(--cyan)", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                  <CheckCircle size={11} />
+                  Connected as <strong style={{ marginLeft: 3 }}>@{status.github_username}</strong>
+                </span>
+              ) : (
+                <span style={{ fontSize: 12, color: "var(--faint)" }}>
+                  Not connected — public repos only
+                </span>
+              )}
+            </div>
+          </div>
+
+          {status != null && (
+            connected ? (
+              <button
+                className="ghost"
+                onClick={disconnect}
+                disabled={busy}
+                style={{ transform: "none", fontSize: 12, padding: "6px 14px",
+                  display: "flex", alignItems: "center", gap: 6 }}
+              >
+                <Unlink2 size={12} />
+                Disconnect
+              </button>
+            ) : (
+              <button
+                onClick={connect}
+                disabled={busy}
+                style={{ transform: "none", fontSize: 13,
+                  display: "flex", alignItems: "center", gap: 7 }}
+              >
+                {busy
+                  ? <><span className="spinner" /> Redirecting…</>
+                  : <><Link2 size={13} /> Connect GitHub</>}
+              </button>
+            )
+          )}
+        </div>
+
+        {!connected && status != null && (
+          <div style={{
+            marginTop: 14, padding: "10px 14px",
+            background: "rgba(255,255,255,0.02)", borderRadius: "var(--radius-sm)",
+            border: "1px solid rgba(255,255,255,0.05)",
+            fontSize: 12, color: "var(--faint)", lineHeight: 1.65,
+          }}>
+            Connect your GitHub account to enable{" "}
+            <span style={{ color: "var(--text)" }}>private repo submissions</span> and
+            per-user rate limits. Without a connection only public repos can be read.
+          </div>
+        )}
+
+        {err && (
+          <div className="alert err" style={{ marginTop: 12, fontSize: 13,
+            display: "flex", alignItems: "center", gap: 8 }}>
+            <AlertCircle size={14} /> {err}
+          </div>
+        )}
+        {urlMsg && (
+          <div className={`alert ${urlMsg.ok ? "ok" : "err"}`}
+            style={{ marginTop: 12, fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
+            {urlMsg.ok ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+            {urlMsg.text}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -660,8 +816,9 @@ export default function Profile() {
         </div>
       )}
 
-      {/* ─── Edit section ──────────────────────────────────────────────── */}
+      {/* ─── GitHub connection + Edit section ─────────────────────────── */}
       <div className="fade-in-3">
+        <GitHubConnectionCard />
         <EditCard />
       </div>
 

@@ -6,15 +6,15 @@ import FeedbackCard from "../components/FeedbackCard";
 import BadgeToast from "../components/BadgeToast";
 import { useSensei } from "../context/SenseiContext";
 
-const ACCEPT = ".txt,.md,.py,.json,.pdf";
-
 export default function SubmitWork() {
   const { dayId } = useParams();
   const navigate = useNavigate();
   const { triggerEvent } = useSensei();
+
   const [day, setDay] = useState(null);
-  const [content, setContent] = useState("");
-  const [file, setFile] = useState(null);
+  const [linkedRepo, setLinkedRepo] = useState(null);
+  const [ghConnected, setGhConnected] = useState(null);
+
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
@@ -22,57 +22,50 @@ export default function SubmitWork() {
 
   useEffect(() => {
     client.get(`/program-days/${dayId}`).then((r) => setDay(r.data.day)).catch((e) => setError(e.message));
+    client.get("/programs/me").then((r) => {
+      const prog = r.data.program;
+      if (prog?.github_owner && prog?.github_repo) {
+        setLinkedRepo({ owner: prog.github_owner, repo: prog.github_repo, subfolder: prog.github_subfolder || "" });
+      }
+    }).catch(() => {});
+    client.get("/auth/github/status")
+      .then((r) => setGhConnected(r.data.connected))
+      .catch(() => setGhConnected(false));
   }, [dayId]);
 
-  const submit = async () => {
-    setError(""); setResult(null);
-    if (!content.trim()) {
-      setError("Describe what you did. This is what gets evaluated.");
-      return;
+  const handleResult = (data) => {
+    setResult(data);
+    if (data.evaluation?.passed) {
+      const dayNum = day?.day_number ?? 0;
+      if (dayNum >= 15) {
+        const fire = (origin) => confetti({ particleCount: 90, spread: 70, origin, startVelocity: 45 });
+        fire({ x: 0.25, y: 0.65 });
+        setTimeout(() => fire({ x: 0.75, y: 0.65 }), 180);
+        setTimeout(() => fire({ x: 0.5, y: 0.6 }), 360);
+      } else {
+        confetti({ particleCount: 55, spread: 60, origin: { y: 0.7 } });
+      }
     }
+    const earned = data.new_badges || [];
+    if (earned.length) {
+      setNewBadges(earned);
+      setTimeout(() => setNewBadges([]), 6000);
+    }
+    const passed = data.evaluation?.passed;
+    const score = data.feedback?.score ?? 0;
+    if (passed) triggerEvent(score >= 10 ? "perfect10" : "pass");
+    else triggerEvent("fail");
+    if (earned.length) setTimeout(() => triggerEvent("badge_earned"), passed ? 8000 : 4000);
+  };
+
+  const submitGitHub = async () => {
+    setError(""); setResult(null);
     setBusy(true);
     try {
-      const fd = new FormData();
-      fd.append("program_day_id", dayId);
-      fd.append("content", content);
-      if (file) fd.append("file", file);
-
-      const res = await client.post("/submissions", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setResult(res.data);
-
-      if (res.data.evaluation?.passed) {
-        const dayNum = day?.day_number ?? 0;
-        if (dayNum >= 15) {
-          // Big celebration for final days — three volleys from both sides
-          const fire = (origin) =>
-            confetti({ particleCount: 90, spread: 70, origin, startVelocity: 45 });
-          fire({ x: 0.25, y: 0.65 });
-          setTimeout(() => fire({ x: 0.75, y: 0.65 }), 180);
-          setTimeout(() => fire({ x: 0.5, y: 0.6 }), 360);
-        } else {
-          confetti({ particleCount: 55, spread: 60, origin: { y: 0.7 } });
-        }
-      }
-
-      const earned = res.data.new_badges || [];
-      if (earned.length) {
-        setNewBadges(earned);
-        setTimeout(() => setNewBadges([]), 6000);
-      }
-
-      // Sensei reactions
-      const passed = res.data.evaluation?.passed;
-      const score  = res.data.feedback?.score ?? 0;
-      if (passed) {
-        triggerEvent(score >= 10 ? "perfect10" : "pass");
-      } else {
-        triggerEvent("fail");
-      }
-      if (earned.length) setTimeout(() => triggerEvent("badge_earned"), passed ? 8000 : 4000);
+      const res = await client.post("/submissions/github", { program_day_id: dayId });
+      handleResult(res.data);
     } catch (e) {
-      setError(e.message);
+      setError(e.response?.data?.detail || e.message);
     } finally {
       setBusy(false);
     }
@@ -81,32 +74,82 @@ export default function SubmitWork() {
   return (
     <div>
       <h1 className="page-title">Submit Work</h1>
-      <p className="page-sub">
-        {day ? `Day ${day.day_number} — ${day.title}` : "…"}
-      </p>
+      <p className="page-sub">{day ? `Day ${day.day_number} — ${day.title}` : "…"}</p>
 
       {error && <div className="alert err">{error}</div>}
 
       {!result && (
         <div className="card">
-          <label>What did you build / complete?</label>
-          <textarea
-            placeholder="Explain what you did, decisions you made, and anything you struggled with."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            style={{ minHeight: 160 }}
-          />
-
-          <label>Optional file (evidence)</label>
-          <input type="file" accept={ACCEPT} onChange={(e) => setFile(e.target.files[0] || null)} />
-          <p className="muted" style={{ fontSize: 12, marginTop: 6 }}>
-            Accepted: .txt .md .py .json .pdf · max 5MB · uploaded files are auto-analyzed and fed
-            into the evaluation.
-          </p>
-
-          <button className="full" style={{ marginTop: 20 }} onClick={submit} disabled={busy}>
-            {busy ? <><span className="spinner" /> &nbsp;Analyzing & evaluating…</> : "Submit for evaluation"}
-          </button>
+          {ghConnected === null ? (
+            <div style={{ color: "var(--faint)", fontSize: 14 }}>
+              <span className="spinner" /> &nbsp;Loading…
+            </div>
+          ) : !ghConnected ? (
+            <div style={{ textAlign: "center", padding: "24px 0" }}>
+              <div style={{ fontWeight: 600, marginBottom: 8 }}>GitHub account not connected</div>
+              <p className="muted" style={{ fontSize: 13, marginBottom: 16 }}>
+                Connect your GitHub account on your Profile page to enable repo-based submissions.
+              </p>
+              <button onClick={() => navigate("/profile")} style={{ transform: "none" }}>
+                Go to Profile →
+              </button>
+            </div>
+          ) : !linkedRepo ? (
+            <div style={{ textAlign: "center", padding: "24px 0" }}>
+              <div style={{ fontWeight: 600, marginBottom: 8 }}>No repo linked</div>
+              <p className="muted" style={{ fontSize: 13, marginBottom: 16 }}>
+                Link your GitHub project repo on Day 0 before submitting.
+              </p>
+              <button className="ghost" onClick={() => navigate("/program")} style={{ transform: "none" }}>
+                Go to My Program →
+              </button>
+            </div>
+          ) : (
+            <>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 12,
+                padding: "12px 16px",
+                background: "rgba(77,208,255,0.06)",
+                border: "1px solid rgba(77,208,255,0.2)",
+                borderRadius: "var(--radius)",
+                marginBottom: 16, fontSize: 14,
+              }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, color: "var(--cyan)" }}>
+                    {linkedRepo.owner}/{linkedRepo.repo}
+                    {linkedRepo.subfolder && (
+                      <span className="muted"> /{linkedRepo.subfolder}</span>
+                    )}
+                  </div>
+                  <div className="muted" style={{ fontSize: 12, marginTop: 2 }}>
+                    The evaluator will read your latest pushed code directly.
+                  </div>
+                </div>
+                <span style={{
+                  fontSize: 11, fontWeight: 600, padding: "3px 9px",
+                  borderRadius: 99, flexShrink: 0,
+                  background: "rgba(74,222,128,0.1)",
+                  color: "var(--green)",
+                  border: "1px solid rgba(74,222,128,0.22)",
+                }}>
+                  OAuth ✓
+                </span>
+              </div>
+              <p className="muted" style={{ fontSize: 13, marginBottom: 20 }}>
+                Make sure you've pushed your latest work before submitting.
+              </p>
+              <button
+                className="full"
+                style={{ transform: "none" }}
+                onClick={submitGitHub}
+                disabled={busy}
+              >
+                {busy
+                  ? <><span className="spinner" /> &nbsp;Fetching code & evaluating…</>
+                  : "Submit via GitHub →"}
+              </button>
+            </>
+          )}
         </div>
       )}
 
@@ -122,7 +165,7 @@ export default function SubmitWork() {
 
           {result.submission.file_analysis && (
             <div className="card">
-              <h3>File analysis</h3>
+              <h3>Submission details</h3>
               <div className="mono-block">
                 {JSON.stringify(result.submission.file_analysis, null, 2)}
               </div>
@@ -133,9 +176,7 @@ export default function SubmitWork() {
             {result.evaluation.passed ? (
               <button onClick={() => navigate("/program")}>Back to program →</button>
             ) : (
-              <button onClick={() => { setResult(null); setContent(""); setFile(null); }}>
-                Resubmit
-              </button>
+              <button onClick={() => { setResult(null); setError(""); }}>Resubmit</button>
             )}
             <button className="ghost" onClick={() => navigate("/history")}>View history</button>
           </div>

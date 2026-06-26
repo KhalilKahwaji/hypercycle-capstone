@@ -1,8 +1,10 @@
 import os
+import secrets
 import time
 import json
 import logging
 import re
+import urllib.parse
 import urllib.request
 import urllib.error
 from pathlib import Path
@@ -19,7 +21,7 @@ from fastapi import (
     FastAPI, HTTPException, UploadFile, File, Form, status, Request,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel, EmailStr, Field
 from supabase import create_client, Client
 from openai import OpenAI as _GroqFactory
@@ -32,6 +34,7 @@ import program_generator
 import evaluator
 import achievements
 import platform_knowledge
+import github_reader
 
 # -----------------------------
 # Config
@@ -50,6 +53,11 @@ MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 
 ENABLE_SIMULATE = os.getenv("ENABLE_SIMULATE", "false").lower() == "true"
+
+GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID", "")
+GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET", "")
+GITHUB_CALLBACK_URL = os.getenv("GITHUB_CALLBACK_URL", "http://localhost:8000/auth/github/callback")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 PUBLIC_PATHS = {
     "/", "/health", "/users/register", "/users/login",
@@ -162,6 +170,17 @@ class CliAskRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000)
 
 
+class LinkRepoRequest(BaseModel):
+    github_url: Optional[str] = None
+    owner: Optional[str] = None
+    repo: Optional[str] = None
+    subfolder: Optional[str] = ""
+
+
+class GitHubSubmitRequest(BaseModel):
+    program_day_id: str = Field(..., min_length=1)
+
+
 # -----------------------------
 # Helpers
 # -----------------------------
@@ -201,6 +220,9 @@ def is_public_path(path: str) -> bool:
     if path in PUBLIC_PATHS or path.startswith("/docs"):
         return True
     if ENABLE_SIMULATE and path.startswith("/simulate"):
+        return True
+    # GitHub OAuth callback has no app JWT — security comes from the state check
+    if path == "/auth/github/callback":
         return True
     return False
 
@@ -243,6 +265,8 @@ def find_user_by_username_or_email(value: str):
 def remove_password_hash(user: dict) -> dict:
     safe = dict(user)
     safe.pop("password_hash", None)
+    safe.pop("github_access_token", None)  # never expose OAuth tokens
+    safe.pop("github_oauth_state", None)   # never expose CSRF state
     return safe
 
 
@@ -471,6 +495,104 @@ def get_me(request: Request):
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
     return {"user": remove_password_hash(user)}
+
+
+# -----------------------------
+# GitHub OAuth
+# -----------------------------
+@app.get("/auth/github/start")
+def github_oauth_start(request: Request):
+    """Return the GitHub authorize URL. Frontend redirects the user there."""
+    if not GITHUB_CLIENT_ID:
+        raise HTTPException(status_code=503, detail="GitHub OAuth is not configured on this server.")
+    user_id = request.state.user_id
+    state = secrets.token_hex(24)
+    safe_execute(supabase.table("users").update({"github_oauth_state": state}).eq("id", user_id))
+    params = urllib.parse.urlencode({
+        "client_id": GITHUB_CLIENT_ID,
+        "redirect_uri": GITHUB_CALLBACK_URL,
+        "scope": "repo",
+        "state": state,
+    })
+    return {"auth_url": f"https://github.com/login/oauth/authorize?{params}"}
+
+
+@app.get("/auth/github/callback")
+def github_oauth_callback(
+    code: Optional[str] = None,
+    state: Optional[str] = None,
+    error: Optional[str] = None,
+):
+    """
+    GitHub redirects here after the user authorizes (or denies) the app.
+    Public path — verified by the `state` param instead of a JWT.
+    Always redirects back to the frontend; never returns raw data.
+    """
+    front = FRONTEND_URL
+
+    if error:
+        return RedirectResponse(url=f"{front}/profile?github=error&reason=denied", status_code=302)
+
+    if not code or not state:
+        return RedirectResponse(url=f"{front}/profile?github=error&reason=invalid_request", status_code=302)
+
+    user_res = safe_execute(
+        supabase.table("users").select("id").eq("github_oauth_state", state)
+    )
+    if not user_res.data:
+        return RedirectResponse(url=f"{front}/profile?github=error&reason=state_mismatch", status_code=302)
+
+    user_id = user_res.data[0]["id"]
+
+    try:
+        access_token = _exchange_github_code(code)
+    except Exception as e:
+        log_json({"event": "github_oauth_exchange_failed", "user_id": user_id, "error": repr(e)})
+        return RedirectResponse(url=f"{front}/profile?github=error&reason=token_exchange_failed", status_code=302)
+
+    try:
+        gh_username = _get_github_user(access_token)
+    except Exception as e:
+        log_json({"event": "github_oauth_user_failed", "user_id": user_id, "error": repr(e)})
+        return RedirectResponse(url=f"{front}/profile?github=error&reason=user_fetch_failed", status_code=302)
+
+    safe_execute(supabase.table("users").update({
+        "github_access_token": access_token,
+        "github_username": gh_username,
+        "github_connected_at": datetime.now(timezone.utc).isoformat(),
+        "github_oauth_state": None,
+    }).eq("id", user_id))
+
+    log_json({"event": "github_oauth_connected", "user_id": user_id, "github_username": gh_username})
+    return RedirectResponse(url=f"{front}/profile?github=connected", status_code=302)
+
+
+@app.post("/auth/github/disconnect")
+def github_disconnect(request: Request):
+    """Revoke the stored GitHub OAuth token and clear the connection."""
+    user_id = request.state.user_id
+    safe_execute(supabase.table("users").update({
+        "github_access_token": None,
+        "github_username": None,
+        "github_connected_at": None,
+        "github_oauth_state": None,
+    }).eq("id", user_id))
+    log_json({"event": "github_oauth_disconnected", "user_id": user_id})
+    return {"message": "GitHub account disconnected."}
+
+
+@app.get("/auth/github/status")
+def github_status(request: Request):
+    """Return connection state. NEVER returns the access token."""
+    user = find_user_by_id(request.state.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+    connected = bool(user.get("github_access_token"))
+    return {
+        "connected": connected,
+        "github_username": user.get("github_username") if connected else None,
+        "connected_at": user.get("github_connected_at") if connected else None,
+    }
 
 
 # -----------------------------
@@ -713,7 +835,7 @@ def complete_setup_day(request: Request, day_id: str):
     day = day_res.data[0]
 
     prog = safe_execute(
-        supabase.table("programs").select("user_id").eq("id", day["program_id"])
+        supabase.table("programs").select("user_id,github_owner,github_repo").eq("id", day["program_id"])
     )
     if not prog.data or prog.data[0]["user_id"] != user_id:
         raise HTTPException(status_code=403, detail="You cannot access this program day.")
@@ -722,6 +844,20 @@ def complete_setup_day(request: Request, day_id: str):
         raise HTTPException(
             status_code=403,
             detail="Only the setup day can be completed without review.",
+        )
+
+    # Gate: GitHub must be connected and a repo must be linked before completing setup
+    user = find_user_by_id(user_id)
+    if not user or not user.get("github_access_token"):
+        raise HTTPException(
+            status_code=400,
+            detail="Connect your GitHub account on the Profile page before completing Day 0.",
+        )
+    prog_row = prog.data[0]
+    if not prog_row.get("github_owner") or not prog_row.get("github_repo"):
+        raise HTTPException(
+            status_code=400,
+            detail="Link your GitHub project repo above before completing Day 0.",
         )
 
     if not day["is_completed"]:
@@ -741,6 +877,177 @@ def complete_setup_day(request: Request, day_id: str):
 
     achievements.check_and_award(supabase, user_id, "setup_complete")
     return {"message": "Setup day completed.", "day_id": day_id}
+
+
+# -----------------------------
+# GitHub OAuth helpers (server-side only — tokens never leave the backend)
+# -----------------------------
+def _exchange_github_code(code: str) -> str:
+    """Exchange an OAuth authorization code for an access token."""
+    body = urllib.parse.urlencode({
+        "client_id": GITHUB_CLIENT_ID,
+        "client_secret": GITHUB_CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": GITHUB_CALLBACK_URL,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://github.com/login/oauth/access_token",
+        data=body,
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "HyperCycle/1.0",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        raise ValueError(f"Token exchange request failed: {e}")
+    if "error" in result:
+        raise ValueError(result.get("error_description") or result["error"])
+    token = result.get("access_token")
+    if not token:
+        raise ValueError("GitHub did not return an access token.")
+    return token
+
+
+def _get_github_user(token: str) -> str:
+    """Fetch the authenticated GitHub username for the given token."""
+    req = urllib.request.Request(
+        "https://api.github.com/user",
+        headers={
+            "Accept": "application/vnd.github.v3+json",
+            "Authorization": f"Bearer {token}",
+            "User-Agent": "HyperCycle/1.0",
+        },
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        raise ValueError(f"GitHub user fetch failed: {e}")
+    username = data.get("login")
+    if not username:
+        raise ValueError("Could not retrieve GitHub username from token.")
+    return username
+
+
+# -----------------------------
+# GitHub repo helpers
+# -----------------------------
+def _parse_github_url(url: str) -> tuple:
+    """Return (owner, repo, subfolder) from a GitHub URL or 'owner/repo' string."""
+    url = url.strip().rstrip("/")
+    url = re.sub(r'^https?://github\.com/', '', url)
+    url = re.sub(r'^github\.com/', '', url)
+    parts = url.split("/")
+    if len(parts) < 2 or not parts[0] or not parts[1]:
+        raise ValueError("Invalid GitHub URL. Expected format: github.com/owner/repo")
+    owner = parts[0]
+    repo_name = parts[1]
+    # Strip .git suffix if present
+    if repo_name.endswith(".git"):
+        repo_name = repo_name[:-4]
+    # Handle /tree/branch/subfolder
+    subfolder = ""
+    if len(parts) > 3 and parts[2] == "tree":
+        subfolder = "/".join(parts[4:]) if len(parts) > 4 else ""
+    return owner, repo_name, subfolder
+
+
+def _generate_repo_summary(repo_text: str, repo_name: str) -> str:
+    """Generate a concise summary of the current repo state for use as future grading context."""
+    response = _groq_client.chat.completions.create(
+        model=_GROQ_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a code analyst. Given a student's project files, write a brief "
+                    "technical summary (3-5 sentences) describing what the project implements "
+                    "and its current state. Focus on what has been built, key files, and "
+                    "overall structure. Be concise and factual."
+                ),
+            },
+            {
+                "role": "user",
+                "content": f"Summarize this project ({repo_name}):\n\n{repo_text[:6000]}",
+            },
+        ],
+        temperature=0.3,
+        max_tokens=300,
+    )
+    return response.choices[0].message.content.strip()
+
+
+def _on_pass(user_id: str, day: dict, program_day_id: str, evaluation, submission_text: str):
+    """Mark day complete, unlock next day, and run best-effort adaptation. Called on passing grade."""
+    safe_execute(
+        supabase.table("program_days").update({"is_completed": True}).eq("id", program_day_id)
+    )
+    next_day = safe_execute(
+        supabase.table("program_days").select("id")
+        .eq("program_id", day["program_id"])
+        .eq("day_number", day["day_number"] + 1)
+    )
+    if not next_day.data:
+        return
+    next_day_id = next_day.data[0]["id"]
+    safe_execute(
+        supabase.table("program_days").update({"is_unlocked": True}).eq("id", next_day_id)
+    )
+    try:
+        next_day_full = safe_execute(
+            supabase.table("program_days").select("*").eq("id", next_day_id)
+        ).data
+        if not next_day_full or next_day_full[0].get("is_completed"):
+            return
+        next_day_row = next_day_full[0]
+        already_submitted = safe_execute(
+            supabase.table("submissions").select("id")
+            .eq("program_day_id", next_day_id).limit(1)
+        ).data
+        if already_submitted:
+            return
+        prog_meta = safe_execute(
+            supabase.table("programs").select("title,summary").eq("id", day["program_id"])
+        ).data
+        user_for_adapt = find_user_by_id(user_id)
+        uname = user_for_adapt.get("username", "learner") if user_for_adapt else "learner"
+        adapted = program_generator.adapt_next_day(
+            program_title=prog_meta[0]["title"] if prog_meta else "",
+            program_summary=prog_meta[0]["summary"] if prog_meta else "",
+            next_day_current=next_day_row,
+            prev_day=day,
+            prev_submission_text=submission_text,
+            prev_feedback={
+                "score": evaluation.score,
+                "passed": evaluation.passed,
+                "summary": evaluation.summary,
+                "strengths": evaluation.strengths,
+                "issues": evaluation.issues,
+                "required_fixes": evaluation.required_fixes,
+            },
+            username=uname,
+        )
+        safe_execute(
+            supabase.table("program_days").update({
+                "title": adapted["title"],
+                "objective": adapted["objective"],
+                "research_topics": "\n".join(adapted["research_topics"]),
+                "task_description": adapted["task_description"],
+                "expected_output": adapted["expected_output"],
+                "evaluation_criteria": adapted["evaluation_criteria"],
+                "estimated_hours": adapted["estimated_hours"],
+                "unlock_condition": adapted["unlock_condition"],
+            }).eq("id", next_day_id)
+        )
+        log_json({"event": "day_adapted", "user_id": user_id, "day_id": next_day_id,
+                  "day_number": next_day_row["day_number"]})
+    except Exception as _adapt_err:
+        log_json({"event": "adaptation_failed", "user_id": user_id, "error": repr(_adapt_err)})
 
 
 # -----------------------------
@@ -824,83 +1131,8 @@ async def create_submission(
         "raw_feedback": evaluation.model_dump(),
     })).data[0]
 
-    # On pass: mark day complete and unlock the next day.
     if evaluation.passed:
-        safe_execute(
-            supabase.table("program_days").update({"is_completed": True}).eq("id", program_day_id)
-        )
-        next_day = safe_execute(
-            supabase.table("program_days").select("id")
-            .eq("program_id", day["program_id"])
-            .eq("day_number", day["day_number"] + 1)
-        )
-        if next_day.data:
-            next_day_id = next_day.data[0]["id"]
-            safe_execute(
-                supabase.table("program_days").update({"is_unlocked": True})
-                .eq("id", next_day_id)
-            )
-            # Best-effort: adapt the next day's content based on actual performance.
-            # Any failure here is logged and swallowed — it must never break the pass.
-            try:
-                next_day_full = safe_execute(
-                    supabase.table("program_days").select("*").eq("id", next_day_id)
-                ).data
-                if next_day_full and not next_day_full[0].get("is_completed"):
-                    next_day_row = next_day_full[0]
-                    # Don't overwrite a day the user already started.
-                    already_submitted = safe_execute(
-                        supabase.table("submissions").select("id")
-                        .eq("program_day_id", next_day_id).limit(1)
-                    ).data
-                    if not already_submitted:
-                        prog_meta = safe_execute(
-                            supabase.table("programs").select("title,summary")
-                            .eq("id", day["program_id"])
-                        ).data
-                        user_for_adapt = find_user_by_id(user_id)
-                        uname = (
-                            user_for_adapt.get("username", "learner")
-                            if user_for_adapt else "learner"
-                        )
-                        adapted = program_generator.adapt_next_day(
-                            program_title=prog_meta[0]["title"] if prog_meta else "",
-                            program_summary=prog_meta[0]["summary"] if prog_meta else "",
-                            next_day_current=next_day_row,
-                            prev_day=day,
-                            prev_submission_text=clean_content,
-                            prev_feedback={
-                                "score": evaluation.score,
-                                "passed": evaluation.passed,
-                                "summary": evaluation.summary,
-                                "strengths": evaluation.strengths,
-                                "issues": evaluation.issues,
-                                "required_fixes": evaluation.required_fixes,
-                            },
-                            username=uname,
-                        )
-                        safe_execute(
-                            supabase.table("program_days").update({
-                                "title": adapted["title"],
-                                "objective": adapted["objective"],
-                                "research_topics": "\n".join(adapted["research_topics"]),
-                                "task_description": adapted["task_description"],
-                                "expected_output": adapted["expected_output"],
-                                "evaluation_criteria": adapted["evaluation_criteria"],
-                                "estimated_hours": adapted["estimated_hours"],
-                                "unlock_condition": adapted["unlock_condition"],
-                            }).eq("id", next_day_id)
-                        )
-                        log_json({
-                            "event": "day_adapted", "user_id": user_id,
-                            "day_id": next_day_id,
-                            "day_number": next_day_row["day_number"],
-                        })
-            except Exception as _adapt_err:
-                log_json({
-                    "event": "adaptation_failed", "user_id": user_id,
-                    "error": repr(_adapt_err),
-                })
+        _on_pass(user_id, day, program_day_id, evaluation, clean_content)
 
     new_badges = achievements.check_and_award(supabase, user_id, "web_submission", {
         "score": evaluation.score,
@@ -910,6 +1142,200 @@ async def create_submission(
     })
     return {
         "message": "Submission evaluated.",
+        "submission": submission,
+        "feedback": feedback_row,
+        "evaluation": evaluation.model_dump(),
+        "new_badges": new_badges,
+    }
+
+
+# -----------------------------
+# GitHub repo linking
+# -----------------------------
+@app.post("/programs/link-repo")
+def link_repo(request: Request, body: LinkRepoRequest):
+    user_id = request.state.user_id
+
+    if body.github_url:
+        try:
+            owner, repo_name, subfolder = _parse_github_url(body.github_url)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+    else:
+        if not body.owner or not body.repo:
+            raise HTTPException(status_code=400, detail="Provide github_url or both owner and repo.")
+        owner = body.owner.strip()
+        repo_name = body.repo.strip()
+        subfolder = (body.subfolder or "").strip()
+
+    user = find_user_by_id(user_id)
+    user_token = user.get("github_access_token") if user else None
+
+    if not user_token:
+        raise HTTPException(
+            status_code=400,
+            detail="Connect your GitHub account on the Profile page before linking a repo.",
+        )
+
+    try:
+        github_reader.validate_repo(owner, repo_name, user_token=user_token)
+    except github_reader.GitHubRepoError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Could not access the repository. Make sure it exists and is accessible.")
+
+    prog = safe_execute(supabase.table("programs").select("id").eq("user_id", user_id))
+    if not prog.data:
+        raise HTTPException(status_code=404, detail="No program found. Generate your program first.")
+
+    safe_execute(
+        supabase.table("programs").update({
+            "github_owner": owner,
+            "github_repo": repo_name,
+            "github_subfolder": subfolder,
+        }).eq("user_id", user_id)
+    )
+    log_json({"event": "repo_linked", "user_id": user_id, "owner": owner, "repo": repo_name})
+    return {
+        "message": "Repository linked.",
+        "owner": owner,
+        "repo": repo_name,
+        "subfolder": subfolder,
+        "url": f"https://github.com/{owner}/{repo_name}",
+    }
+
+
+# -----------------------------
+# GitHub submissions
+# -----------------------------
+@app.post("/submissions/github", status_code=status.HTTP_201_CREATED)
+def create_github_submission(request: Request, body: GitHubSubmitRequest):
+    user_id = request.state.user_id
+
+    day_res = safe_execute(supabase.table("program_days").select("*").eq("id", body.program_day_id))
+    if not day_res.data:
+        raise HTTPException(status_code=404, detail="Program day not found.")
+    day = day_res.data[0]
+
+    prog_res = safe_execute(
+        supabase.table("programs").select("*").eq("id", day["program_id"])
+    )
+    if not prog_res.data or prog_res.data[0]["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="You cannot submit for this program day.")
+    prog = prog_res.data[0]
+
+    if not day["is_unlocked"]:
+        raise HTTPException(status_code=403, detail="This day is locked. Pass the previous day first.")
+
+    owner = prog.get("github_owner")
+    repo_name = prog.get("github_repo")
+    if not owner or not repo_name:
+        raise HTTPException(
+            status_code=400,
+            detail="No GitHub repo linked. Link your repo on Day 0 first.",
+        )
+    subfolder = prog.get("github_subfolder") or ""
+
+    # Require a connected GitHub account for all repo reads
+    user = find_user_by_id(user_id)
+    user_token = user.get("github_access_token") if user else None
+
+    if not user_token:
+        raise HTTPException(
+            status_code=400,
+            detail="Connect your GitHub account on the Profile page to submit via GitHub.",
+        )
+
+    try:
+        repo_text, file_count, truncated = github_reader.fetch_repo_text(
+            owner, repo_name, subfolder, user_token=user_token
+        )
+    except github_reader.GitHubRepoError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        log_json({"event": "github_fetch_failed", "user_id": user_id, "error": repr(e)})
+        raise HTTPException(status_code=502, detail="Could not read the GitHub repository. Please try again.")
+
+    # Get prior repo summary from the most recent passed feedback for this program
+    prior_summary = None
+    try:
+        prior_fb = safe_execute(
+            supabase.table("submission_feedback")
+            .select("repo_summary")
+            .eq("user_id", user_id)
+            .eq("passed", True)
+            .order("created_at", desc=True)
+            .limit(1)
+        )
+        if prior_fb.data and prior_fb.data[0].get("repo_summary"):
+            prior_summary = prior_fb.data[0]["repo_summary"]
+    except Exception as e:
+        log_json({"event": "prior_summary_fetch_failed", "user_id": user_id, "error": repr(e)})
+
+    try:
+        evaluation = evaluator.evaluate_submission(
+            day=day,
+            submission_text=repo_text,
+            prior_summary=prior_summary,
+        )
+    except Exception as e:
+        log_json({"event": "github_eval_failed", "user_id": user_id, "error": repr(e)})
+        raise HTTPException(status_code=502, detail="Could not evaluate submission. Please try again.")
+
+    submission_content = f"[GitHub submission: {owner}/{repo_name}]"
+    submission = safe_execute(supabase.table("submissions").insert({
+        "user_id": user_id,
+        "program_day_id": body.program_day_id,
+        "day_number": day["day_number"],
+        "content": submission_content,
+        "file_url": None,
+        "file_analysis": {
+            "source": "github",
+            "owner": owner,
+            "repo": repo_name,
+            "subfolder": subfolder,
+            "files_read": file_count,
+            "truncated": truncated,
+        },
+        "source": "github",
+    })).data[0]
+
+    # Generate fresh repo summary (best-effort — failure must not break the submission)
+    repo_summary = None
+    try:
+        repo_summary = _generate_repo_summary(repo_text, f"{owner}/{repo_name}")
+    except Exception as e:
+        log_json({"event": "repo_summary_gen_failed", "user_id": user_id, "error": repr(e)})
+
+    feedback_row = safe_execute(supabase.table("submission_feedback").insert({
+        "submission_id": submission["id"],
+        "user_id": user_id,
+        "program_day_id": body.program_day_id,
+        "score": evaluation.score,
+        "passed": evaluation.passed,
+        "summary": evaluation.summary,
+        "strengths": "\n".join(evaluation.strengths),
+        "issues": "\n".join(evaluation.issues),
+        "required_fixes": "\n".join(evaluation.required_fixes),
+        "next_steps": "\n".join(evaluation.next_steps),
+        "raw_feedback": evaluation.model_dump(),
+        "repo_summary": repo_summary,
+    })).data[0]
+
+    if evaluation.passed:
+        _on_pass(user_id, day, body.program_day_id, evaluation, submission_content)
+
+    new_badges = achievements.check_and_award(supabase, user_id, "web_submission", {
+        "score": evaluation.score,
+        "passed": evaluation.passed,
+        "day_number": day["day_number"],
+        "program_day_id": body.program_day_id,
+    })
+    log_json({"event": "github_submission_evaluated", "user_id": user_id,
+              "day_number": day["day_number"], "passed": evaluation.passed,
+              "score": evaluation.score})
+    return {
+        "message": "GitHub submission evaluated.",
         "submission": submission,
         "feedback": feedback_row,
         "evaluation": evaluation.model_dump(),
