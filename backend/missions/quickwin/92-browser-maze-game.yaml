@@ -1,0 +1,85 @@
+id: browser-maze-game
+version: 1
+title: Build a Simple Maze Game in the Browser
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Design a maze on paper, build it as a playable browser game with arrow-key movement and collision - then learn why walls are the hard part.
+goal: A playable maze game with a layout you designed, working movement and wall collision, a win condition, and one extra mechanic of your choice.
+brief: |
+  Every game you've ever played stands on two pillars: things MOVE, and
+  things STOP when they hit other things. Movement and collision. A maze
+  game is those two pillars and nothing else - which makes it the perfect
+  first real game.
+
+  DESIGN THE MAZE FIRST, on paper or in a text grid - # for walls, dots
+  for paths, S for start, E for exit. Make it actually good: a tempting
+  wrong path that wastes time, a corridor that LOOKS dead but isn't, the
+  exit visible early but reachable late (cruelty is level design). A maze
+  generated randomly teaches nothing; a maze designed by you has intent
+  in every wall.
+
+  Then build: your grid rendered as the level, a player square moving on
+  arrow keys, and COLLISION - the player stops at walls instead of
+  ghosting through. When collision misbehaves (walking through corners,
+  sticking to walls, the classic glitches), debug by precise symptom
+  report: "moving right into a wall stops me, but holding down+right
+  slides me through corners" - that sentence gets fixes; "collision is
+  broken" gets guesses.
+
+  Add a win state at the exit, then ONE mechanic of your choice: a timer,
+  a key that opens a door, a patrolling enemy square, fog that limits
+  vision. One mechanic chosen well changes the whole game's personality -
+  feel that power.
+
+  Done when a friend gets lost in YOUR wrong turn, exactly as designed.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and iterate the game; grid-based logic suits it well.
+  - surface: claude_project
+    why: Strong at collision debugging from symptom descriptions.
+  - surface: replit
+    why: Host it - mazes are made for sharing.
+skills:
+  teaches: [debugging-loop, prompt-decomposition]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: file_upload
+    description: Your maze design grid, made before the build.
+  - type: screenshot
+    description: The game in play, and the win state.
+  - type: prompt_log
+    description: The build conversation including at least one collision bug reported by symptom and fixed.
+evaluation:
+  deterministic_checks:
+    - id: design_grid_present
+      description: A pre-build maze layout with start, exit, and deliberate features is attached.
+    - id: game_evidence
+      description: Screenshots show working gameplay and the win condition firing.
+    - id: debug_present
+      description: Prompt log documents a symptom-reported bug and its fix.
+  rubric:
+    - criterion: The level is designed with intent
+      looks_like: The maze contains the planned features - wrong path, fake dead end, visible-but-far exit - and the build matches the design grid.
+      weight: 0.3
+    - criterion: Movement and collision are solid
+      looks_like: Arrow keys move the player smoothly, walls genuinely block in all directions including corners - hunted and verified deliberately.
+      weight: 0.4
+    - criterion: The extra mechanic lands
+      looks_like: One chosen mechanic works and visibly changes how the maze plays, with the learner able to say why they chose it.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Hand the AI your exact grid: "Build a maze game from this layout - # is wall, . is path, S start, E exit: [paste grid]. Player is a colored square, arrow keys move one cell per press, walls block movement." Grid-in beats describe-and-hope.'
+  - level: 2
+    hint: Cell-by-cell movement (one grid square per keypress) makes collision nearly bulletproof - the game just checks "is the target cell a wall?" before moving. Smooth pixel movement is prettier and 5x buggier; for mission one, take the grid.
+  - level: 3
+    hint: 'For your mechanic, the key-and-door is the best teacher: a key cell that sets a flag, a door cell that checks it. One variable, two cell types - and suddenly your game has PROGRESSION. Ask for exactly that if you''re unsure which to pick.'
+reflection_prompts:
+  - What makes a maze fun versus just annoying - where's the line?
+  - Why is collision detection harder than movement?
+unlocks: [adventure-story-game, photo-memory-game, reaction-time-tester]
+stretch_challenge: Add a second level that loads when the first is won - and feel how fast "a level" becomes "a level SYSTEM" the moment there are two.
+safety_notes: Nothing sensitive here - design cruel mazes, share them proudly, accept no responsibility for friendships strained by your fake dead end.

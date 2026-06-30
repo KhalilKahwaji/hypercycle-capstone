@@ -1,0 +1,83 @@
+id: report-a-problem-form
+version: 1
+title: Build a "Report a Problem" Form for a School or Club
+track: community
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a problem-reporting system for a real group - structured intake, a triage view, and the human handoff that makes it real infrastructure.
+goal: A working report-a-problem system for a real school, club, or team - structured form, triage sheet with status tracking, agreed handoff to a real owner, and at least three real reports processed.
+brief: |
+  Every group has broken things nobody reports: the projector that died
+  in March, the bathroom tap, the goalpost net, the suggestion nobody
+  knows where to send. Not because people don't care - because there's
+  NOWHERE TO PUT the report. Today you build the somewhere.
+
+  The form is structured intake design: WHAT is the problem (category
+  dropdown - equipment, facilities, safety, suggestion - categories you
+  confirm with whoever runs the place), WHERE exactly ("the tap" helps
+  nobody; "left tap, ground-floor bathroom" gets fixed), HOW URGENT
+  (reporter's view, three levels with plain descriptions - "safety
+  risk" / "annoying daily" / "when someone gets a chance"), an optional
+  photo, and optional contact for follow-up. Anonymous allowed -
+  anonymity raises reporting honesty, you know this from your feedback-
+  form work.
+
+  The triage sheet is where reports become action: each arrival gets a
+  status (new → seen → in progress → done) and an owner. Build the
+  at-a-glance view - new items highlighted, safety category red.
+
+  And the step that separates a system from a school project: THE
+  HANDOFF. A real person with actual authority (the club leader, a
+  teacher, the coach) must agree to check the sheet and own the
+  statuses - infrastructure without an owner is decoration. Get the
+  agreement, run a pilot with at least three real reports, and watch
+  at least one thing actually get fixed. That fixed thing is your
+  deliverable.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Structured intake plus the triage sheet - the full system, shareable with the owner.
+  - surface: google_ai_studio
+    why: Question design and the triage-view formulas and formatting.
+skills:
+  teaches: [data-structuring, user-feedback]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The form, the triage sheet with statuses in use, and at least three real reports.
+  - type: prompt_log
+    description: Your category and urgency design (confirmed with the group), and the handoff agreement described.
+  - type: reflection
+    description: Two sentences - what got fixed (or moved toward fixed), and what did the owner say about the triage view?
+evaluation:
+  deterministic_checks:
+    - id: system_evidence
+      description: Screenshots show form, triage sheet with status tracking, and three or more real reports.
+    - id: handoff_present
+      description: A named real owner agreed to run the triage - documented.
+    - id: design_confirmation_present
+      description: Categories and urgency levels were confirmed with the actual group.
+  rubric:
+    - criterion: Intake is structured for action
+      looks_like: Categories, precise-location prompting, and plain-language urgency - reports arrive fixable, not vague.
+      weight: 0.3
+    - criterion: Triage makes status visible
+      looks_like: Statuses flow new-to-done, safety flags stand out, and the owner can see what needs attention in five seconds.
+      weight: 0.3
+    - criterion: It's real infrastructure
+      looks_like: A real owner committed, real reports flowed, and at least one problem moved toward resolution - the system touched the physical world.
+      weight: 0.4
+hint_ladder:
+  - level: 1
+    hint: 'Get the categories from reality: ask the person who''d own this "what kinds of problems actually come to you?" Their off-the-top list IS the dropdown - design transcribed from experience beats design invented at a desk.'
+  - level: 2
+    hint: 'The pitch for the handoff is the triage view itself: build it first with two fake reports, show the owner the at-a-glance sheet, and ask "if real reports arrived here, would you check it weekly?" Seeing the tool makes the commitment concrete.'
+  - level: 3
+    hint: 'For the pilot''s three reports, recruit honestly: tell three group members "we have a reporting system now - what''s broken that you''ve been meaning to mention?" Everyone has one. The backlog of unspoken problems is your launch content.'
+reflection_prompts:
+  - Why did the system need a human owner to be real?
+  - What does the urgency-level design protect against?
+unlocks: [club-feedback-form, local-events-board, volunteer-form]
+stretch_challenge: 'Add an auto-acknowledgment - reporters with contact info get "received, status: seen" automatically when the owner updates the sheet. Closing the loop with reporters is what makes people report twice.'
+safety_notes: Safety-category reports about genuine hazards need a fast lane to a responsible adult - build that expectation into the handoff agreement explicitly. Anonymous reports deserve the same respect as named ones; the system serves the problem, not the politics.

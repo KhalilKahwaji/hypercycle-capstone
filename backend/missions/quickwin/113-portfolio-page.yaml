@@ -1,0 +1,82 @@
+id: portfolio-page
+version: 1
+title: Build Your Project Portfolio Page (Starting With Today)
+track: portfolio
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Turn your completed missions into a portfolio that proves you build things - each project told as problem, build, and evidence.
+goal: A published portfolio page presenting at least three of your completed missions as proper case entries - problem, what you built, proof - with this portfolio itself as entry number one-in-progress.
+brief: |
+  You've been building for a while now. Screenshots in submissions,
+  pages at URLs, tools your family actually uses. Scattered, that's
+  homework; COLLECTED AND PRESENTED, it's a portfolio - the single most
+  convincing document a builder can own, at any age. Today you build it.
+
+  The craft is in the ENTRY FORMAT - steal it from how professionals
+  present work: each project gets a PROBLEM ("my grandmother couldn't
+  get tech help in Arabic"), WHAT I BUILT ("a patient bilingual support
+  bot with one-action steps"), and PROOF (the screenshot, the live
+  link, the result - "she used it to fix her WhatsApp herself").
+  Problem-build-proof turns "I did some missions" into "I solve things" -
+  same facts, different power.
+
+  Choose your best three or more missions (variety beats quantity: one
+  visual, one tool, one thing made for a real person tells a fuller
+  story than three games). Write the entries, then build the page:
+  your name, one line about what you're learning, the entries, and a
+  "built with" note that's honest about AI as your power tool - owning
+  your methods is a flex, not a confession.
+
+  Publish it, and add the final touch with a wink: this portfolio page
+  is itself a project - so it goes IN itself as the newest entry. Done
+  when the URL is live and one person who matters has seen it.
+build_surfaces:
+  - surface: replit
+    why: Published portfolio with a real URL - this page IS your address now.
+  - surface: google_ai_studio
+    why: Build and iterate the page from your written entries.
+  - surface: claude_project
+    why: Strong at tightening problem-build-proof writing.
+skills:
+  teaches: [proof-of-work, shipping-basics]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: live_url
+    description: Your published portfolio.
+  - type: prompt_log
+    description: Your entry drafts in problem-build-proof format, written before the page build.
+  - type: reflection
+    description: Two sentences - who did you show it to, and which entry are you proudest of?
+evaluation:
+  deterministic_checks:
+    - id: url_reachable
+      description: The portfolio URL loads.
+    - id: three_entries_present
+      description: At least three projects presented in problem-build-proof format with evidence.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Entries tell problem-build-proof
+      looks_like: Each project states a real problem, what was built, and verifiable proof - case entries, not a list of titles.
+      weight: 0.4
+    - criterion: Curation shows judgment
+      looks_like: The chosen projects span different skills and include work made for real people - a deliberate selection, not everything dumped in.
+      weight: 0.3
+    - criterion: Shipped and shown
+      looks_like: Live URL, honest built-with note, the self-referential entry present, and a real person has seen it.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'For each candidate mission, answer in one line: "what was annoying or missing before I built this?" If there''s a real answer, it''s portfolio material; if the answer is "nothing, it was just fun" - that can be ONE entry (joy is a valid problem), not all three.'
+  - level: 2
+    hint: 'Proof beats adjectives: "my family uses it every week" outranks "a great tool". Hunt each entry for its most concrete evidence - a number, a user, a quote from someone who used it - and lead with that.'
+  - level: 3
+    hint: 'Page structure that works: name and one-liner up top, entries as cards (project name, the three sections, screenshot, link), built-with note at the bottom. Ask for "clean, lots of white space, screenshots prominent" - portfolios are evidence displays, not design showcases.'
+reflection_prompts:
+  - How did problem-build-proof change how your own work looks to you?
+  - What's missing from the portfolio that your next mission should fill?
+unlocks: [ai-assisted-cv, freelancer-one-pager, github-first-readme]
+stretch_challenge: Add a "currently building" section that you update each new mission - a portfolio that visibly grows is proof of momentum, which is the rarest proof of all.
+safety_notes: First name and your work - no school name, no age, no location details. The portfolio is public by design; let the projects do the talking and keep the person private.

@@ -1,0 +1,84 @@
+id: cover-letter-assistant
+version: 1
+title: Build a Cover-Letter Draft Assistant (Draft Only - You Personalize)
+track: portfolio
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build an assistant that maps your real experience to what an opportunity asks for - producing honest drafts you must personalize before anything sends.
+goal: A cover-letter assistant with a matching method and a personalization boundary you designed, run against a real opportunity, producing a draft you then made yours - with the diff to prove it.
+brief: |
+  A cover letter has one job: connect WHAT THEY NEED to WHAT YOU'VE
+  DONE, in a voice that sounds like a person. Generic letters fail the
+  connection; pure-AI letters fail the person. Your assistant will be
+  engineered against both failures.
+
+  The MATCHING METHOD is the core build: the assistant takes two inputs -
+  the opportunity text (a real job posting, program, or scholarship
+  call) and YOUR material (your CV from the CV mission, your portfolio
+  entries). Its first output isn't a letter; it's a MATCH MAP: their
+  top three needs, each paired with your most relevant evidence
+  ("they want initiative → you cold-pitched a shop and delivered a
+  site"). No letter gets drafted until the map exists - connection
+  before composition.
+
+  Then the draft, with structure rules: open with a specific reason for
+  THIS opportunity (never "I am writing to apply"), body paragraphs
+  built from the match map (claim + your evidence), close with
+  forward energy. Length cap: one page means under 300 words.
+
+  And the boundary that names this mission: DRAFT ONLY. The assistant's
+  output is by definition unfinished - YOUR pass must add what only you
+  have: the genuine reason you care, your actual voice, the line nobody
+  else could write. Track what you changed (the diff is evidence of
+  personalization). A letter you couldn't defend line-by-line in an
+  interview shouldn't carry your name. Done when the final letter
+  passes the read-aloud test: it sounds like you, on a good day,
+  telling the truth.
+build_surfaces:
+  - surface: claude_project
+    why: Holds your CV and portfolio as context; strong at match-mapping.
+  - surface: google_ai_studio
+    why: Same pipeline with system instructions holding the method.
+skills:
+  teaches: [context-grounding, responsible-use]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your method instructions, the match map for a real opportunity, and the assistant's draft.
+  - type: file_upload
+    description: The final personalized letter plus your change-notes (what you altered and why).
+  - type: reflection
+    description: Two sentences - what could only YOU add, and would every line survive an interview?
+evaluation:
+  deterministic_checks:
+    - id: match_map_present
+      description: A needs-to-evidence map for a real opportunity precedes the draft.
+    - id: personalization_diff_present
+      description: Change-notes document substantive edits between draft and final.
+    - id: final_letter_present
+      description: A complete final letter under 300 words is attached.
+  rubric:
+    - criterion: The match map does the thinking
+      looks_like: Their real needs paired with the learner's real evidence, and the letter's body visibly built from those pairs.
+      weight: 0.35
+    - criterion: Personalization was real
+      looks_like: The diff shows genuine additions - authentic motivation, voice, specifics - not synonym swaps; the final sounds like the learner.
+      weight: 0.35
+    - criterion: Every line is defensible
+      looks_like: Claims trace to true experience (CV/portfolio), and the learner affirms interview-survivability line by line.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Method instruction that enforces order: "First produce a MATCH MAP: their top 3 needs from this posting, each with my strongest matching evidence from my materials. Wait for my approval of the map before drafting anything." Map approval is your quality gate.'
+  - level: 2
+    hint: 'The opening line test: could this sentence open a letter to any other opportunity? If yes, it''s not specific enough - demand "an opening that could ONLY be about this posting" and feed it the detail that genuinely interests you about them.'
+  - level: 3
+    hint: 'For your personalization pass, hunt three targets: the REASON (why do you actually want this - write it raw, then polish), the VOICE (read aloud, fix every sentence you''d never say), and the ONLY-YOU line (one detail no other applicant could write). Three edits minimum; the diff will show more.'
+reflection_prompts:
+  - Why does the match map have to come before the draft?
+  - Where's your line between assisted and ghostwritten - and is this side of it?
+unlocks: [ai-assisted-cv, interview-practice-bot, freelancer-one-pager]
+stretch_challenge: Run the same method against a second, different opportunity and compare match maps - watching the same true material re-emphasize itself for different readers is the deepest lesson in application writing.
+safety_notes: The draft-only boundary is the mission's spine - a letter is a promise about who'll show up, and only you can make it honestly. Never let the assistant invent experience, and read everything aloud before it sends.

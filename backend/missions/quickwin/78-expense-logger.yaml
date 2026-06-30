@@ -1,0 +1,79 @@
+id: expense-logger
+version: 1
+title: Build an Expense Logger - Form to Sheet, Automatically
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a 10-second expense tracker - a form on your phone feeding a sheet that calculates itself - and meet your own spending data.
+goal: A working expense pipeline (quick-entry form to auto-calculating sheet) designed for 10-second logging, with three days of real entries and one honest insight from the data.
+brief: |
+  Every expense tracker fails the same way: day one enthusiasm, day four
+  abandonment, because logging took too long. Your design target today is
+  brutal and specific: TEN SECONDS from "I bought something" to "logged
+  and done". Hit that, and the habit survives. Miss it, and you've built
+  another abandoned app.
+
+  The pipeline: a Google Form (lives as an icon on your phone's home
+  screen) with the absolute minimum fields - amount, category, optional
+  one-word note. Date stamps itself; never make a human enter what a
+  machine knows. Categories are a dropdown YOU design from how YOU
+  actually spend (food out, transport, gaming, gifts...) - five to seven,
+  more and you'll stall choosing.
+
+  Responses flow into a Sheet automatically (that's the built-in
+  automation), where you add the intelligence: a summary area computing
+  total this week, total by category, and biggest single expense. Ask the
+  AI for the exact formulas - SUMIF by category is the workhorse - and
+  wire them yourself so you understand what's summing what.
+
+  Then the real test: LIVE WITH IT for three days. Log everything. Done
+  when the sheet tells you something you didn't know about your own money
+  - it always does, and it's rarely flattering.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Form-to-sheet is built-in automation; formulas make the sheet think.
+  - surface: google_ai_studio
+    why: Your formula consultant - describe what you want computed, get the formula, understand it.
+skills:
+  teaches: [automation-trigger-action, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The form (phone view), and the sheet with three days of real entries plus the working summary calculations.
+  - type: prompt_log
+    description: Your category design with reasoning, and the formula conversation - including what each formula does in your words.
+  - type: reflection
+    description: Your data insight - what three days of truth revealed, and whether logging stayed under ten seconds.
+evaluation:
+  deterministic_checks:
+    - id: pipeline_evidence
+      description: Screenshots show the form and the sheet with real entries and computing summaries.
+    - id: three_days_present
+      description: Entries span at least three days.
+    - id: formula_understanding_present
+      description: Log explains each summary formula in the learner's own words.
+  rubric:
+    - criterion: Designed for the ten-second habit
+      looks_like: Minimal fields, self-stamping date, personal category dropdown, phone-accessible - every choice traceable to logging speed.
+      weight: 0.35
+    - criterion: The sheet computes correctly
+      looks_like: Week total, per-category totals, and biggest expense all calculate correctly against the real entries - and the learner understands the formulas.
+      weight: 0.3
+    - criterion: Real data, real insight
+      looks_like: Three honest days logged, and the reflection names a specific, non-obvious finding from the numbers.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Phone setup is the habit''s foundation: open the form link on your phone, browser menu, "Add to home screen". If logging requires finding a link, the tracker is already dead.'
+  - level: 2
+    hint: 'Formula conversation that teaches: "My sheet has columns: timestamp, amount, category. Give me formulas for total this week, total per category, and largest single expense - and explain each formula piece by piece." Wire them in yourself.'
+  - level: 3
+    hint: 'If a formula returns zero or errors: check the responses tab name matches what the formula references, and check amounts arrived as numbers not text (a currency symbol in the form answer breaks SUM - keep the field numbers-only).'
+reflection_prompts:
+  - What did the data say that your memory wouldn't have?
+  - Why do minimal fields beat complete fields for anything requiring a habit?
+unlocks: [rsvp-auto-responder, birthday-reminder-automation, attachment-saver]
+stretch_challenge: Add a weekly budget per category and a formula computing what percent you've used - then a conditional format turning a category red at 80%. Your sheet now has opinions.
+safety_notes: Your money data is yours alone - don't share the sheet, and skip logging anything you'd be uncomfortable seeing surfaced. The tracker works for you, not on you.

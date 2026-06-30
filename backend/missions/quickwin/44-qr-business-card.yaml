@@ -1,0 +1,79 @@
+id: qr-business-card
+version: 1
+title: Make a Digital Business Card With a QR Code
+track: portfolio
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Design a digital business card for who you're becoming, generate a QR code to your page, and test the full scan-to-screen handshake.
+goal: A designed digital card with a working QR code linking to your online presence - tested by a real scan from someone else's phone.
+brief: |
+  You've built a personal website and a link-in-bio. There's just one problem:
+  in the real world, nobody can find them. The bridge between a conversation
+  and your corner of the internet is a QR code. Today you build the bridge.
+
+  First, decide your TITLE - the fun part. You're allowed to be aspirational:
+  "AI Builder", "Junior Automation Engineer", "Builds websites for real
+  businesses". Pick the one that's TRUE ENOUGH - you've literally done these
+  missions; own them.
+
+  Design the card (Canva or AI-generated page): name, title, one memorable
+  line, QR code. Card design is a masterclass in hierarchy on a tiny canvas -
+  what's biggest? What can a person read in two seconds? Iterate like a
+  designer: too crowded → remove something. (The answer is almost always
+  remove something.)
+
+  Generate the QR pointing at your link-in-bio or website, place it on the
+  card, then run the REAL TEST: someone else's phone, scanning your card,
+  landing on your page in under five seconds. If the scan struggles - more
+  contrast, more size, more quiet space around the code. Done when the
+  handshake works first try.
+build_surfaces:
+  - surface: canva
+    why: Card design plus built-in QR generation in one tool.
+  - surface: google_ai_studio
+    why: Generate the card as a page and a QR via a free QR API.
+  - surface: claude_project
+    why: Good at layout hierarchy advice for tiny canvases.
+skills:
+  teaches: [tool-assembly, shipping-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: The final card (image or PDF).
+  - type: screenshot
+    description: Proof of the scan test - the card being scanned or the page open after scanning.
+  - type: reflection
+    description: One sentence - what did you remove from the card, and why was it better after?
+evaluation:
+  deterministic_checks:
+    - id: card_present
+      description: Card file attached.
+    - id: scan_test_present
+      description: Scan-test screenshot attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: The handshake works
+      looks_like: A real scan on someone else's phone reached the learner's actual page - the full pipeline (card to QR to URL to page) verified.
+      weight: 0.4
+    - criterion: Hierarchy on a tiny canvas
+      looks_like: Name, title, and QR have a clear size order; the card reads in two seconds; something was deliberately removed during iteration.
+      weight: 0.35
+    - criterion: The title is owned
+      looks_like: The title reflects real mission work and the learner can defend it ("I've built 6 sites" beats vague aspiration).
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Write your one memorable line by finishing - "the person who..." ("the person who built their grandmother's recipe a website"). Concrete beats clever.
+  - level: 2
+    hint: In Canva, search "QR code" in apps to generate one from your URL right on the card. Elsewhere, ask the AI for a free QR image API and paste your URL into it.
+  - level: 3
+    hint: 'If scanning fails: the QR needs dark-on-light, at least 2cm on screen, and empty margin around it. Decorated or recolored QRs look cool and scan terribly - boring codes work.'
+reflection_prompts:
+  - What does a physical-to-digital bridge make possible that a link alone doesn't?
+  - When someone scans this in three months, what do you want to have added to your page?
+unlocks: [link-in-bio, personal-website, own-your-ai]
+stretch_challenge: Print it - real card stock, real wallet. Hand one to someone at the next family gathering and watch them land on your website.
+safety_notes: The card is designed to be handed to strangers - first name, title, and your page URL only. No phone number, school, or address.

@@ -1,0 +1,71 @@
+id: first-ai-conversation
+version: 1
+title: Your First Real Conversation With an AI Model
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Sign up to Google AI Studio, talk to a real model, and discover how changing your words changes everything it says back.
+goal: A saved conversation in Google AI Studio where you made the model change its behavior twice using only your own instructions.
+brief: |
+  Today you meet the machine properly. Not through someone else's app - directly.
+
+  Sign up to Google AI Studio (free, just a Google account). Open a new chat and
+  say hello. That part takes two minutes. The real mission starts now.
+
+  Pick any topic you actually care about - football, a game, a band, your favorite
+  food. Ask the model about it. Then change ONE thing about how you ask and watch
+  what happens. Tell it to answer only in questions. Tell it to act like a grumpy
+  expert. Tell it to explain like you're a champion of that topic already.
+
+  Your mission: make the model visibly change its behavior TWICE, using only your
+  instructions. Same topic, different behavior. When you can steer it on purpose,
+  you've learned the single most important thing about AI - it does what you say,
+  not what you mean. Capture the proof and submit.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Free, shows you model settings other apps hide, and you'll use it all through this track.
+  - surface: any_chat_ui
+    why: Any AI chat works if AI Studio is blocked for you - the skill is the same.
+skills:
+  teaches: [prompt-basics, model-comparison]
+  requires: []
+evidence_required:
+  - type: screenshot
+    description: Your conversation showing the same topic answered in two clearly different styles, because of your instructions.
+  - type: prompt_log
+    description: The exact instructions you used for behavior change one and behavior change two.
+  - type: reflection
+    description: Two sentences - which instruction surprised you most, and why?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists and contains at least two distinct instructions (min 100 characters).
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Deliberate behavior steering
+      looks_like: The two responses in the screenshot are visibly different in style or behavior, and the difference traces back to the learner's instruction, not luck.
+      weight: 0.5
+    - criterion: Instructions are the learner's own
+      looks_like: The prompt log reads like a real person experimenting - specific topic, specific style requests - not a copied template.
+      weight: 0.3
+    - criterion: Honest observation
+      looks_like: The reflection names something concrete the model did, not a generic statement like "AI is cool".
+      weight: 0.2
+hint_ladder:
+  - level: 1
+    hint: Stuck on what to change? Try giving the model a personality ("answer like a sports commentator") or a rule ("never use more than 10 words").
+  - level: 2
+    hint: Ask the same question twice - once normally, once with your rule added. Screenshot both. That side-by-side IS your evidence.
+  - level: 3
+    hint: Copy this and adapt - "You are a [personality]. When I ask about [topic], always [rule]. Never [thing you don't want]." Then ask your question again and compare.
+reflection_prompts:
+  - What is one thing the model did that you didn't expect?
+  - If you had to explain to a friend how to control an AI in one sentence, what would you say?
+unlocks: [first-interactive-visual, compliment-generator, first-study-helper]
+stretch_challenge: In AI Studio, change the temperature setting, run the exact same prompt twice, and screenshot how the answers differ.
+safety_notes: Use a topic you'd be happy to show anyone. Don't share personal details like your address, school, or passwords with any AI service.

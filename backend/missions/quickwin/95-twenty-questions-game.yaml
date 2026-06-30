@@ -1,0 +1,84 @@
+id: twenty-questions-game
+version: 1
+title: Build a 20 Questions Game Where the AI Guesses Your Object
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Set up the classic 20 Questions with the AI as guesser, design its strategy rules, and study how a machine narrows infinity to one object.
+goal: A working 20 Questions game with strategy rules you wrote, at least three full games played and scored, and a written analysis of the AI's questioning strategy.
+brief: |
+  Twenty yes/no questions to find one object among... everything. It's the
+  purest thinking game there is - and when the AI plays guesser, you get a
+  front-row seat to watch a machine do STRATEGY. Then you get to make it
+  better.
+
+  Set up the game with rules you write: you think of an object (write it
+  down first - no changing mid-game, you scoundrel), the AI asks yes/no
+  questions one at a time, you answer honestly (plus "sometimes" and
+  "irrelevant" - decide what's allowed), it tracks the question count,
+  and it may only make a formal GUESS when it declares "Final guess:".
+  Guessing costs - wrong final guess loses. That cost rule forces real
+  strategy about WHEN to commit.
+
+  Play three full games with different object types - something physical
+  (a fork), something abstract-ish (a shadow), something local (man'oushe).
+  Then ANALYZE like a strategist: did its questions HALVE the space
+  ("is it man-made?" eliminates half of everything) or nibble at it
+  ("is it a giraffe?" eliminates one giraffe)? When did it switch from
+  wide categories to narrow features? Where did it waste a question? Write
+  the analysis - then encode one improvement rule from it ("never ask
+  about specific objects before question 15") and play once more to see
+  if it helps.
+
+  Done when you understand why "is it bigger than a microwave?" is a
+  genuinely brilliant question.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the rules; games run as chats.
+  - surface: claude_project
+    why: Plays a disciplined guesser and discusses its own strategy afterward.
+  - surface: any_chat_ui
+    why: Pure conversation game - any chat works.
+skills:
+  teaches: [prompt-success-criteria, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your game rules including the final-guess cost mechanism.
+  - type: transcript
+    description: Three full games with different object types, plus the improved fourth game.
+  - type: reflection
+    description: Your strategy analysis - halving versus nibbling, the wasted question, and whether your improvement rule helped.
+evaluation:
+  deterministic_checks:
+    - id: rules_present
+      description: Prompt log exists, min 250 characters, contains complete game rules.
+    - id: three_games_present
+      description: Transcript shows three complete games with varied objects.
+    - id: analysis_present
+      description: Reflection exists, min 150 characters, analyzes question strategy with examples.
+  rubric:
+    - criterion: The game runs by its rules
+      looks_like: One question per turn, count tracked, formal guess mechanism honored across all games.
+      weight: 0.3
+    - criterion: The analysis sees strategy
+      looks_like: The learner identifies space-halving versus narrow questions with examples from their transcripts, and spots at least one wasted question.
+      weight: 0.4
+    - criterion: The improvement loop closed
+      looks_like: One strategy rule derived from the analysis, encoded, and tested in a fourth game with the outcome reported.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Write your object down before the game starts - and after the game, show it. The honesty mechanism matters: an opponent who can secretly change targets makes strategy meaningless (and you WILL be tempted when it gets close).'
+  - level: 2
+    hint: 'For the analysis, annotate each question in a transcript: H for halving, N for narrowing, W for wasted. The pattern across 20 letters tells the whole strategic story at a glance.'
+  - level: 3
+    hint: 'Improvement rules that usually work: "spend questions 1-5 on the biggest categories only (alive? man-made? bigger than X?)" or "never name a specific object until under 50 candidates remain". Pick the one YOUR transcripts show it violating.'
+reflection_prompts:
+  - Why is a question that eliminates half always better than one that might win instantly?
+  - Where in real life do you ask nibbling questions when you should ask halving ones?
+unlocks: [word-association-game, sassy-number-game, adventure-story-game]
+stretch_challenge: Reverse the roles - YOU guess the AI's object using your own halving strategy, and compare your question efficiency against the machine's. The scoreboard is question count; may the better strategist win.
+safety_notes: Keep chosen objects family-friendly if younger players join. The strategy lesson - halve, don't nibble - is yours to keep everywhere decisions narrow things down.

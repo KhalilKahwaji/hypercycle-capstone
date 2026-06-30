@@ -1,0 +1,74 @@
+id: season-rain
+version: 1
+title: Snow, Rain, or Falling Leaves - Animate a Season
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a falling-weather animation - snow, rain, or autumn leaves - where natural randomness is the design skill.
+goal: A season animation page where every particle falls slightly differently, with one interactive touch and one scene detail you added.
+brief: |
+  Animate snow and you learn the deepest trick in natural motion: NOTHING IN
+  NATURE MOVES IN STRAIGHT LINES, AND NO TWO THINGS MOVE THE SAME.
+
+  Pick your season - snow, rain, or falling leaves (each has its own physics
+  personality). Ask for the falling animation, then look hard at version one.
+  It will probably feel fake - everything falling at the same speed, same
+  angle, like a pattern, not weather. The fix is VARIATION: every particle
+  needs its own size, speed, and drift. Snow wobbles side to side as it falls.
+  Leaves tumble and rock like paper. Rain streaks straight but at varied
+  speeds. Ask for exactly those behaviors.
+
+  Then add two finishing touches: one INTERACTION (wind that follows your
+  mouse, snow that piles up at the bottom, leaves that swirl away from the
+  cursor) and one SCENE detail (a dark silhouette skyline, a single tree, a
+  warm window glow).
+
+  Done when the scene feels like weather you can almost hear.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; variation tweaks are quick to test.
+  - surface: claude_project
+    why: Previews in chat; understands "it looks fake because..." feedback well.
+skills:
+  teaches: [ui-basics, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The final scene (or a short recording - the motion is the point).
+  - type: prompt_log
+    description: Your build conversation showing the variation fixes and your two finishing touches.
+  - type: reflection
+    description: One sentence - what specific change made it stop looking fake?
+evaluation:
+  deterministic_checks:
+    - id: evidence_present
+      description: Screenshot or recording artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Natural variation achieved
+      looks_like: Particles visibly differ in size, speed, and drift, with season-appropriate motion (wobble, tumble, or streak) - not a uniform pattern.
+      weight: 0.4
+    - criterion: Interaction and scene present
+      looks_like: One working interactive element and one scene detail, both chosen and described by the learner.
+      weight: 0.3
+    - criterion: Eye for fakeness
+      looks_like: The log shows the learner diagnosing WHY version one felt fake and requesting the specific fix - the observational skill this mission teaches.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Start with - "snow falling on a dark blue night background - every snowflake gets a random size, falling speed, and gentle side-to-side sway". The randomness request up front saves a round.
+  - level: 2
+    hint: For leaves, the magic word is tumble - "each leaf rotates as it falls and rocks side to side like paper". For rain, it's "thin streaks, varied speeds, slight uniform angle - and faster drops look closer".
+  - level: 3
+    hint: For piling snow, ask - "snow accumulates at the bottom of the screen, building up an uneven snow layer over time". Uneven is the keyword - a flat line ruins it.
+reflection_prompts:
+  - Why does sameness read as fake to human eyes?
+  - Which season would be hardest to animate convincingly, and why?
+unlocks: [mood-lamp, zen-garden, weird-clock]
+stretch_challenge: Add a season switch - one button cycles snow, rain, leaves, with the background mood changing to match.
+safety_notes: Nothing sensitive here - this one makes a lovely gift as a personalized scene for someone.

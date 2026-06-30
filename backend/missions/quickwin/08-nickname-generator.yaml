@@ -1,0 +1,71 @@
+id: nickname-generator
+version: 1
+title: The Official Nickname Generator of Your Friend Group
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a generator that produces legendary nicknames from a few facts about a person - tuned on your actual friend group.
+goal: A nickname generator with clear naming rules you designed, tested on at least three real friends, with the winning nicknames documented.
+brief: |
+  Nicknames are earned, but yours will now be PROFESSIONALLY MANUFACTURED.
+
+  Build an AI tool with one job: take a few facts about a person (what they're
+  known for, a habit, their signature move) and produce five nickname options
+  with a one-line origin story each.
+
+  The skill here is designing RULES. Without rules you get "CoolGuy42" energy.
+  Write naming laws: must sound like a football commentator invented it, must
+  reference a real habit, two words max, never insulting. Then test on your
+  actual friends and tune. "Cool Sam" needs work; "The Apology Machine" (he says
+  sorry to furniture) is instant canon.
+
+  Run all three friends through it, crown the winners, document the results.
+  Done when at least one nickname is good enough that the group might adopt it.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your naming laws; regenerate fast while tuning.
+  - surface: any_chat_ui
+    why: Works fine as a pinned instruction prompt in any AI chat.
+skills:
+  teaches: [data-structuring, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your naming rules and the input facts for three friends (first names or initials only).
+  - type: screenshot
+    description: The generator producing nickname options for one friend.
+  - type: reflection
+    description: Which nickname won, and which RULE was responsible for it?
+evaluation:
+  deterministic_checks:
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, contains a numbered or bulleted set of naming rules.
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Rules shape the output
+      looks_like: The naming rules are specific (length, style, source material, forbidden moves) and the generated nicknames visibly obey them.
+      weight: 0.4
+    - criterion: Tested on real inputs
+      looks_like: Three distinct friends' facts went in, each got multiple options, and a winner was picked with a reason.
+      weight: 0.35
+    - criterion: Origin stories land
+      looks_like: Each nickname comes with a one-liner explaining it that connects to the input facts.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Start with the rules, not the friends. Write three laws - one about style, one about what the nickname must reference, one about what's forbidden.
+  - level: 2
+    hint: Give the AI one example of a perfect nickname with its origin story, then say "follow this pattern". The example trains it better than the rules alone.
+  - level: 3
+    hint: If outputs are cringe, add anti-rules - "never use 'master', 'lord', or 'ninja'; never rhyme; never just translate their name". Banning bad moves works as well as requesting good ones.
+reflection_prompts:
+  - Which rule had the biggest effect on quality?
+  - How is designing rules different from just asking for nicknames?
+unlocks: [me-quiz, emoji-translator]
+stretch_challenge: Make it a ceremony - generate a formal "nickname certificate" page for the winning nickname, suitable for dramatic presentation in the group chat.
+safety_notes: Nicknames must celebrate, never mock. Use first names or initials only in your submission, and get a friend's OK before the nickname goes public.

@@ -1,0 +1,82 @@
+id: daily-quote-poster
+version: 1
+title: Auto-Post a Daily Quote to Your Group Chat
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a scheduled automation that posts a daily quote from a library YOU curated to a chat you're actually in - content automation with editorial standards.
+goal: A daily quote automation posting from your hand-curated quote sheet to a real chat, running for two consecutive days, with a no-repeat mechanism.
+brief: |
+  Daily quote bots are usually insufferable - because nobody curated them.
+  Yours will be different for exactly one reason: YOU are the editor, and
+  the editorial work is the real mission.
+
+  First, build the LIBRARY: 15-20 quotes in a Google Sheet that pass your
+  personal bar. Curate ruthlessly for your audience - your friend group
+  chat wants funny-wise, not corporate-poster ("Hang in there!" gets you
+  removed from the chat, deservedly). Mix it: a proverb your grandmother
+  actually says, a line from a song the group loves, something genuinely
+  wise, something absurd. Attribution column included - made-up
+  attributions are how misinformation starts, and your bot won't be part
+  of that.
+
+  Then the automation: every morning at your hour, it picks a quote from
+  the sheet and posts to the chat. The engineering wrinkle - and your
+  design problem to solve - is NO REPEATS. Random selection repeats
+  embarrassingly fast (do the math: 15 quotes, daily posts...). Solve it:
+  a "used" column the automation marks and filters against, or sequential
+  row-walking. Either teaches the same lesson: automations need STATE -
+  memory of what they've done.
+
+  Run it two real days. Done when someone in the chat reacts to a quote
+  not knowing a robot you built posted it.
+build_surfaces:
+  - surface: make
+    why: Schedule trigger, sheet read, chat post - plus the state-update step back to the sheet.
+  - surface: google_forms_sheets
+    why: The quote library with its used-tracking column.
+  - surface: n8n
+    why: Open-source alternative.
+skills:
+  teaches: [automation-trigger-action, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The curated sheet, the scenario, and the posted quotes from two consecutive days.
+  - type: prompt_log
+    description: Your curation standards, and your no-repeat solution explained in your own words.
+  - type: reflection
+    description: Two sentences - what got cut during curation and why, and how does your bot remember what it posted?
+evaluation:
+  deterministic_checks:
+    - id: two_days_evidence
+      description: Screenshots show posts on two consecutive scheduled days.
+    - id: curated_library_present
+      description: Sheet contains 15+ quotes with attributions and visible curation.
+    - id: state_solution_present
+      description: Log explains a working no-repeat mechanism.
+  rubric:
+    - criterion: Editorial standards are real
+      looks_like: The library shows taste and audience-awareness - mixed sources, honest attributions, and the learner can name what they rejected.
+      weight: 0.35
+    - criterion: The state problem is solved
+      looks_like: A working no-repeat mechanism the learner can explain - they understand why stateless random fails.
+      weight: 0.35
+    - criterion: Live and unattended
+      looks_like: Two consecutive scheduled posts to a real chat without manual help.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Curation filter: read each candidate aloud in the group chat''s voice. Would it land, or would someone reply "ok linkedin"? Your ear knows; trust it and cut.'
+  - level: 2
+    hint: 'Simplest state solution: a "used" column. The automation searches for rows where used is empty, takes the first, posts it, then a final module updates that row''s used cell to "yes". Search-act-mark: the universal state pattern.'
+  - level: 3
+    hint: 'If the same quote posts twice, the mark-as-used step is failing - check the update module targets the same row the search returned (row number must be mapped through, not hardcoded). What happens when all rows are used? Decide: stop, or clear and recycle. Design the ending.'
+reflection_prompts:
+  - Why does state turn out to be necessary for even this trivial bot?
+  - What's the difference between automating content and automating spam?
+unlocks: [daily-weather-message, new-music-notifier, rss-news-digest]
+stretch_challenge: Add a submission form - chat members propose quotes through a Google Form that lands in a pending tab, and only quotes YOU approve move into the live library. You've built a content pipeline with moderation.
+safety_notes: Get the chat's OK before adding a bot to it - one person's delight is another's spam. Verify attributions; the internet is full of things Einstein never said, and your bot shouldn't launder them.

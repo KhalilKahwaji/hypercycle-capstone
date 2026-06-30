@@ -1,0 +1,80 @@
+id: citation-formatter
+version: 1
+title: Build a Citation Formatter for School Reports
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a citation assistant that formats your sources perfectly - and learn why citation is the one place AI invents things most dangerously.
+goal: A citation formatter for your school's required style, tested on five real sources of different types, with every output field-verified against the actual source.
+brief: |
+  Citations are fiddly, boring, and graded. Perfect job for a robot - with
+  one famous catch you're about to weaponize into a lesson.
+
+  Build the formatter: pick the style your school requires (APA, MLA, or
+  your teacher's format - paste their example if it's custom). The bot's
+  job: you provide source details, it returns the perfectly formatted
+  citation plus the matching in-text version. Configure it to ASK for
+  missing fields rather than guess - that one rule is the soul of this tool.
+
+  Why? Because citation is where AI hallucination gets students into actual
+  trouble. Ask an AI to "cite a source about X" and it will invent authors,
+  fabricate page numbers, generate plausible DOIs that lead nowhere. So your
+  formatter's law is: FORMAT ONLY, NEVER FIND. It formats details YOU
+  provide from sources YOU have open. If a field is missing, it asks you to
+  look it up - never fills it in.
+
+  Test on five real sources of different types: a book, a website, a
+  journal article or news piece, a video, and one weird one (an interview?
+  a map?). Verify every formatted field against the actual source. Done
+  when all five are perfect and you've caught the difference between a tool
+  that formats facts and one that manufactures them.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the style rules; instant formatting on demand.
+  - surface: claude_project
+    why: Reliable at strict format compliance and at asking for missing fields.
+  - surface: any_chat_ui
+    why: A pinned formatter prompt works anywhere you write reports.
+skills:
+  teaches: [ai-limits, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your formatter instructions including the format-only-never-find rule, and all five sources processed.
+  - type: file_upload
+    description: The five verified citations with their in-text versions.
+  - type: reflection
+    description: Two sentences - did the bot ever try to fill a gap itself, and why is "never find" the critical rule?
+evaluation:
+  deterministic_checks:
+    - id: instructions_present
+      description: Prompt log exists, min 250 characters, contains the never-guess rule and style specification.
+    - id: five_sources_present
+      description: Five citations of distinct source types attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Format-only discipline holds
+      looks_like: The bot asked for missing fields instead of inventing them - tested at least once with deliberately incomplete details.
+      weight: 0.4
+    - criterion: Citations are verified-correct
+      looks_like: All five match their real sources field by field, in the required style, including in-text versions.
+      weight: 0.35
+    - criterion: The lesson landed
+      looks_like: The reflection articulates why AI-found citations are dangerous, in the learner's own words.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Paste a perfect example citation from your teacher or style guide and say "match this format exactly, including punctuation". Citation styles live and die on commas.'
+  - level: 2
+    hint: 'Test the discipline deliberately: give it a book with no year and see what happens. If it guesses a year, add - "if any field is missing, output [MISSING: field] and tell me where on the source to find it". Retest.'
+  - level: 3
+    hint: 'For weird sources, give it the decision rule: "if the source type is unusual, ask me three questions about it, then format using the closest standard pattern and flag it for teacher confirmation". Flagging uncertainty is what trustworthy tools do.'
+reflection_prompts:
+  - Why is a fabricated citation worse than a missing one?
+  - Where else should AI be format-only, never find?
+unlocks: [essay-outline-helper, chapter-summary-tool, spot-the-hallucination]
+stretch_challenge: Build the bibliography mode - paste all your formatted citations and have it produce the final alphabetized, hanging-indent reference list, then verify the ordering rules yourself.
+safety_notes: Never ask AI to find or invent sources - every citation must trace to a source you actually opened. Fabricated citations are treated as academic dishonesty, even when a machine did the fabricating.

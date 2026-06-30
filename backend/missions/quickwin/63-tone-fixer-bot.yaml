@@ -1,0 +1,80 @@
+id: tone-fixer-bot
+version: 1
+title: Build a Bot That Fixes Your Message Tone
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a message-polishing assistant that takes your blunt draft and your intent, and returns the version that lands right - with your voice intact.
+goal: A tone fixer with rewrite rules you designed, validated on three real messages including one that was genuinely hard to send.
+brief: |
+  You know that feeling - the message is typed, your thumb hovers, and
+  something whispers "this is going to land wrong". Today you build the
+  second opinion.
+
+  The design insight: tone-fixing needs TWO inputs, not one. The draft, AND
+  the intent - "I want to say no without damaging the friendship", "I need
+  the teacher to reconsider without sounding entitled", "I'm annoyed and I
+  want them to know, but at level 4, not level 9". Build the bot to always
+  ask for (or receive) both. A fixer that doesn't know what you're aiming
+  for can only make things blander, and blander is not better.
+
+  Add your rules: keep my voice (no corporate-speak, no "I hope this finds
+  you well" - I'm sixteen, not a bank), keep it the same length or shorter,
+  never delete the actual point (softening the message must not dissolve
+  the message), and show me WHAT you changed and WHY so I learn the pattern.
+
+  Test on three real messages: one easy (group chat logistics), one medium
+  (asking a favor), one genuinely hard - an apology, a complaint, a no. The
+  hard one is the real test. You decide what to actually send - the bot
+  proposes, you dispose. Done when the hard message is sent and lands the
+  way you intended.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your rules; quick enough for real-time use.
+  - surface: claude_project
+    why: Excellent at tone gradations and explaining its edits.
+  - surface: any_chat_ui
+    why: This tool earns its keep living one tab away from your messages.
+skills:
+  teaches: [prompt-iteration, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your rewrite rules and the two-input format.
+  - type: transcript
+    description: All three messages fixed - draft, intent, result, and the bot's what-changed explanations.
+  - type: reflection
+    description: Two sentences - what happened when you sent the hard one, and what tone pattern did you learn?
+evaluation:
+  deterministic_checks:
+    - id: rules_present
+      description: Prompt log exists, min 250 characters, includes voice-preservation and explain-changes rules.
+    - id: three_messages_present
+      description: Transcript shows three drafts with intents and rewrites, including one hard message.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Two-input design works
+      looks_like: Every rewrite used both draft and stated intent, and the results visibly serve the intent rather than just sanding everything smooth.
+      weight: 0.35
+    - criterion: Voice and point survive
+      looks_like: Rewrites still sound like the learner, stay concise, and keep the message's actual point - softened delivery, undissolved content.
+      weight: 0.35
+    - criterion: Learning extracted
+      looks_like: The what-changed explanations appear in the transcript, and the reflection names a reusable tone pattern the learner took away.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Set the input format in the instructions: "I''ll give you DRAFT and INTENT. Never rewrite without both - if I forget the intent, ask for it." Structure prevents bland.'
+  - level: 2
+    hint: 'Calibrate voice with one real sample: paste a message you sent that sounded exactly like you and say "this is my voice - all rewrites must sound like this person". One sample beats ten adjectives.'
+  - level: 3
+    hint: 'For the hard message, ask for three versions at different intensities - "gentle, direct, and firm" - then choose. Seeing the spectrum teaches you more than accepting one answer, and the choice stays yours.'
+reflection_prompts:
+  - Which of the bot's edits would you now make yourself, without it?
+  - When is a blunt message actually the right message?
+unlocks: [birthday-message-generator, interview-practice-bot, devils-advocate-bot]
+stretch_challenge: Build a reverse mode - paste a message you RECEIVED and your honest reaction, and have the bot help you read its tone charitably before you reply hot.
+safety_notes: The bot polishes your words; the decisions stay yours. Never paste private messages from others without thinking about their privacy, and don't use it to craft manipulation - persuasion that needs engineering that precise probably shouldn't be sent.

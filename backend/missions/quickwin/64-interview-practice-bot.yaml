@@ -1,0 +1,80 @@
+id: interview-practice-bot
+version: 1
+title: Build an Interview Practice Bot That Asks Follow-Ups
+track: portfolio
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a mock interviewer that doesn't accept your first answer - it probes, follows up, and then gives you a structured scorecard.
+goal: An interview bot configured for a real target (job, university, scholarship), with follow-up and scoring rules you wrote, plus one completed mock interview with scorecard.
+brief: |
+  Everyone rehearses answers. Almost nobody rehearses FOLLOW-UPS - and
+  follow-ups are where interviews are actually won and lost. "Tell me about
+  a project" is easy. "What would you do differently?" - asked while your
+  brain is still celebrating the first answer - is the real game. Today you
+  build an interviewer that never lets you off after one answer.
+
+  Configure it for something real: a part-time job, a university interview,
+  a scholarship, a volunteer leadership spot. Feed it the context - what
+  they're looking for, what you'd bring.
+
+  Then write the interviewer's protocol, the heart of the build: ask one
+  question at a time. After EVERY answer, ask at least one follow-up that
+  probes - "can you give a specific example?", "what was YOUR part exactly?",
+  "what went wrong along the way?". Never accept vague; chase the concrete.
+  Stay realistic - professional, warm-ish, occasionally challenging.
+
+  And define the SCORECARD: at the end, it rates you on criteria you chose
+  (specificity, structure, confidence, honesty) with one quoted example
+  each, plus your strongest moment and the answer to rework. Then do the
+  full mock - out loud if you're brave, typed if not. Done when the
+  scorecard tells you something true that stings slightly and helps a lot.
+build_surfaces:
+  - surface: claude_project
+    why: Holds your target context; strong at realistic probing and fair scoring.
+  - surface: google_ai_studio
+    why: System instructions hold the protocol; rerun mocks free until smooth.
+  - surface: any_chat_ui
+    why: A pinned protocol works anywhere you can type.
+skills:
+  teaches: [prompt-success-criteria, user-feedback]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your interviewer protocol - target context, follow-up rules, and scorecard criteria.
+  - type: transcript
+    description: The complete mock interview including follow-ups and the final scorecard.
+  - type: reflection
+    description: Two sentences - which follow-up caught you least prepared, and what will you rework before the real thing?
+evaluation:
+  deterministic_checks:
+    - id: protocol_present
+      description: Prompt log exists, min 300 characters, contains follow-up rules and scorecard criteria.
+    - id: full_mock_present
+      description: Transcript shows a complete interview with follow-ups after answers and a final scorecard.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Follow-ups actually probe
+      looks_like: The transcript shows follow-ups chasing specifics after vague answers - the bot visibly refuses first-answer escapes per the protocol.
+      weight: 0.4
+    - criterion: Configured for a real target
+      looks_like: Questions reflect the actual job/university/scholarship context the learner fed in, not generic interview clichés.
+      weight: 0.25
+    - criterion: The scorecard teaches
+      looks_like: Ratings use the learner's criteria with quoted examples, naming a real strength and a real rework - feedback specific enough to act on.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'The core rule verbatim: "After every answer, ask one follow-up that demands a specific example, my exact role, or what went wrong. If my answer contains no concrete details, say ''can you make that specific?'' and wait."'
+  - level: 2
+    hint: 'Feed it real ammunition: paste the actual job posting or program description and say "draw your questions from what they say they want". Real postings produce eerily realistic interviews.'
+  - level: 3
+    hint: If it's too soft, escalate one notch - "you are now slightly skeptical; you''ve heard polished answers all day and want proof". If it rattles you, that''s the rehearsal working - better here than there.
+reflection_prompts:
+  - Why do follow-ups expose what first answers hide?
+  - Which scorecard criterion do you now think matters most in real interviews?
+unlocks: [ai-assisted-cv, cover-letter-assistant, devils-advocate-bot]
+stretch_challenge: Run the same mock three days in a row and compare scorecards - then walk into the real interview with documented proof you improve under practice (mention it; it's a great answer to "tell me about yourself").
+safety_notes: Practice answers should be true - rehearsing polish is preparation, rehearsing fiction is a trap that real follow-ups will spring. Don't paste other people's personal details into your context.

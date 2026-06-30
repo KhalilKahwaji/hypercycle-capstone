@@ -1,0 +1,80 @@
+id: explain-like-five-bot
+version: 1
+title: Build a Bot That Explains Anything Like You're Five
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build an explainer bot with rules that force true simplicity - then test whether its explanations survive contact with an actual confused human.
+goal: An ELI5 bot with simplicity rules you wrote, tested on three genuinely hard concepts, with one explanation validated on a real person.
+brief: |
+  "Explain like I'm five" is the hardest writing exercise in the world wearing
+  a cute name. Simple words are easy; TRUE simplicity - keeping the idea
+  correct while a child could follow it - is expert-level. Today you build a
+  bot that does it on demand.
+
+  The build is a rule system. Bad ELI5 just shrinks sentences; good ELI5
+  follows laws, and you're writing them: every explanation must use a
+  comparison to everyday life (school, food, football, family). No word a
+  ten-year-old wouldn't know - and if a technical word is unavoidable, it
+  must be introduced like a character in a story. Maximum five sentences.
+  Must end by checking understanding with a tiny question.
+
+  Then stress it with genuinely hard concepts - inflation, how vaccines work,
+  why the moon doesn't fall, what an algorithm is, how interest on a loan
+  grows. Watch for the classic failure: OVERSIMPLIFYING INTO WRONGNESS. "The
+  moon is held by an invisible string" is simple and false. When you catch
+  one, add a rule: "simple, but never false - if precision must be lost, say
+  'it's a bit more complicated, but...'".
+
+  Final test: take its best explanation to a real person who didn't know the
+  concept. Did they get it? Could they repeat it back? That's your benchmark.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your simplicity laws; quick to iterate.
+  - surface: claude_project
+    why: Strong at analogy generation and honest caveats.
+  - surface: any_chat_ui
+    why: Works as a pinned prompt anywhere.
+skills:
+  teaches: [prompt-success-criteria, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your simplicity rules, including at least one rule added after catching an oversimplification.
+  - type: transcript
+    description: Three hard concepts explained by your bot.
+  - type: reflection
+    description: Two sentences - what happened when a real person heard the explanation, and what was your bot's best analogy?
+evaluation:
+  deterministic_checks:
+    - id: rules_present
+      description: Prompt log exists, min 250 characters, contains explicit simplicity rules.
+    - id: three_concepts_present
+      description: Transcript shows three distinct hard concepts explained.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Rules force real simplicity
+      looks_like: The rules mandate analogies, vocabulary limits, length caps, and a comprehension check - and outputs visibly obey them.
+      weight: 0.35
+    - criterion: Simple but never false
+      looks_like: Explanations stay accurate; at least one oversimplification was caught and a precision-preserving rule added.
+      weight: 0.35
+    - criterion: Validated on a human
+      looks_like: A real person heard one explanation and could repeat the idea back - the only test that counts.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Start with three rules: everyday comparison required, five sentences max, end with a check question. Add rules only when outputs break - rules earned from failures stick.'
+  - level: 2
+    hint: 'Test wrongness deliberately: ask it to explain something you DO understand well. You''ll spot the too-simple-to-be-true parts instantly - that''s your calibration.'
+  - level: 3
+    hint: 'If analogies feel forced, constrain the domain: "use comparisons from cooking and football only". Narrower analogy pools produce weirdly better analogies.'
+reflection_prompts:
+  - Why is explaining simply harder than explaining completely?
+  - Where's the line between simplifying and lying?
+unlocks: [study-buddy-bot, family-tech-support-bot, math-step-explainer]
+stretch_challenge: Add levels - the same concept explained "like I'm 5", "like I'm 12", and "like I'm an expert" - and study what changes between them.
+safety_notes: Double-check explanations of health, money, or safety topics against a real source before passing them to anyone - simple and wrong is most dangerous exactly there.

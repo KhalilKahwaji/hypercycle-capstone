@@ -1,0 +1,76 @@
+id: neighborhood-gallery
+version: 1
+title: Build a Photo Gallery of Your Neighborhood
+track: community
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Shoot your neighborhood like a visitor would never see it, then build a gallery page where layout and captions turn photos into a story.
+goal: A gallery page of 8-12 original photos of your area, arranged with intent, each with a caption that tells what the eye can't see.
+brief: |
+  You've walked your street a thousand times. Today, walk it like a
+  photographer with an exhibition deadline.
+
+  The shoot: 30 minutes, phone camera, 8-12 photos with a THEME you pick
+  before leaving. "Doors of my street". "Morning light". "Things older than
+  my grandfather". "Green fighting through concrete". A theme turns snapshots
+  into a collection - that decision is half the art.
+
+  The build: a gallery page where layout is a real choice. Grid (clean,
+  democratic)? Masonry (artsy)? One large hero photo with the rest below?
+  Try two layouts with the AI and keep the one that fits your theme. Then
+  captions - the part everyone skips and shouldn't. A good caption tells what
+  the eye can't see: "This door has been blue for 40 years. The owner repaints
+  it the same color every spring."
+
+  Title the collection like an exhibition. Done when someone from your area
+  says "I never noticed that" - the highest compliment local photography gets.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build the gallery page and experiment with layouts fast.
+  - surface: claude_project
+    why: Good at caption-polishing while keeping your observations yours.
+  - surface: replit
+    why: Publish the exhibition - neighbors can visit it.
+skills:
+  teaches: [ui-basics, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The full gallery page with title, photos, and captions visible.
+  - type: prompt_log
+    description: Your theme choice, both layouts you tried, and which won with the reason.
+  - type: reflection
+    description: Two sentences - what did you notice on the shoot that you'd never noticed before?
+evaluation:
+  deterministic_checks:
+    - id: gallery_screenshot_present
+      description: Screenshot shows a titled gallery with at least eight photos and captions.
+    - id: prompt_log_present
+      description: Prompt log exists, min 200 characters, documents theme and layout comparison.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: A real collection, not a camera roll
+      looks_like: The photos clearly belong to the stated theme, were shot for this mission, and the title frames them as one body of work.
+      weight: 0.35
+    - criterion: Captions add invisible information
+      looks_like: Captions tell history, context, or observation beyond what's visible - not "a blue door".
+      weight: 0.35
+    - criterion: Layout chosen with intent
+      looks_like: Two layouts were compared and the choice is justified by the theme ("masonry felt right for the chaos of the market").
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Can't pick a theme? Use "pairs" - old/new, big/small, open/closed - or follow one color through the neighborhood. Constraints create vision.
+  - level: 2
+    hint: For captions, stand in front of each photo and answer - "what do I know about this that the camera didn't capture?" One sentence of that per photo.
+  - level: 3
+    hint: 'Ask the AI: "a gallery page titled [your title] - layout option A as a uniform grid with captions below each photo, then the same as option B with a masonry layout - I''ll pick one." Compare screenshots before deciding.'
+reflection_prompts:
+  - How did having a theme change the way you looked at familiar streets?
+  - Which photo is the strongest, and can you say why?
+unlocks: [heritage-guide, family-recipe-page, hobby-fan-page]
+stretch_challenge: Add a map view - each photo pinned where it was taken, turning your gallery into a walkable route others can follow.
+safety_notes: Photograph places and things, not people - faces need permission. Skip shots that reveal your exact home or expose private property interiors.

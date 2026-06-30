@@ -1,0 +1,74 @@
+id: top-five-showcase
+version: 1
+title: Build Your "Top 5 Favorite Things" Showcase Page
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a ranked showcase of your top 5 anything - where defending each pick in writing is half the build.
+goal: A showcase page with your ranked top 5 in a category you chose, each with a written defense, in a layout that makes ranking feel dramatic.
+brief: |
+  Everyone has a top 5. Almost nobody can DEFEND theirs in writing. Today you
+  build the page that does both.
+
+  Pick a category with stakes - top 5 football players, desserts your family
+  makes, game bosses, songs for a bad day, places in your town. Then do the
+  hard part FIRST, in a note: rank them and write a two-sentence defense for
+  each. Rule: no defense, no spot on the list. "It's just great" is not a
+  defense; "Number 2 because no other dessert works at both weddings and
+  Tuesday nights" is.
+
+  Then design for DRAMA. A ranking isn't a flat list - number one deserves the
+  biggest card, the gold accent, maybe an animated crown. Numbers 5 to 2 build
+  up to it. Tell the AI the hierarchy you want and iterate until the page
+  treats your number one like a champion.
+
+  Send it to a friend who will disagree. Their outrage is your proof of
+  quality - it means the page communicated.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview; quick to iterate on the visual hierarchy.
+  - surface: claude_project
+    why: Good at punchy defense-writing help and dramatic layouts.
+skills:
+  teaches: [data-structuring, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The full showcase page, number one visibly the star.
+  - type: prompt_log
+    description: Your ranked list with defenses, written before generating.
+  - type: reflection
+    description: Two sentences - what did your friend dispute, and did they have a point?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: Screenshot artifact attached.
+    - id: ranked_list_present
+      description: Prompt log exists, min 250 characters, contains five ranked items each with a defense.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Defenses have substance
+      looks_like: Each pick has a specific, arguable reason - comparisons, criteria, or moments - not generic praise.
+      weight: 0.4
+    - criterion: Visual hierarchy matches ranking
+      looks_like: Number one is unmistakably the star of the layout; the design makes rank differences visible without reading numbers.
+      weight: 0.35
+    - criterion: It provoked a reaction
+      looks_like: A real person engaged with the ranking, and the learner reflected honestly on the pushback.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: If you can't decide an order, run a bracket - compare items two at a time, winner advances. Five items, a few comparisons, done. Write down WHY each winner won - those are your defenses.
+  - level: 2
+    hint: 'Give each defense a shape: claim plus evidence. "Best for bad days (claim) because the chorus physically forces your shoulders to drop (evidence)."'
+  - level: 3
+    hint: For drama, ask - "number 1 gets a full-width gold-accented card at top with a crown badge; 2-5 are progressively smaller cards below; reveal each card with a slight animation on scroll".
+reflection_prompts:
+  - Which pick was hardest to defend, and what does that tell you?
+  - Did writing defenses change your ranking?
+unlocks: [hobby-fan-page, me-quiz, family-recipe-page]
+stretch_challenge: Add a "your turn" section where visitors can rank the same five items - and compare their order against yours.
+safety_notes: Rank things, not people you know. Celebrities in a "top players" list are fine; ranking classmates is not.

@@ -1,0 +1,85 @@
+id: bilingual-menu-helper
+version: 1
+title: Build a Bilingual Menu Helper for a Family Restaurant
+track: language
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Translate a real local menu the right way - dishes explained, not just converted - and learn why food translation is culture work, not word work.
+goal: A bilingual menu for a real restaurant or family kitchen, with dish names handled by a translation policy you designed, verified by a native speaker and (ideally) the owner.
+brief: |
+  Run "man'oushe bi zaatar" through a translation machine and you might
+  get "thyme pastry" - technically defensible, spiritually a crime.
+  Food doesn't translate; it gets INTRODUCED. Today you build a menu
+  that introduces.
+
+  Pick a real menu: the family restaurant, a neighbor's catering, your
+  own family's twelve great dishes (a "family kitchen menu" is a
+  beautiful artifact even with no restaurant attached). Then design your
+  TRANSLATION POLICY - the intellectual heart of the mission. For each
+  dish, decide between three modes: KEEP the name (transliterated) with
+  a one-line introduction ("Kibbeh - bulgur shells stuffed with spiced
+  meat, the dish every grandmother is judged by"), TRANSLATE literally
+  (works for "grilled chicken", insults "kibbeh"), or HYBRID. Write the
+  rule for when each mode applies - that rule is real translation
+  theory, discovered through food.
+
+  Work WITH the AI on the introductions - it knows ingredients; YOU
+  know what the dish means, when it's eaten, why it matters. Then the
+  non-negotiable: verification by a NATIVE SPEAKER of the target
+  language (a relative, a teacher) - because AI translation confidently
+  produces the slightly-off phrasing every tourist menu in history is
+  famous for. Their corrections are the quality stamp.
+
+  Format it clean - two languages, readable, warm - and show the owner
+  or family. Done when someone says the introductions made them hungry
+  in both languages.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Translation drafting and the formatted menu page.
+  - surface: claude_project
+    why: Strong at the introduction-not-translation register.
+  - surface: canva
+    why: For a printable menu the restaurant could actually use.
+skills:
+  teaches: [context-grounding, responsible-use]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your translation policy with its mode rules, and the dish-by-dish decisions.
+  - type: file_upload
+    description: The finished bilingual menu.
+  - type: reflection
+    description: Two sentences - what did the native speaker correct, and which dish was hardest to introduce?
+evaluation:
+  deterministic_checks:
+    - id: policy_present
+      description: Prompt log contains a three-mode translation policy with applicability rules.
+    - id: menu_present
+      description: A complete bilingual menu file is attached.
+    - id: native_verification_present
+      description: Native-speaker corrections are documented.
+  rubric:
+    - criterion: The policy shows translation thinking
+      looks_like: Keep/translate/hybrid modes with principled rules, applied consistently - dish names treated as culture, not vocabulary.
+      weight: 0.35
+    - criterion: Introductions carry meaning
+      looks_like: Dish lines convey what the food IS and what it means - knowledge the AI alone didn't have, contributed by the learner.
+      weight: 0.3
+    - criterion: Verified by a human who knows
+      looks_like: A real native speaker reviewed it, corrections were made and documented - the AI draft didn't ship unexamined.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'The mode test for each dish: would a visitor ordering by the translated name alone get what they expect, and would a local recognize their dish in it? Two no''s = keep the name and introduce it.'
+  - level: 2
+    hint: 'Feed the AI YOUR knowledge per dish before drafting: "Kibbeh is festive, labor-intensive, judged harshly, eaten at family gatherings" - then "now write a one-line menu introduction in [language]". Context in, soul out; without it you get ingredient lists.'
+  - level: 3
+    hint: 'For the native-speaker review, ask them to read the target-language side ALOUD - awkward phrasing announces itself out loud (you know this from your script mission). Mark every hesitation; those are the lines to fix.'
+reflection_prompts:
+  - Why does food resist translation more than most language?
+  - What did the native speaker catch that you couldn't have?
+unlocks: [family-recipe-page, local-shop-site, language-practice-partner]
+stretch_challenge: Add a third language - and notice how your policy decisions transfer (or don't) across language pairs. Policy that survives a third language is real policy.
+safety_notes: The menu represents someone's livelihood and culture - owner approval before any public use, native verification before print. Translation errors on menus are funny on the internet and costly in the dining room.

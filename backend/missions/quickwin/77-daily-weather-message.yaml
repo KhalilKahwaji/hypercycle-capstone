@@ -1,0 +1,80 @@
+id: daily-weather-message
+version: 1
+title: Build a Daily Weather Message That Greets You Every Morning
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a scheduled automation that fetches tomorrow's weather and messages you every morning - your first scheduled trigger and your first API.
+goal: A working daily scheduled automation that pulls real weather data for your city and delivers a personally formatted morning message, running for at least two consecutive days.
+brief: |
+  Your first two automations waited for something to happen. This one
+  doesn't wait - it runs ON SCHEDULE, which is the other half of all
+  automation. And it introduces the most important plumbing concept in
+  modern software: the API.
+
+  The build: every morning at your chosen hour, an automation wakes up,
+  asks a weather service for your city's forecast, formats it YOUR way,
+  and messages you. The weather service part is an API - a counter where
+  programs order data instead of humans ordering food. Your automation
+  sends "weather for Zahle?" and gets back structured data: temperature,
+  rain chance, wind. When you wire that up in Make (the weather module
+  does the API call for you), peek at the raw response - that nested
+  data structure is what the entire internet runs on.
+
+  The personality is the design work: raw data says "22°C, 30% rain".
+  YOUR message says "22 and decent - light jacket weather. 30% rain so
+  the match is probably safe." Decide what you actually want each
+  morning: temperature in YOUR terms, rain translated into decisions
+  (umbrella? football?), maybe a different message for weekends.
+
+  Let it run two real mornings. Done when you wake up to a message your
+  past self built for you - which is, quietly, one of the best feelings
+  in this whole track.
+build_surfaces:
+  - surface: make
+    why: Scheduled triggers plus a weather module plus messaging - all on free tier.
+  - surface: n8n
+    why: Same build, open-source, slightly more raw API visibility.
+skills:
+  teaches: [automation-trigger-action, api-concept]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The scenario with its schedule, and the received messages from two consecutive mornings.
+  - type: prompt_log
+    description: Your message format design, and your notes on what the raw API response contained.
+  - type: reflection
+    description: Two sentences - explain what an API is to a friend, using your weather counter as the example.
+evaluation:
+  deterministic_checks:
+    - id: two_mornings_evidence
+      description: Screenshots show messages received on two consecutive scheduled mornings.
+    - id: format_design_present
+      description: Log shows a deliberate message format translating data into personal decisions.
+    - id: api_notes_present
+      description: Log contains observations of the raw API response structure.
+  rubric:
+    - criterion: Scheduled delivery works
+      looks_like: The automation fired on schedule two mornings running, with real current weather data for the learner's city.
+      weight: 0.35
+    - criterion: Data became decisions
+      looks_like: The message format translates raw numbers into the learner's actual morning choices - clothing, plans, transport - in their voice.
+      weight: 0.3
+    - criterion: The API concept landed
+      looks_like: The reflection explains request-response in their own words, grounded in what they saw in the raw weather data.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'In Make: the scenario''s schedule lives on the clock icon - set it to daily at your hour. Then add a weather module (search "weather" - OpenWeather works free) with your city, then your messaging app as the final module.'
+  - level: 2
+    hint: 'Click the weather module after a test run and inspect its output bubble - that''s the API response. Find the fields you want (temp, rain probability, description) and drag them into your message template, wrapped in your own words.'
+  - level: 3
+    hint: 'If the morning message doesn''t arrive: check the scenario toggle is ON, check the schedule timezone matches yours (the classic bug - it fired at 7am somewhere else), and check your messaging connection is still authorized. Debug the chain in order.'
+reflection_prompts:
+  - Now that you've seen one API, where else do you suspect they're hiding?
+  - What's the difference between data and information, based on your message design?
+unlocks: [daily-quote-poster, rss-news-digest, deadline-reminder-bot]
+stretch_challenge: Add weather-conditional logic - IF rain probability is above 60%, the message leads with the umbrella warning; otherwise it leads with the temperature. Your first branching automation.
+safety_notes: Your city for the forecast is fine, but don't put your precise home address into third-party services. Free API tiers have daily limits - one call per morning is well within all of them.

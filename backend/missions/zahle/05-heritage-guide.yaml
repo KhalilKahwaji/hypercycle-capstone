@@ -1,0 +1,70 @@
+id: heritage-guide
+version: 1
+title: The Zahle Heritage Guide
+track: heritage
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 120
+languages: [en]
+summary: Build a guide that tells visitors the real stories of Zahle - the Berdawni, the poets, the wineries - without inventing history.
+goal: A structured, fact-checked mini-guide to 5 or more Zahle places or traditions, powered by an assistant that separates fact from story.
+brief: |
+  Zahle is called the City of Wine and Poetry. An AI knows a little about it - and will
+  confidently invent the rest. Your mission is to build a guide that gets it RIGHT.
+
+  Choose at least 5 places or traditions: the Berdawni river restaurants, Our Lady of
+  Zahle and the view from the tower, the wineries and arak tradition, the poets, the
+  souk, the train station history - your pick.
+
+  First, make the AI draft an entry for each. Then fact-check every claim against real
+  sources or people who know (your grandparents count as primary sources - interview them!).
+  Mark each claim: confirmed, corrected, or removed. You will catch the AI inventing
+  at least one "fact" - that catch is a required deliverable.
+
+  Structure each entry the same way: name, what it is, one true story, practical visitor
+  info. Same columns every time - you learned why in the flashcard machine.
+build_surfaces:
+  - surface: any_chat_ui
+    why: Drafting and fact-check interrogation work in any chat.
+  - surface: canva
+    why: Turn the final entries into a visual guide if you want.
+  - surface: notion
+    why: A clean structured home for the guide entries.
+skills:
+  teaches: [data-structuring, ai-limits]
+  requires: [context-grounding]
+evidence_required:
+  - type: file_upload
+    description: The guide - 5+ entries in consistent structure, each claim marked confirmed/corrected/removed.
+  - type: prompt_log
+    description: How you interrogated the AI - including where you caught it being wrong or unsure.
+  - type: reflection
+    description: The best wrong "fact" the AI gave you, and how you proved it wrong.
+evaluation:
+  deterministic_checks:
+    - id: guide_present
+      description: Guide artifact contains at least 5 entries.
+    - id: factcheck_markers
+      description: Guide contains confirmed/corrected/removed markers on claims.
+  rubric:
+    - criterion: Fact-checking rigor
+      looks_like: Claims are verified against named sources (sites, books, people interviewed), with at least one documented AI error caught and corrected.
+      weight: 0.45
+    - criterion: Consistent structure
+      looks_like: Every entry follows the same fields in the same order, usable as-is by a visitor.
+      weight: 0.25
+    - criterion: Local depth
+      looks_like: Entries contain specifics a generic travel site would not have - a real story, a local detail, something from a human source.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: For each AI claim ask it - "How confident are you in that? What is your source?" Watch how the confident tone changes. That wobble tells you what to check first.
+  - level: 2
+    hint: Older family members are gold for this. Ask them about one entry - you will get a correction or a story no website has.
+  - level: 3
+    hint: Can't verify a claim anywhere? That IS the answer - mark it removed. A shorter true guide beats a longer maybe-guide.
+reflection_prompts:
+  - The AI sounded equally confident about true and invented facts. How will you handle that in everything you build from now on?
+unlocks: [notes-powered-assistant, spot-the-hallucination]
+stretch_challenge: Make the guide trilingual using your flashcard-machine technique, and have a French or English speaker test it.
+safety_notes: Interviewing people? Tell them what it's for and ask before including their name or photo.

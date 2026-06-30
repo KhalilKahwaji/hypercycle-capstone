@@ -1,0 +1,84 @@
+id: bullets-to-slides
+version: 1
+title: Build a Slideshow Generator - Bullet Points In, Slides Out
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a converter that turns your bullet points into actual presentable slides - with the design rules that stop slides from being documents in disguise.
+goal: A bullets-to-slides generator encoding real slide-design rules, run on genuine content, producing a presentable HTML slideshow you tested by presenting.
+brief: |
+  Every terrible presentation ever given was a document wearing a slide
+  costume - paragraphs on screens, read aloud to hostages. Today you
+  build a converter that makes the opposite: slides that work BECAUSE
+  they're not documents.
+
+  The design rules go into your generator, and they're the craft: one
+  idea per slide (a bullet list of six points becomes six slides, not
+  one). Headlines are CLAIMS, not labels ("Practice beats talent" not
+  "Introduction"). Maximum ~15 words visible per slide - the rest is
+  for SAYING (slides support a speaker; they don't replace one). And
+  every third-ish slide should be a visual moment: a giant number, a
+  single question, one enormous word.
+
+  The build: paste bullet points (real ones - a school presentation,
+  a club pitch, your case for getting a cat), and the generator returns
+  an actual HTML slideshow - full-screen slides, arrow-key navigation,
+  clean typography. Per-slide it decides: claim headline, the few
+  on-screen words, and a speaker note of what YOU say while it's up
+  (the note is where your bullets' detail went - nothing was lost,
+  it was relocated to the human).
+
+  Then the test that matters: PRESENT it - to one person or your mirror,
+  arrow keys and all. Slides that read well but present badly get
+  revised. Done when the run-through flows and your audience watched
+  YOU, not the screen.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generates the full HTML slideshow from your rules and content.
+  - surface: claude_project
+    why: Strong at claim-headlines and the say-versus-show split.
+  - surface: canva
+    why: Alternative execution if you prefer designed templates over generated HTML.
+skills:
+  teaches: [prompt-success-criteria, ui-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your slide-design rules, the source bullets, and the generation conversation.
+  - type: file_upload
+    description: The HTML slideshow file (or exported slides).
+  - type: reflection
+    description: Two sentences - what changed after the practice run, and where did your bullets' detail end up?
+evaluation:
+  deterministic_checks:
+    - id: rules_present
+      description: Prompt log contains explicit slide-design rules including word caps and claim headlines.
+    - id: slideshow_present
+      description: A working slideshow file from real content is attached.
+    - id: practice_run_present
+      description: Reflection documents an actual presentation run-through with at least one revision.
+  rubric:
+    - criterion: The rules killed the document
+      looks_like: One idea per slide, claim headlines, word caps respected, visual-moment slides present - the conversion genuinely transformed, not reformatted.
+      weight: 0.4
+    - criterion: The speaker notes carry the detail
+      looks_like: Bullets' substance relocated to say-notes rather than deleted or crammed on screen - the speaker-support model understood and executed.
+      weight: 0.3
+    - criterion: Presented and revised
+      looks_like: A real run-through happened, revealed something (a clunky transition, an overstuffed slide), and the deck improved because of it.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Claim-headline drill: take your first bullet and ask "what am I actually SAYING with this?" - the answer phrased as a sentence is the headline. "Results" is a label; "We doubled sign-ups in a month" is a slide.'
+  - level: 2
+    hint: 'For the slideshow: "one self-contained HTML file - each slide a full-screen section, arrow keys navigate, big centered typography, speaker notes as comments in the code". Test navigation immediately; broken arrows kill rehearsal.'
+  - level: 3
+    hint: 'The practice run exposes one thing above all: slides where you had nothing to SAY (the screen said it all - cut or split it) or too much (your note is a essay - that''s two slides). Let the awkward silences and rushed mumbles point to the edits.'
+reflection_prompts:
+  - Why does less on screen produce more in the room?
+  - Which of your slides became a visual moment, and what did it do to the rhythm?
+unlocks: [notes-to-script-tool, imaginary-product-landing, hobby-fan-page]
+stretch_challenge: 'Add a print mode - the same content rendered as a one-page handout with the speaker notes visible. One source, two outputs: the presentation and the takeaway, which is how professionals actually ship talks.'
+safety_notes: Present your own content. If the deck is for school, the thinking and the delivery are the graded parts - the generator moved your words around; make sure they were yours to begin with.

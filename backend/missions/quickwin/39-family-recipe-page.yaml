@@ -1,0 +1,77 @@
+id: family-recipe-page
+version: 1
+title: Build a Recipe Page for a Family Dish
+track: heritage
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Capture a family recipe that lives only in someone's hands and memory - and turn it into a beautiful page that preserves it forever.
+goal: A recipe page documenting a real family dish from a real conversation with its keeper - ingredients, steps, secrets, and the story.
+brief: |
+  Somewhere in your family is a dish nobody wrote down. It lives in someone's
+  hands - "a little of this, until it smells right". If nobody documents it,
+  one day it's gone. Today, you're the documentarian.
+
+  Step one is the conversation - the real heart of this mission. Sit with the
+  cook. Get the ingredients with HONEST amounts (watch their hands when they
+  say "a pinch"), the steps in order, the secret everyone gets wrong, and the
+  STORY: where the recipe came from, who taught them, when it gets cooked.
+  Record or take notes like a journalist.
+
+  Then structure the chaos with the AI's help: ingredients list (with the
+  cook's units - "one tea glass of rice" is data too), numbered steps,
+  a "secrets" callout box for the things cookbooks never tell you, and the
+  story in the cook's own words at the top.
+
+  Build the page warm - this is heritage, not a recipe app. Show the cook the
+  finished page. If they say "yes, that's it" - and maybe get a little quiet -
+  mission complete.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Structure your interview notes into clean recipe format, then build the page.
+  - surface: claude_project
+    why: Excellent at preserving voice while organizing - the story should still sound like the cook.
+  - surface: canva
+    why: Alternative for a beautiful printable version to gift the cook.
+skills:
+  teaches: [data-structuring, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The finished recipe page - ingredients, steps, secrets, and story all visible.
+  - type: prompt_log
+    description: Your raw interview notes and how you structured them with the AI.
+  - type: reflection
+    description: Two sentences - what did the cook say when they saw it, and what would have been lost if you hadn't done this?
+evaluation:
+  deterministic_checks:
+    - id: page_screenshot_present
+      description: Screenshot shows a complete recipe page with distinct sections.
+    - id: interview_notes_present
+      description: Prompt log exists, min 300 characters, contains raw notes from a real conversation.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 100 characters.
+  rubric:
+    - criterion: Real documentation happened
+      looks_like: The notes show a genuine conversation - quirky units, hand-gesture measurements honestly recorded, the cook's actual phrases preserved.
+      weight: 0.4
+    - criterion: Structure serves cooking
+      looks_like: Someone could actually attempt the dish from this page - ingredients complete, steps ordered and clear, secrets where they're needed.
+      weight: 0.3
+    - criterion: The story survived
+      looks_like: The page carries the dish's history and the cook's voice - it reads as heritage, and the cook approved it.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Best interview question for cooks: "imagine I''m making it and you can''t touch anything - talk me through it." Steps come out in real order, with the warnings attached.'
+  - level: 2
+    hint: When they say "a little" or "until it's right", ask "how do you KNOW it's right?" - the answer ("when it smells like toasted nuts", "when it pulls from the pan edge") is the real instruction. Write those down verbatim.
+  - level: 3
+    hint: 'For the page, ask: "a warm single-page recipe layout - story paragraph at top in the cook''s voice, two-column ingredients, numbered steps, and a highlighted ''secrets'' box" - and paste your structured notes.'
+reflection_prompts:
+  - What did you learn that you'd never have gotten from a cookbook?
+  - Whose recipe should be documented next, before it's too late?
+unlocks: [heritage-guide, neighborhood-gallery, thank-you-page]
+stretch_challenge: Make it bilingual - the full recipe in Arabic or French alongside English, checked by the cook - and print a copy as a gift.
+safety_notes: The recipe belongs to the cook - ask before sharing it beyond family, especially if it's a "secret recipe" in the real sense.

@@ -1,0 +1,74 @@
+id: particle-screensaver
+version: 1
+title: Build a Screensaver Where Particles Chase Your Mouse
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a full-screen particle background that swarms, follows, or flees your mouse - tuned until the motion feels alive.
+goal: A full-screen particle page where the particles visibly react to your mouse, with motion you tuned through at least three iterations.
+brief: |
+  Hypnotic swarms of dots that follow your cursor - you've seen them on fancy
+  websites. Today you find out they're an hour of work when you know how to ask.
+
+  Describe the scene to the AI: how many particles, what they look like (dots,
+  sparks, tiny triangles), and the RELATIONSHIP with your mouse. That relationship
+  is the soul of the piece - do they chase you, scatter in fear, orbit you like
+  planets, or connect to you with threads?
+
+  Get version one running, then tune the physics by feel: "they snap too
+  instantly - make them drift like they're underwater", "too crowded, halve
+  them", "let them wander when I stop moving". You're directing motion the way
+  a film director directs actors - in plain language, judged by eye.
+
+  Done when you catch yourself just moving the mouse around to watch them. That's
+  the screensaver test.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview the page in one place, free.
+  - surface: claude_project
+    why: Previews HTML in chat, responds well to "feel" adjustments.
+  - surface: replit
+    why: Host it live so it can run full-screen on any device.
+skills:
+  teaches: [ui-basics, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The screensaver running full-screen (or a short screen recording as a file).
+  - type: prompt_log
+    description: Your original scene description and at least three motion-tuning requests.
+  - type: reflection
+    description: One sentence - which tuning change made it go from "demo" to "alive"?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot or recording artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, contains three or more iteration requests.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Mouse relationship works
+      looks_like: Evidence shows particles clearly reacting to cursor position - chasing, fleeing, orbiting, or connecting - not just ambient drifting.
+      weight: 0.4
+    - criterion: Motion was tuned by feel
+      looks_like: The log shows sensory language ("floatier", "lazier", "like underwater") translated into changes - the learner judged motion quality, not just function.
+      weight: 0.35
+    - criterion: Aesthetic ownership
+      looks_like: Colors, density, and particle style reflect stated choices, and the learner can say what mood they were going for.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Pick the relationship first - chase, flee, orbit, or connect. Then describe it with an analogy - "follow my cursor like fish following food flakes".
+  - level: 2
+    hint: Ask for "a single self-contained HTML file, canvas element, no libraries, particles as soft glowing circles" - then run it and write down the first three things that feel wrong. Those are your next three prompts.
+  - level: 3
+    hint: If motion feels robotic, ask for "smooth easing - particles accelerate gently toward the target instead of moving at constant speed, and keep a little randomness per particle". Those two tweaks fix 90% of robotic motion.
+reflection_prompts:
+  - How did you describe motion without knowing physics vocabulary?
+  - What's the difference between "it works" and "it feels right"?
+unlocks: [light-painter, keyboard-fireworks, zen-garden]
+stretch_challenge: Add a second species of particle with different behavior - and a reaction when the two species meet.
+safety_notes: Flashing visuals can trigger photosensitive conditions - keep movement smooth and avoid rapid full-screen flashing if you share it.

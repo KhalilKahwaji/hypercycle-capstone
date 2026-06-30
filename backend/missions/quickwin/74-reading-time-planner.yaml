@@ -1,0 +1,81 @@
+id: reading-time-planner
+version: 1
+title: Build a Reading-Time Estimator and Chapter Planner
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Measure your true reading speed, then build a planner that turns any book into an honest day-by-day schedule - personal data beats wishful thinking.
+goal: A reading planner calibrated with your measured reading speed (not a guessed one), producing a realistic schedule for a real book you need to read, checked after the first session.
+brief: |
+  "I'll read it this weekend" - the most repeated lie in education. The cure
+  isn't discipline; it's DATA. Today you measure yourself like a scientist
+  and build a planner that runs on truth.
+
+  THE EXPERIMENT comes first: take the actual book you need to read (novel
+  for class, textbook chapters, anything real). Time yourself reading for
+  ten full minutes at normal comprehension - not race pace, the pace where
+  you actually absorb. Count the pages. That's your TRUE RATE, and it's
+  probably half of what you'd have guessed. If the book has different
+  densities (story vs. analysis chapters), measure both. You now own a
+  number almost no student knows about themselves.
+
+  Then build the planner around your number: feed it the book's structure
+  (chapters and page counts - paste the table of contents), your rate, your
+  deadline, and your real available slots. Its rules: sessions match your
+  honest rate with a comprehension buffer (add 15% - you'll reread things),
+  chapter boundaries beat page targets where possible (stopping mid-argument
+  wastes the next session's warmup), and the deadline gets a safety margin.
+
+  Run the first session, compare planned to actual, recalibrate. A planner
+  built on your measured truth and corrected by your first session is a
+  tool you can trust for every book after this one.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Does the schedule math instantly once you provide rate and structure.
+  - surface: claude_project
+    why: Holds the book plan across sessions for recalibration.
+  - surface: google_forms_sheets
+    why: Export the plan to a sheet and tick sessions off.
+skills:
+  teaches: [data-structuring, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your measured rate experiment (time, pages, conditions), the book structure, and the generated plan.
+  - type: reflection
+    description: The session-one report - planned versus actual, and the recalibration made.
+  - type: screenshot
+    description: The final schedule, version two.
+evaluation:
+  deterministic_checks:
+    - id: measurement_present
+      description: Prompt log exists, min 250 characters, contains a real timed reading measurement.
+    - id: plan_present
+      description: A complete day-by-day plan for a real book exists.
+    - id: session_report_present
+      description: Reflection exists, min 100 characters, compares planned to actual for session one.
+  rubric:
+    - criterion: The rate is measured, not guessed
+      looks_like: A genuine ten-minute experiment with page count and conditions - ideally two rates for different text densities.
+      weight: 0.35
+    - criterion: The plan respects reality
+      looks_like: Sessions use the measured rate with buffer, prefer chapter boundaries, fit real time slots, and leave deadline margin.
+      weight: 0.3
+    - criterion: Calibration loop closed
+      looks_like: Session one's actual result honestly reported and the plan adjusted - the planner learns its owner.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Measure under real conditions - your actual desk, your actual phone nearby (or banished, but then that''s the plan''s condition too). Lab-perfect measurements produce plans for a person who doesn''t exist.'
+  - level: 2
+    hint: 'Paste the table of contents and say: "Build a session plan: my rate is X pages per 10 minutes, sessions available are [your slots], deadline [date]. Prefer ending sessions at chapter ends. Add 15% comprehension buffer and finish two days before deadline."'
+  - level: 3
+    hint: 'If session one ran long, don''t just stretch the plan - diagnose: was it density (this chapter was harder), conditions (interruptions), or rate (your number was optimistic)? Each has a different fix. Tell the planner which it was.'
+reflection_prompts:
+  - How far off was your guessed speed from your measured one - and why do you think that gap exists?
+  - What else in your studying deserves measurement instead of guessing?
+unlocks: [study-schedule-generator, chapter-summary-tool, homework-planner-bot]
+stretch_challenge: Track your rate across the whole book - does it speed up as you get into the story or settle into the author's style? You're now collecting longitudinal data on your own brain.
+safety_notes: The honest number is the useful number - an inflated rate produces a plan that fails and feels like your fault when it was just bad data. Measure true, plan true.

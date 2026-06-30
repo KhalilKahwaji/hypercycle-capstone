@@ -1,0 +1,79 @@
+id: study-schedule-generator
+version: 1
+title: Build a Study Schedule Generator From Your Real Timetable
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a scheduler that fits study plans around your REAL life - classes, training, family, energy levels - and survives contact with an actual week.
+goal: A schedule generator loaded with your true constraints, producing a realistic week plan you actually ran for two days, then revised from what happened.
+brief: |
+  Every study schedule ever made by a motivated student at 11pm has one flaw:
+  it was designed for a robot. 6am revision! Four-hour blocks! No Friday
+  football! By Tuesday it's abandoned and you feel like the failure - but
+  the SCHEDULE failed, not you. Today you build one that respects reality.
+
+  Start with the constraint dump - the honest one. Your real class
+  timetable. Training days. Family obligations (Sunday lunch is not
+  optional and you know it). The hour you genuinely stop functioning. Your
+  energy map: when are you actually sharp? Feed ALL of it in - the
+  scheduler's quality depends entirely on the honesty of its inputs.
+
+  Then the scheduling rules - encode what schedule science and common sense
+  agree on: study blocks of 25-45 minutes with breaks, hardest subject at
+  your sharpest hour, no block after your shutdown time, at least one fully
+  free evening per week (a schedule with no slack shatters on first
+  contact), and buffer before deadlines, not cramming after.
+
+  Generate the week. Then the real mission: LIVE it for two days, and bring
+  the wreckage back - what held, what slipped, what was fantasy. Revise.
+  A schedule that survived revision is a tool; the first draft never is.
+build_surfaces:
+  - surface: claude_project
+    why: Holds your constraints across the week for revisions.
+  - surface: google_ai_studio
+    why: System instructions hold the rules; regeneration after revision is instant.
+  - surface: google_forms_sheets
+    why: Export the final plan into a sheet you can actually see daily.
+skills:
+  teaches: [data-structuring, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your full constraint dump, scheduling rules, and the generated week.
+  - type: reflection
+    description: The two-day reality report - what held, what slipped, and the revision made.
+  - type: screenshot
+    description: The revised schedule, version two.
+evaluation:
+  deterministic_checks:
+    - id: constraints_present
+      description: Prompt log exists, min 300 characters, contains timetable, obligations, and energy map.
+    - id: reality_report_present
+      description: Reflection exists, min 150 characters, reports actual adherence over two days.
+    - id: revision_present
+      description: A version-two schedule exists differing from version one based on the report.
+  rubric:
+    - criterion: Inputs are honest
+      looks_like: The constraint dump includes real obligations, true energy patterns, and the shutdown hour - signs of honesty rather than aspiration.
+      weight: 0.3
+    - criterion: Rules encode realism
+      looks_like: Short blocks, energy-matched subjects, protected free time, and deadline buffers all appear in the rules and the output.
+      weight: 0.3
+    - criterion: The loop closed with reality
+      looks_like: Two real days lived, slippage honestly reported, and version two visibly shaped by what actually happened.
+      weight: 0.4
+hint_ladder:
+  - level: 1
+    hint: 'For the energy map, just rank three slots: after school, after dinner, weekend morning - sharpest to dullest. Put your hardest subject in the sharpest slot. That one move beats most full systems.'
+  - level: 2
+    hint: 'Make it ask YOU first: "Before generating, ask me five questions about constraints I might have forgotten." It will find the things you didn''t think to mention - like how long dinner actually takes.'
+  - level: 3
+    hint: 'In the revision, cut before you rearrange: if you did 60% of planned blocks, version two should PLAN roughly that 60% - a schedule you complete builds the trust that lets you grow it later. Shrink to fit, then expand.'
+reflection_prompts:
+  - Why did your previous schedules fail - and was it ever actually your fault?
+  - What did version two remove, and why did removing feel harder than adding?
+unlocks: [homework-planner-bot, reading-time-planner, deadline-reminder-bot]
+stretch_challenge: Add exam mode - feed in a real exam date and have it generate a backwards plan from the exam with escalating review and a mandatory rest day before. Compare it to what you'd have done naturally.
+safety_notes: A schedule serves your life, not the reverse - if the honest math says there aren't enough hours, that's vital information for a conversation with a teacher or parent, not a reason to schedule your sleep away.

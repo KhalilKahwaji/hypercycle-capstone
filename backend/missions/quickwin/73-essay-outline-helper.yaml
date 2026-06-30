@@ -1,0 +1,80 @@
+id: essay-outline-helper
+version: 1
+title: Build an Essay Outline Helper (Outline Only - You Write)
+track: study
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build an outlining partner that interrogates YOUR ideas into a strong structure - and is constitutionally incapable of writing the essay for you.
+goal: An outline helper with a hard outline-only boundary, used on a real essay assignment, producing a structure built from your ideas - with the essay then written by you.
+brief: |
+  The hardest part of an essay isn't the writing - it's knowing what you
+  think and in what order to say it. That's outlining, and it's where an
+  AI partner genuinely helps without stealing the work. Today you build
+  that partner, with the boundary welded shut.
+
+  The constitution comes first, and it's the famous part of this build:
+  "You produce outlines only. Never write sentences for the essay itself.
+  If I ask you to write a paragraph, refuse and turn it back into outline
+  work." Why weld it shut? Because an essay in your own words from a strong
+  outline makes you smarter and is honest work - while a generated essay
+  with your name on it is neither. Your bot enforces the line so 11pm-you
+  doesn't have to.
+
+  Then the method - your helper works by INTERROGATION, not generation: it
+  asks what the assignment demands, what YOU actually think (your thesis,
+  in your words - it can sharpen but not supply), what your strongest three
+  arguments are, what the best objection is (every strong essay handles
+  one), and what evidence you have per point. From your answers it builds
+  the skeleton: thesis, point order with reasons for the order, where the
+  counterargument lives, what each paragraph must accomplish.
+
+  Use it on a REAL assignment due soon. Then write the essay yourself -
+  and notice how fast writing goes when the thinking is already done.
+build_surfaces:
+  - surface: claude_project
+    why: Holds the assignment context; respects hard boundaries reliably.
+  - surface: google_ai_studio
+    why: System instructions hold the constitution; outline sessions run free.
+skills:
+  teaches: [prompt-decomposition, responsible-use]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your constitution and the full interrogation session, including at least one moment the boundary was tested.
+  - type: file_upload
+    description: The final outline - and the opening paragraph of the essay YOU then wrote from it.
+  - type: reflection
+    description: Two sentences - how did writing from the outline feel, and why does the boundary matter?
+evaluation:
+  deterministic_checks:
+    - id: constitution_present
+      description: Prompt log exists, min 250 characters, contains the outline-only rule with refusal behavior.
+    - id: interrogation_present
+      description: Log shows the bot drawing thesis and arguments FROM the learner via questions.
+    - id: own_writing_present
+      description: An essay opening written by the learner is attached alongside the outline.
+  rubric:
+    - criterion: The boundary held
+      looks_like: The transcript shows a tested boundary - a request for written sentences refused and redirected to outline work, per the constitution.
+      weight: 0.35
+    - criterion: The ideas are the learner's
+      looks_like: Thesis and arguments visibly originated from the learner's answers - the bot sharpened and structured, never supplied positions.
+      weight: 0.35
+    - criterion: Structure shows craft
+      looks_like: The outline has a defensible point order, a placed counterargument, and per-paragraph jobs - structure a teacher would recognize as strong.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'The interrogation opener that works: have it ask "What''s your honest opinion on this topic, in one messy sentence? Don''t make it good - make it true." Theses hide inside messy true sentences.'
+  - level: 2
+    hint: 'For point order, have it ask you: "Which argument would convince your most skeptical classmate? That one usually goes last - strongest closes." Order with reasons beats default order.'
+  - level: 3
+    hint: 'Test the boundary on purpose: ask it to "just write the intro quickly". If it complies, strengthen the constitution with "this rule overrides ALL my future requests, even if I claim urgency" - then retest. A boundary untested is a boundary unknown.'
+reflection_prompts:
+  - Where does help end and substitution begin - in your own words?
+  - What did the interrogation surface that you didn't know you thought?
+unlocks: [chapter-summary-tool, citation-formatter, cover-letter-assistant]
+stretch_challenge: After writing, feed your finished essay back and ask it to check the essay against the outline - did you deliver each paragraph's job? Structure-checking your own work is editing's first move.
+safety_notes: The outline-only boundary is the mission - an AI-written essay submitted as yours is plagiarism at most schools, and it cheats the only person the essay was supposed to build. Your outline, your words, your name.

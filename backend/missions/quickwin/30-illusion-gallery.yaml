@@ -1,0 +1,74 @@
+id: illusion-gallery
+version: 1
+title: Code an Optical Illusion Gallery
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Recreate three classic optical illusions in code, present them in a gallery page, and explain why each one fools your brain.
+goal: A gallery page with three working coded illusions, each with your one-paragraph explanation of why the brain falls for it.
+brief: |
+  Your brain can be hacked with geometry. Today you build the proof.
+
+  Pick three classic illusions to recreate in code. Good starters: the rotating
+  snakes that seem to move while perfectly still, the grid with ghost dots
+  flickering at intersections, the two same-length lines that refuse to look
+  equal, the same gray that looks light or dark depending on surroundings, or
+  the spinning spiral that makes your hand ripple afterward. Describe each to
+  the AI carefully - illusions are PRECISE, and "almost right" often means no
+  illusion at all. If the effect doesn't trigger, study what's off (contrast?
+  spacing? size?) and iterate until your brain falls for your own creation.
+
+  Then the twist that makes this a Buddy mission: for each illusion, research
+  WHY it works and write the explanation in your own words - one paragraph,
+  good enough to teach a curious friend. Building the trick is half; owning
+  the explanation is the other half.
+
+  Assemble all three into one gallery page with titles and your explanations.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate each illusion and the gallery page; ask it to explain the science too - then verify.
+  - surface: claude_project
+    why: Precise at geometric descriptions and good at explaining perception research.
+skills:
+  teaches: [prompt-decomposition, explain-your-build]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The gallery showing all three illusions with their titles and explanations.
+  - type: prompt_log
+    description: Your build conversation, including at least one precision fix where an illusion wasn't triggering.
+  - type: reflection
+    description: Two sentences - which illusion was hardest to get working, and what was the critical detail?
+evaluation:
+  deterministic_checks:
+    - id: gallery_present
+      description: Screenshot shows three distinct illusions on one page.
+    - id: explanations_present
+      description: Each illusion has an explanation paragraph (visible in screenshot or submitted text).
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 250 characters.
+  rubric:
+    - criterion: The illusions actually work
+      looks_like: All three produce their perceptual effect - ghost dots flicker, still images appear to move, equal things look unequal.
+      weight: 0.4
+    - criterion: Explanations are owned
+      looks_like: Each explanation is in the learner's own words, names the mechanism (contrast, peripheral vision, context), and would make sense to a friend - not pasted jargon.
+      weight: 0.35
+    - criterion: Precision iteration
+      looks_like: The log shows at least one case of diagnosing why an effect was weak and fixing the specific parameter.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Start with the scintillating grid - it's the most reliable - "a grid of black squares separated by gray lines, with white dots at every intersection". The ghost dots appear in your peripheral vision immediately.
+  - level: 2
+    hint: If an illusion feels weak, the usual suspects are contrast and scale - "increase the contrast between elements and make the whole pattern larger". Illusions often need to fill more of your vision to trigger.
+  - level: 3
+    hint: For explanations, ask the AI "why does this illusion work, in simple terms?" - then close the chat and rewrite it from memory in your own words. If you can't, read it again. That loop IS the learning.
+reflection_prompts:
+  - What does it tell you that your brain falls for an illusion even when you know the trick?
+  - Which explanation could you now give without notes?
+unlocks: [click-color-art, photo-kaleidoscope, spot-the-hallucination]
+stretch_challenge: Add a fourth illusion nobody in your class has seen - research "lilac chaser" or "motion aftereffect" and recreate it.
+safety_notes: Motion illusions can cause brief dizziness and may affect photosensitive viewers - add a small warning note on your gallery page and avoid rapid flashing.

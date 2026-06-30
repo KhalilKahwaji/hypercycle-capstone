@@ -1,0 +1,80 @@
+id: caption-generator
+version: 1
+title: Build a Caption Generator for Your Photos
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a caption assistant trained on YOUR voice from your own past captions - generic out, you-but-faster in.
+goal: A caption generator calibrated with your real voice samples and style rules, tested on three real photos, with at least one caption you actually used.
+brief: |
+  Caption-block is real: perfect photo, cursor blinking, nothing. AI can
+  fix it - but the default AI caption ("Living my best life ✨") is worse
+  than nothing. The mission is building a generator that sounds like YOU.
+
+  Voice calibration first: collect five captions you've actually written
+  and liked - yours, from your real posts. Those are training data. Add
+  your style rules by studying your own habits: do you do lowercase? One
+  emoji or none? Self-deprecating or sincere? Short or story-mode? What
+  would you NEVER write? ("Never 'vibes'. Never a hashtag wall. Never
+  inspirational.") The never-list shapes voice more than the always-list.
+
+  Then the build: upload a photo (or describe it), the generator returns
+  five caption options in your calibrated voice across moods - one
+  deadpan, one sincere, one absurd, you define the spread. Five options
+  matters: caption generation is a TASTE workflow, you pick and tweak,
+  never auto-post.
+
+  Test on three real photos from your camera roll. The bar: would a close
+  friend believe you wrote it? Iterate the rules until yes. Done when one
+  generated-then-tweaked caption goes on a real post and nobody suspects
+  a thing.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Image upload plus system instructions - the full calibrated generator.
+  - surface: claude_project
+    why: Excellent at voice-matching from samples.
+  - surface: any_chat_ui
+    why: Works as a pinned prompt with photo descriptions.
+skills:
+  teaches: [prompt-examples, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your five voice samples, style rules including the never-list, and the calibration conversation.
+  - type: screenshot
+    description: Generated options for a real photo, with your pick marked and your tweak shown.
+  - type: reflection
+    description: Two sentences - what makes a caption sound like you, and did the friend-test pass?
+evaluation:
+  deterministic_checks:
+    - id: calibration_present
+      description: Prompt log contains five real voice samples and explicit style rules with a never-list.
+    - id: options_evidence
+      description: Screenshot shows multiple caption options for a real photo with a selection.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Voice calibration is real
+      looks_like: Genuine past captions as samples, observed habits as rules, and output that visibly matches the samples - not generic with the learner's emoji glued on.
+      weight: 0.4
+    - criterion: The taste workflow holds
+      looks_like: Multiple options generated, learner picks and tweaks - human curation in the loop, never auto-accept.
+      weight: 0.3
+    - criterion: It survived the wild
+      looks_like: A real caption used on a real post (or held to that bar), passing the close-friend believability test.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'No five past captions? Write five fresh ones for old photos, in your natural voice, WITHOUT AI - that''s your baseline sample set. The generator needs to know what unassisted-you sounds like.'
+  - level: 2
+    hint: 'The instruction that does the heavy lifting: "Match the voice of these samples exactly - their length, punctuation, capitalization, and humor style: [samples]. Never produce anything from this list: [never-list]."'
+  - level: 3
+    hint: 'If output is close-but-off, name the gap precisely: "too polished - mine are messier", "you''re explaining the photo, I never do that". Voice gaps close fast when described, never when regenerated blindly.'
+reflection_prompts:
+  - What did studying your own captions reveal about your voice?
+  - Where's the line between assisted and fake?
+unlocks: [hashtag-assistant, thumbnail-idea-generator, week-in-comic]
+stretch_challenge: Add platform modes - the same photo captioned for the close-friends story (unhinged) versus the public grid (composed) - and notice you've been running multi-voice all along.
+safety_notes: Your photos, your accounts, your final say on every post. Calibrate on your own writing only - mimicking someone else's voice for posts is impersonation, not assistance.

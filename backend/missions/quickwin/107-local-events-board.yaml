@@ -1,0 +1,83 @@
+id: local-events-board
+version: 1
+title: Build a Local Events Board Your Neighborhood Can Submit To
+track: community
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a two-sided community tool - anyone can submit an event, you moderate, the board displays what's approved - and meet the moderation problem every platform faces.
+goal: A working events board with public submission, a moderation step you designed, and a display view - seeded with real local events and tested end-to-end with at least one outside submission.
+brief: |
+  Where do you find out what's happening in your neighborhood? Probably:
+  you don't, until it's over. Today you build the fix - and your first
+  TWO-SIDED system, where the architecture is the lesson.
+
+  The pipeline has three stations: SUBMIT (a public form anyone can fill -
+  event name, date, time, place, one-line description, organizer
+  contact), MODERATE (submissions land in a sheet marked "pending" -
+  and only YOU flip them to "approved"), and DISPLAY (a page showing
+  approved events, soonest first, past events auto-hidden).
+
+  The moderation station is the interesting one - you're about to feel,
+  in miniature, the problem every platform on earth wrestles with: what
+  gets approved? Write your policy BEFORE the first submission arrives:
+  real events only, no commercial spam (or some? a shop's sale event -
+  community or commerce? you decide), nothing inappropriate, date must
+  be future. Five lines, written down. The discipline of policy-before-
+  cases is what separates moderation from mood.
+
+  Seed the board with 4-5 real upcoming local events (gathering them is
+  its own little journalism), then the END-TO-END TEST: have someone
+  else submit an event through the form, moderate it, watch it appear.
+  That full loop - stranger input to public display through your
+  checkpoint - is the whole architecture of community platforms, running
+  on your sheet.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Submission form, moderation sheet with status column - two stations native.
+  - surface: google_ai_studio
+    why: Build the display page reading from the published sheet.
+  - surface: replit
+    why: Host the display - a community board needs a public address.
+skills:
+  teaches: [tool-assembly, responsible-use]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: All three stations - the form, the moderation sheet with statuses, the display showing approved events.
+  - type: prompt_log
+    description: Your written moderation policy (pre-cases), and the end-to-end test documented.
+  - type: reflection
+    description: Two sentences - what was the hardest policy call, and what would change at 50 submissions a week?
+evaluation:
+  deterministic_checks:
+    - id: three_stations_evidence
+      description: Screenshots show submission, moderation with pending/approved states, and the public display.
+    - id: policy_present
+      description: A written moderation policy predating submissions exists.
+    - id: end_to_end_present
+      description: An outside submission traveled the full pipeline to display.
+  rubric:
+    - criterion: The architecture works
+      looks_like: Three stations connected - submissions flow to pending, approval flips them live, past events hide - verified by the end-to-end test.
+      weight: 0.4
+    - criterion: Moderation is policy, not mood
+      looks_like: A written policy with real decisions (the commercial question answered), applied consistently to the seeded and submitted events.
+      weight: 0.3
+    - criterion: Genuinely local and live
+      looks_like: Real neighborhood events seeded, a real outsider's submission processed, and the board useful to an actual resident today.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'The status column is the whole moderation mechanism: submissions arrive as "pending", you change a cell to "approved", and the display only reads approved rows. One column, full editorial control.'
+  - level: 2
+    hint: 'For the display page: publish the sheet (File > Share > Publish to web, as CSV) and ask the AI for "a page that fetches this CSV, shows only approved rows with future dates, sorted soonest first, as clean event cards". Auto-hiding the past is one date comparison.'
+  - level: 3
+    hint: 'If the display doesn''t update after approval: published sheets cache for a few minutes - wait, then hard-refresh. If events show unsorted or past ones linger, the date column probably arrived as text - format it as dates in the sheet, the comparison needs real dates to work.'
+reflection_prompts:
+  - Why must the policy exist before the cases arrive?
+  - Which platform you use daily is just your three stations at scale?
+unlocks: [report-a-problem-form, event-invite-page, ngo-wishlist-page]
+stretch_challenge: Add a weekly digest leg - every Sunday an automation messages the coming week's approved events to a community group chat. Board plus broadcast is how local information actually travels.
+safety_notes: You're publishing community information - verify events are real before approving, never display submitters' personal contacts without consent, and hand the moderation keys to a community adult if the board outlives your pilot. Public boards are public responsibility.

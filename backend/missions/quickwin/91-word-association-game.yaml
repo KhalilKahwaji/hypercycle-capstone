@@ -1,0 +1,85 @@
+id: word-association-game
+version: 1
+title: Build a Word Association Game - You vs the AI
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a word association game with rules you design and the AI as both opponent and referee - then catch it being a biased judge.
+goal: A playable word association game with a written ruleset, the AI as opponent and judge, scoring you defined, and one documented case of auditing the judge's calls.
+brief: |
+  Word association is the game humans play to discover how minds connect
+  things. Playing it against an AI is genuinely fascinating - its
+  associations come from reading the entire internet, and they're
+  sometimes brilliant, sometimes alien. Today you build the game AND
+  discover the deep problem of machine referees.
+
+  Design your ruleset first - association games live or die on rules:
+  what counts as a valid association? (Connection must be explainable in
+  one sentence.) What's banned? (Rhymes? Plurals? "Things in the same
+  room"?) Time or turn limits? How do you SCORE creativity - is "bread →
+  butter" worth less than "bread → diplomacy" (both connect, one
+  beautifully)? Write it like a real game manual.
+
+  Then build it as a chat game: the AI plays opponent AND referee,
+  applying your rules, judging both players' associations, keeping score.
+
+  And here's the meaty part - the referee problem: can the AI fairly judge
+  its OWN associations? Audit it. Play several rounds and track the calls.
+  Does it score itself generously? Accept its own weird links while
+  questioning yours? Document at least one questionable call and confront
+  it ("explain why yours scored 3 and mine scored 1"). You're poking at
+  judge-and-player conflict of interest - a real problem in AI evaluation,
+  found inside a parlor game.
+
+  Done when you've won a round fair and square - or proven the referee
+  needed reforming.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the ruleset; games run as long chats.
+  - surface: claude_project
+    why: Thoughtful about explaining its judging when challenged.
+  - surface: any_chat_ui
+    why: The game is pure conversation - any chat works.
+skills:
+  teaches: [prompt-success-criteria, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your complete ruleset including scoring.
+  - type: transcript
+    description: At least two full rounds, including the judge-audit confrontation.
+  - type: reflection
+    description: Two sentences - was the referee fair, and what did its strangest association reveal?
+evaluation:
+  deterministic_checks:
+    - id: ruleset_present
+      description: Prompt log exists, min 250 characters, contains validity rules, bans, and scoring.
+    - id: rounds_present
+      description: Transcript shows two or more complete rounds with scores.
+    - id: audit_present
+      description: Transcript includes a challenged call and the judge's explanation.
+  rubric:
+    - criterion: The ruleset is a real design
+      looks_like: Clear validity criteria, bans, and a creativity-aware scoring scheme - a manual a stranger could play from.
+      weight: 0.35
+    - criterion: The game actually plays
+      looks_like: Multiple genuine rounds with rules applied and scores tracked - a working game, not a concept.
+      weight: 0.3
+    - criterion: The judge was audited
+      looks_like: Calls were tracked, at least one challenged with the response documented, and the reflection takes an evidence-based position on referee fairness.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Scoring scheme that works: 1 point for valid-but-obvious, 2 for clever, 3 for "I never would have connected those but it''s perfect". Require the judge to justify any 3 in one sentence.'
+  - level: 2
+    hint: 'Anti-bias rule for the instructions: "Judge each association blind to who made it - state the connection''s quality before noting whose turn it was." It won''t be perfectly blind, but watch whether scores change. That''s data.'
+  - level: 3
+    hint: 'For the audit, keep a simple tally: your average score versus its average score across rounds. A consistent gap is evidence (of bias - or of it genuinely being better at this; the confrontation question helps you tell which).'
+reflection_prompts:
+  - Can a player ever be a fair judge of their own game?
+  - What did the AI's associations show about how it "thinks" compared to you?
+unlocks: [twenty-questions-game, rps-trash-talk, food-debate-bot]
+stretch_challenge: Add a human round - play the same rules with a friend, with the AI judging only - then ask which referee was fairer, the conflicted one or the neutral one, and prove it from your score data.
+safety_notes: Keep banned-words lists in place if younger siblings join. The judging audit teaches healthy skepticism - carry it to every AI that grades, ranks, or scores anything you care about.

@@ -1,0 +1,75 @@
+id: photo-kaleidoscope
+version: 1
+title: Turn Any Photo Into a Living Kaleidoscope
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a kaleidoscope page that mirrors and spins any photo you load into mesmerizing symmetrical patterns.
+goal: A working kaleidoscope page that loads your own photo, mirrors it into rotating symmetry, and has at least one control you added.
+brief: |
+  A kaleidoscope is just mirrors and rotation - which means it's just code. Feed
+  it the right photo and your ordinary camera roll becomes hypnotic geometry.
+
+  Ask the AI for a page where you can load a photo, which then gets sliced into
+  a wedge, mirrored around a center point, and slowly rotated - classic
+  kaleidoscope. This is your most technical visual build yet, so expect the
+  first version to have bugs: photo not loading, mirroring looking wrong, weird
+  seams. Debugging by describing symptoms ("the image loads but I only see one
+  slice, not the mirrored pattern") is THE skill of this mission.
+
+  Once it works, add at least one CONTROL of your choice: a slider for rotation
+  speed, a button to change the number of mirror segments (6? 8? 12?), or
+  click-to-shuffle which part of the photo feeds the pattern.
+
+  Then experiment like a scientist: faces, food, your street, fabric. Done when
+  you find the photo that produces a pattern you'd frame.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; handles the canvas mirroring code well.
+  - surface: claude_project
+    why: Strong at debugging from symptom descriptions.
+  - surface: replit
+    why: Hosting makes photo loading simpler in some browsers.
+skills:
+  teaches: [debugging-loop, ui-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The kaleidoscope running with one of your photos - pattern clearly visible.
+  - type: prompt_log
+    description: Your build conversation, including at least one bug you reported by describing symptoms and the fix that followed.
+  - type: reflection
+    description: Two sentences - what bug did you hit, and how did you describe it to get it fixed?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot attached showing a mirrored symmetrical pattern.
+    - id: prompt_log_present
+      description: Prompt log exists, min 300 characters, contains at least one symptom report and follow-up.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Real kaleidoscope effect
+      looks_like: Evidence shows true mirrored symmetry from the learner's own photo - not just a rotated image.
+      weight: 0.35
+    - criterion: Debugging by description
+      looks_like: The log shows the learner reporting what they SAW ("blank canvas", "only one wedge", "seams between segments") rather than just "it doesn't work" - and iterating to the fix.
+      weight: 0.4
+    - criterion: A control was added and works
+      looks_like: At least one interactive control (speed, segments, source area) functions, chosen by the learner.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Ask for "a single HTML file with a file-input button to load a photo, drawn to a canvas as a kaleidoscope with 8 mirrored segments, slowly rotating". Specific request, working start.
+  - level: 2
+    hint: When something breaks, report three things - what you did, what you expected, what you saw instead. "I loaded a photo, expected a pattern, got a black screen" gets fixed in one round.
+  - level: 3
+    hint: If the pattern looks wrong (gaps, seams, single slice), say exactly that and add - "make sure each segment is alternately mirrored so edges match seamlessly". Mirroring alternate segments is the classic missing piece.
+reflection_prompts:
+  - What kind of photo made the best pattern, and why do you think that is?
+  - How is describing a bug different from describing a feature?
+unlocks: [pixel-art-editor, illusion-gallery, light-painter]
+stretch_challenge: Add a "snapshot" button that saves the current pattern as an image - then print your favorite as actual wall art.
+safety_notes: Use your own photos. Photos of friends become unrecognizable in the pattern, but still ask before using someone's face as source material.

@@ -1,0 +1,83 @@
+id: signup-confirmation-pipeline
+version: 1
+title: Build a Full Sign-Up Pipeline - Form, Sheet, Confirmation
+track: automation
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build the three-stage pipeline behind every event sign-up on the internet - form to sheet to personalized confirmation - and document it like an engineer.
+goal: A complete working sign-up pipeline for a real or realistic event, with personalized confirmations, full edge-case testing, and a system diagram in your own words.
+brief: |
+  Every event you've ever signed up for online ran on the pipeline you're
+  building today: a form collects, a sheet stores, a confirmation responds.
+  Three stages, each handing data to the next. Build it once and you'll
+  recognize it everywhere - and be the person who can build it for any
+  club, event, or cause that asks.
+
+  Stage one, the FORM: design for a real sign-up (club tryouts, a workshop,
+  a community cleanup). Fields: name, email, plus one choice that matters
+  (team? session time? t-shirt size?) - because that choice is what makes
+  confirmations worth personalizing.
+
+  Stage two, the SHEET: responses land automatically. Add a status column -
+  pipelines track their items.
+
+  Stage three, the CONFIRMATION - where it becomes real engineering: each
+  sign-up triggers a personalized email back. Not "response recorded" but
+  "You're in, Rami - Saturday session, bring water, we start 9 sharp."
+  Their name, THEIR choice, reflected back. Build it with Make or Apps
+  Script.
+
+  Then test like you mean it: normal sign-up, weird name characters,
+  the same person twice, each choice option. Document what each test
+  showed. Finish with the diagram - three boxes, arrows, what data moves
+  where. You now hold the pattern that powers half the internet's forms.
+build_surfaces:
+  - surface: make
+    why: Form trigger to email action with personalization variables - the full pipeline visually.
+  - surface: google_forms_sheets
+    why: Stages one and two are native; Apps Script can do stage three.
+  - surface: n8n
+    why: Open-source pipeline alternative.
+skills:
+  teaches: [automation-trigger-action, tool-assembly]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: All three stages working - the form, the populated sheet, and a personalized confirmation email.
+  - type: prompt_log
+    description: Your test matrix - each case run and what it showed - plus the build conversation.
+  - type: file_upload
+    description: Your three-box system diagram with the data flow labeled.
+evaluation:
+  deterministic_checks:
+    - id: pipeline_evidence
+      description: Screenshots show form, sheet, and a confirmation containing the signer's name and choice.
+    - id: test_matrix_present
+      description: Log documents four or more distinct test cases with results.
+    - id: diagram_present
+      description: A system diagram in the learner's own words is attached.
+  rubric:
+    - criterion: Personalization flows through
+      looks_like: The confirmation email demonstrably uses the individual's name and their specific choice - data traveled all three stages intact.
+      weight: 0.35
+    - criterion: Tested like an engineer
+      looks_like: A real test matrix - normal, edge, duplicate, all options - with observed results and any fixes or known limitations documented.
+      weight: 0.35
+    - criterion: The architecture is understood
+      looks_like: The diagram correctly shows stages and data flow, and the learner could rebuild this for a different event from their own diagram.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Build and verify ONE stage at a time - form filling the sheet first (native, just link them), THEN add the confirmation automation. Pipelines are debugged in stages; building all three at once means debugging all three at once.
+  - level: 2
+    hint: 'In the email module, the form''s answers appear as draggable variables - compose your template around them: "Hi {name}, you''re confirmed for {choice}." Send a test to yourself before going live; you are always test user number one.'
+  - level: 3
+    hint: 'The duplicate sign-up is the interesting case: decide the behavior (allow it? flag it?) - even "both rows kept, humans resolve it" is a decision. Real engineers don''t eliminate every edge case; they KNOW their system''s behavior in each one.'
+reflection_prompts:
+  - Where did data get transformed as it moved between stages?
+  - What sign-up pipeline in your real life could you now rebuild - and improve?
+unlocks: [rsvp-auto-responder, volunteer-form, carpool-form]
+stretch_challenge: Add a capacity cap with a waitlist - after N sign-ups, confirmations switch to "you're #2 on the waitlist" automatically. Conditional pipelines are senior-level plumbing.
+safety_notes: Sign-up data is personal data - collect only what the event needs, keep the sheet private, share results with organizers only, and delete after the event. If real people sign up, you're a data handler now; act like one.

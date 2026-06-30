@@ -1,0 +1,79 @@
+id: flashcard-generator
+version: 1
+title: Build a Flashcard Generator From Any Pasted Notes
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a reusable tool that turns any pasted notes into quality flashcards - with card-quality rules that make the difference.
+goal: A reusable flashcard generator with card-quality rules you wrote, demonstrated on two different subjects' real notes, with verified output.
+brief: |
+  You've used flashcards. Today you build the FACTORY - a tool you'll reuse
+  every exam season for years.
+
+  The difference between this and "AI, make me flashcards" is the QUALITY
+  SPEC you're about to write. Bad flashcards test recognition ("What is
+  photosynthesis? [the definition you just read]"). Good ones force recall
+  and connection. Your rules: every card asks ONE thing. Mix card types -
+  definition cards, why-cards ("why does X happen?"), apply-cards ("which
+  concept explains this example?"), and reverse cards (answer on front,
+  "what's the term?" behind). No card answerable by pattern-matching words
+  from the question. Front under 20 words.
+
+  Build the generator with your spec as system instructions, then run the
+  REUSABILITY test - the thing that makes it a tool: paste notes from TWO
+  different subjects (biology and history, math and French). Same tool,
+  good cards both times? That's generality - the property real tools have.
+
+  Verify a sample of output cards against your notes (you know why by now),
+  then export your favorite deck format - text list, table for printing, or
+  straight into your flashcard-quiz-bot if you built it.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your quality spec; paste-and-generate is instant.
+  - surface: claude_project
+    why: Handles long pasted notes well and follows card-type mixes reliably.
+  - surface: any_chat_ui
+    why: The spec works as a pinned prompt anywhere.
+skills:
+  teaches: [prompt-success-criteria, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your card-quality spec and both subjects' generation runs.
+  - type: file_upload
+    description: Both decks - with at least one card you rejected or fixed, marked.
+  - type: reflection
+    description: Two sentences - which card type is hardest for the AI to generate well, and how did your spec handle it?
+evaluation:
+  deterministic_checks:
+    - id: spec_present
+      description: Prompt log exists, min 300 characters, contains explicit card-quality rules including type mix.
+    - id: two_subjects_present
+      description: Decks from two distinct subjects attached.
+    - id: verification_present
+      description: At least one rejected or corrected card is documented.
+  rubric:
+    - criterion: The spec produces good cards
+      looks_like: Output cards follow the rules - one fact each, mixed types, recall-forcing, no copy-paste answers - across both subjects.
+      weight: 0.4
+    - criterion: True reusability
+      looks_like: The same unmodified tool worked on two genuinely different subjects - evidence of a general spec, not a biology-shaped one.
+      weight: 0.3
+    - criterion: Output was verified
+      looks_like: The learner checked cards against source notes and caught at least one bad card - quality control as habit.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Write the spec as numbered rules with one example card per type. The example cards teach the AI your standard better than any description - "like THIS" beats "make them good".'
+  - level: 2
+    hint: 'Add the explicit type quota: "From these notes produce 15 cards: 5 definition, 4 why, 4 apply, 2 reverse." Without quotas you''ll get 15 definitions, because definitions are easy.'
+  - level: 3
+    hint: 'If apply-cards are weak (they usually are), strengthen with: "Apply cards must describe a NEW example not found in the notes, and ask which concept it illustrates." Forcing novel examples is what makes them test understanding.'
+reflection_prompts:
+  - Why do recognition cards feel like studying but teach less?
+  - What would you add to the spec after seeing both subjects' output?
+unlocks: [flashcard-quiz-bot, trilingual-flashcards, vocab-trainer]
+stretch_challenge: Add difficulty tagging - each card marked easy/medium/hard by the generator - then check whether ITS difficulty ratings match where YOU actually struggle.
+safety_notes: Use your own notes. Verify before you drill - a factory that ships defects at scale is worse than no factory.

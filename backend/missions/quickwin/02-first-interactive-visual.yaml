@@ -1,0 +1,72 @@
+id: first-interactive-visual
+version: 1
+title: Build an Animated Art Piece You Can Touch
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Describe an animated, interactive visual in plain words and have AI build it as a real webpage you can open and play with.
+goal: A working interactive visual (HTML page) that animates and reacts to your mouse or clicks, built from your own description.
+brief: |
+  Time to make something that MOVES.
+
+  You're going to describe a visual in plain language - floating shapes, drifting
+  colors, sparks that follow the cursor, whatever you can picture - and have the AI
+  write the code for a single HTML page that brings it to life. You don't need to
+  know code. You need to know what you want.
+
+  Ask for one HTML file. Open it in your browser. Then comes the real skill:
+  it won't be exactly right the first time. Too fast, wrong colors, boring.
+  Go back and say what to change - "slower", "make them glow", "react when I
+  click". Each round trip makes it more yours.
+
+  You're done when it animates, reacts to you, and you actually like looking at
+  it. That last part matters - keep pushing until it's yours, not the AI's default.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generates and previews code in one place, free tier handles this easily.
+  - surface: claude_project
+    why: Claude can render HTML previews directly in chat.
+  - surface: replit
+    why: If you want your visual hosted at a live URL right away.
+skills:
+  teaches: [ui-basics, debugging-loop, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: Your visual running in a browser (or a short screen recording uploaded as a file).
+  - type: prompt_log
+    description: Your first request AND at least two change requests you made after seeing it run.
+  - type: file_upload
+    description: The HTML file itself.
+    optional: true
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists and contains at least three messages (min 200 characters).
+  rubric:
+    - criterion: It animates and reacts
+      looks_like: Evidence shows movement plus at least one interaction (mouse, click, or keyboard) - not a static image.
+      weight: 0.4
+    - criterion: Real iteration happened
+      looks_like: The prompt log shows at least two change requests with specific, visual language ("slower", "more particles", "blue to purple") after the first version.
+      weight: 0.4
+    - criterion: Personal taste visible
+      looks_like: The final visual reflects choices the learner made on purpose - they can say why it looks the way it does.
+      weight: 0.2
+hint_ladder:
+  - level: 1
+    hint: Can't picture anything? Steal from nature - rain, fireflies, waves, snow. "Make fireflies drift across a dark page and scatter when my mouse gets close."
+  - level: 2
+    hint: Ask for "a single self-contained HTML file using a canvas element, no external libraries". Save it as visual.html and double-click to open in your browser.
+  - level: 3
+    hint: If nothing appears when you open the file, tell the AI exactly that - "I opened it and the page is blank" - and paste any error from the browser console (right-click, Inspect, Console tab). It will fix its own bug.
+reflection_prompts:
+  - What change request made the biggest difference to how it feels?
+  - What would you add if you had one more hour?
+unlocks: [roast-me-kindly, pet-tribute-visual, virtual-pet]
+stretch_challenge: Add sound - ask the AI to play a soft tone whenever the visual reacts to your click.
+safety_notes: Only run code you generated in this session and understand at a high level. If the AI suggests downloading anything beyond your own HTML file, skip it.

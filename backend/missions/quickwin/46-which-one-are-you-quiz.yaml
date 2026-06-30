@@ -1,0 +1,76 @@
+id: which-one-are-you-quiz
+version: 1
+title: Build a "Which One Are You?" Quiz for Your Friend Group
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Design a personality quiz that sorts your friends into types you invented - with a scoring system you built and results that feel true.
+goal: A working personality quiz with 4 result types you designed, a mapping system that scores answers to types, and results from three real friends.
+brief: |
+  "Which pizza topping are you?" quizzes get millions of clicks. The secret
+  is a scoring SYSTEM - and today you build one.
+
+  First, invent your result types - four characters that exist in every friend
+  group. The Planner Who Suffers. The "I Know A Shortcut" One. The Snack
+  Distributor. The One Who's Late But Brings Joy. Write two affectionate
+  sentences for each result - reading your result should feel like being seen.
+
+  Now the system design: write 6 questions, each with 4 options, where each
+  option secretly maps to one of your types. "It's 9pm before the trip. You
+  are..." - each answer is one personality in disguise. That hidden mapping
+  is real data design: every answer is a vote, the most votes wins.
+
+  Have the AI build it as a page (or use Google Forms with a scoring key).
+  Test on yourself first - if YOUR result feels wrong, fix the mapping, not
+  your personality. Then run three friends through it. Done when at least one
+  says "okay, that's accurate" with mild alarm.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build the quiz page with hidden scoring in one file.
+  - surface: claude_project
+    why: Great at punching up result descriptions till they sting affectionately.
+  - surface: google_forms_sheets
+    why: Low-tech alternative - forms plus a scoring key you apply.
+skills:
+  teaches: [data-structuring, user-feedback]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your four types with descriptions, and the full question-to-type mapping table.
+  - type: screenshot
+    description: A friend's result screen (or reported result), plus your own test run.
+  - type: reflection
+    description: Two sentences - whose result was most accurate, and did you change any mapping after testing?
+evaluation:
+  deterministic_checks:
+    - id: mapping_present
+      description: Prompt log exists, min 400 characters, contains four types and a complete answer-to-type mapping.
+    - id: results_present
+      description: Screenshot shows at least one completed quiz result.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The mapping is a real system
+      looks_like: Every answer option maps to a type, types are reachable (no type that's impossible to get), and scoring logic is consistent.
+      weight: 0.4
+    - criterion: Types feel specific and kind
+      looks_like: Result descriptions are affectionate, specific to real friend-group behavior, and would make someone laugh in recognition - never mean.
+      weight: 0.3
+    - criterion: Tested and tuned
+      looks_like: The learner tested on themselves, ran three friends through it, and adjusted at least one mapping based on a wrong-feeling result.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Base your four types on roles people actually play - who organizes, who's late, who feeds everyone, who has the chaotic ideas? Real behavior beats abstract traits.
+  - level: 2
+    hint: Build the mapping as a simple table first - rows are questions, columns are types, each cell is the answer text for that type. Hand the whole table to the AI to build from.
+  - level: 3
+    hint: 'For the page: "a quiz with one question at a time - each answer adds a point to one of four hidden counters - at the end show the type with the most points using these exact descriptions". Paste your table.'
+reflection_prompts:
+  - Why does the quiz need every answer to map somewhere?
+  - What did wrong results teach you about your mapping?
+unlocks: [me-quiz, hometown-trivia-quiz, first-survey]
+stretch_challenge: Add a tiebreaker question that only appears when two types are tied - and figure out the logic needed to detect a tie.
+safety_notes: All four types must be ones you'd happily get yourself. If one type is secretly the "bad" result, redesign it - the quiz should celebrate the group, not rank it.

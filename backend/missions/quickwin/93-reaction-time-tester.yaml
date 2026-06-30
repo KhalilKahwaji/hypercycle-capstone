@@ -1,0 +1,83 @@
+id: reaction-time-tester
+version: 1
+title: Build a Reaction-Time Tester - How Fast Are You Really?
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a reaction tester with anti-cheat, fair statistics, and a real experiment on your friends - measurement design disguised as a game.
+goal: A working reaction tester with random delays, false-start detection, multi-trial averaging, and one real mini-experiment you ran with its data.
+brief: |
+  Click when the color changes. Simple game, beloved by everyone - and
+  secretly a masterclass in MEASUREMENT DESIGN, because a naive version
+  produces numbers that are lies.
+
+  Build the core: a waiting screen, then after a RANDOM delay (2-5
+  seconds) the screen flips color, and the time until click is measured
+  in milliseconds. Why random? Because a fixed delay gets learned in
+  three rounds - players time the rhythm instead of reacting. You're not
+  measuring reaction anymore; you're measuring memorization. Randomness
+  is what keeps the measurement honest.
+
+  Then the anti-cheat: clicking BEFORE the flip must be caught - "FALSE
+  START. We saw that." - and the trial voided. And the statistics: one
+  trial means nothing (you might sneeze); your tester runs five trials
+  and reports the AVERAGE, with the best and worst shown too. Single
+  measurements lie; averages confess.
+
+  Then SCIENCE: design a mini-experiment with your tester. Morning you
+  vs. night you? Left hand vs. right? Before vs. after football? You
+  built a measurement instrument - point it at a question and collect
+  real data from at least two people or two conditions.
+
+  Done when your experiment has an answer - and your friends are arguing
+  about whose nervous system is superior.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and iterate; timing logic is quick to test.
+  - surface: claude_project
+    why: Good at explaining why each fairness feature matters.
+  - surface: replit
+    why: Host it so the experiment can run on any phone.
+skills:
+  teaches: [debugging-loop, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The tester showing a five-trial result with average, plus a caught false start.
+  - type: prompt_log
+    description: The build conversation including the fairness features and why each exists.
+  - type: reflection
+    description: Your experiment - the question, conditions, data, and verdict.
+evaluation:
+  deterministic_checks:
+    - id: fairness_features_present
+      description: Random delay, false-start detection, and five-trial averaging all evidenced.
+    - id: tester_evidence
+      description: Screenshots show working trials and results.
+    - id: experiment_present
+      description: Reflection exists, min 150 characters, with a question, real data, and a conclusion.
+  rubric:
+    - criterion: The measurement is honest
+      looks_like: Random delays, false starts caught and voided, averages over trials - and the learner can explain why each feature protects the number.
+      weight: 0.4
+    - criterion: The instrument works smoothly
+      looks_like: Clean trial flow, millisecond display, best/worst/average reporting - a tool people enjoy being measured by.
+      weight: 0.25
+    - criterion: Real science happened
+      looks_like: A genuine question, at least two conditions or people, actual collected data, and a conclusion the data supports.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Build the single honest trial first: random 2-5s delay, color flip, millisecond timing, false-start catch. Then wrap it in the five-trial loop with running results. Core then wrapper.'
+  - level: 2
+    hint: 'Test the anti-cheat by cheating: click early on purpose, twice in a row, and during the flip itself. Each should void cleanly and restart the trial - if early clicks crash it or count as 0ms world records, report the exact behavior.'
+  - level: 3
+    hint: 'For the experiment, control what you can: same device, same finger, same sitting position across conditions - changing two things at once means your data can''t say which one mattered. (Your bouncing-ball tuning instinct, now applied to humans.)'
+reflection_prompts:
+  - Why would a fixed delay corrupt the measurement?
+  - What surprised you in your experiment's data?
+unlocks: [typing-speed-test, sassy-number-game, browser-maze-game]
+stretch_challenge: Add a reaction-time distribution view - all trials plotted as dots on a line - and see that humans don't have A reaction time; they have a SPREAD. That insight is half of statistics.
+safety_notes: Reaction times vary by person, age, and moment - the tester ranks reflexes for fun, not worth. Flashing color changes should be moderate, not strobing.

@@ -1,0 +1,79 @@
+id: ai-vs-human-quiz
+version: 1
+title: Build a "Guess the AI vs Human" Quiz
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a quiz where players guess which text or image is AI-made and which is human - and discover what actually gives AI away.
+goal: A working AI-vs-human quiz with 6-8 carefully matched pairs you curated, played by three people, with their scores and your analysis of what fooled them.
+brief: |
+  Can your friends tell AI from human? Can YOU? Today you build the test -
+  and become measurably better at spotting synthetic content than almost
+  everyone you know.
+
+  Build 6-8 pairs: one human-made item, one AI-made item, same subject. Texts
+  work brilliantly (a real proverb vs an AI-invented one, a human tweet vs a
+  generated one, your own sentence about rain vs the AI's). Images work too.
+  The craft is in making pairs FAIR - same length, same topic, same format.
+  An obviously watermarked image teaches nothing.
+
+  Curating the pairs forces you to study the tells: AI text is often too
+  smooth, suspiciously balanced, allergic to specifics, and weirdly fond of
+  certain words. Human text has friction - odd rhythm, too much detail about
+  one thing, actual opinions. You'll absorb these tells while choosing pairs,
+  which is the secret curriculum of this mission.
+
+  Run three people through it. Track which pairs fooled everyone and which
+  fooled no one. Your final deliverable includes the analysis: WHAT gave the
+  AI away, in your own words. Done when you can name three tells with
+  examples from your own quiz.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate the AI halves of your pairs and build the quiz page.
+  - surface: google_forms_sheets
+    why: Quiz mode tracks everyone's guesses automatically.
+  - surface: claude_project
+    why: Generate text pairs and discuss the tells afterward.
+skills:
+  teaches: [ai-limits, model-comparison]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your pairs with sources labeled (which is AI, which is human, where the human one came from).
+  - type: screenshot
+    description: Three players' scores.
+  - type: reflection
+    description: Your analysis - three tells that give AI away, each with an example from your quiz, plus which pair fooled everyone and why.
+evaluation:
+  deterministic_checks:
+    - id: pairs_present
+      description: Prompt log exists, min 400 characters, contains six or more labeled pairs.
+    - id: scores_present
+      description: Screenshot shows three players' results.
+    - id: analysis_present
+      description: Reflection exists, min 200 characters, names three tells with examples.
+  rubric:
+    - criterion: Pairs are fair tests
+      looks_like: Each pair matches on topic, length, and format - the only difference is who made it. Human items have honest sources.
+      weight: 0.35
+    - criterion: The analysis has teeth
+      looks_like: Three named tells, each grounded in a specific example from the quiz - insight a friend could use to spot AI content tomorrow.
+      weight: 0.4
+    - criterion: Real play data
+      looks_like: Three people played, scores were tracked per pair, and the hardest/easiest pairs were identified.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Easiest strong pairs: proverbs (real regional proverb vs AI-invented one), product reviews, and "describe this everyday thing" one-liners written by you vs the AI.'
+  - level: 2
+    hint: Make the AI try harder - "write this so it passes as human, with one small imperfection". A lazy AI sample teaches nothing; a trying-hard one reveals the deeper tells.
+  - level: 3
+    hint: For the analysis, sort your pairs by how many players got them right. Stare at the all-fooled pair and the nobody-fooled pair and ask - what's literally different between them? Write that down; that's your best tell.
+reflection_prompts:
+  - Which tell will you now notice everywhere?
+  - If AI keeps improving, which of your tells will stop working first?
+unlocks: [spot-the-hallucination, hometown-trivia-quiz, food-debate-bot]
+stretch_challenge: Run the quiz on an adult and a teen and compare scores - does growing up online improve AI detection, or just confidence?
+safety_notes: Label everything honestly in your records, use human samples you have rights to (your own writing, public proverbs, famous quotes), and reveal the answers to players afterward - the reveal is where the learning happens.

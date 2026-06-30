@@ -1,0 +1,82 @@
+id: birthday-reminder-automation
+version: 1
+title: Build a Birthday Reminder Automation From a Simple Sheet
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build the automation that ends forgotten birthdays - a sheet of dates, a daily check, and reminders timed for action, not apology.
+goal: A working birthday automation checking your real list daily, with two-stage reminders (prepare-ahead and day-of), verified by a live test.
+brief: |
+  Forgetting a birthday feels terrible and is completely preventable with
+  forty minutes of engineering. Today: the forty minutes.
+
+  The data layer first: a sheet of people you genuinely don't want to
+  forget - name, birthday (day and month), relationship, and one gold
+  column most reminder apps lack: GIFT IDEAS, filled in whenever
+  inspiration strikes during the year. Your future panicking self will
+  weep with gratitude.
+
+  The logic layer has a famous wrinkle: birthdays recur YEARLY, so you
+  can't just compare dates - you compare day-and-month while ignoring
+  year. Solve it however you like (a sheet column computing "days until
+  next birthday" keeps the automation simple - let the spreadsheet do the
+  thinking).
+
+  The reminder policy is two-stage by design: SEVEN DAYS BEFORE ("Sara's
+  birthday next Friday - gift idea on file: that book she mentioned")
+  because day-of reminders are too late to act, and DAY-OF ("It's TODAY -
+  message her now") because acting is the point. Build it, simulate a
+  birthday three days out to test, then load your real people.
+
+  Done when it's armed with everyone who matters - and the next "oh no,
+  was that today?" happens to someone else, never again to you.
+build_surfaces:
+  - surface: make
+    why: Daily schedule, sheet read, filtered reminders - the standard build.
+  - surface: google_forms_sheets
+    why: The birthday sheet with its days-until formula; Apps Script can run the whole thing.
+  - surface: n8n
+    why: Open-source alternative.
+skills:
+  teaches: [automation-trigger-action, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The sheet (names may be initials), the scenario, and a test reminder arriving.
+  - type: prompt_log
+    description: Your recurring-date solution explained, and the two-stage policy reasoning.
+  - type: reflection
+    description: Two sentences - why seven days AND day-of, and what does the gift-ideas column change?
+evaluation:
+  deterministic_checks:
+    - id: test_reminder_evidence
+      description: Screenshot shows a reminder produced by the automation for a simulated near birthday.
+    - id: recurrence_solution_present
+      description: Log explains how yearly recurrence was handled.
+    - id: real_list_loaded
+      description: The sheet contains the learner's genuine people (initials acceptable).
+  rubric:
+    - criterion: Recurrence is correctly solved
+      looks_like: The day-month comparison or days-until computation handles year rollover - a December birthday tested from a June run still computes correctly.
+      weight: 0.35
+    - criterion: Two-stage policy works
+      looks_like: Both the prepare-ahead and day-of reminders fire at their right times with their right messages, verified by simulation.
+      weight: 0.35
+    - criterion: Built for real use
+      looks_like: Real people loaded, gift-ideas column present, automation left running - infrastructure, not demo.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Let the sheet do the date math: ask the AI for a formula computing days until the NEXT occurrence of each birthday (handling the year-wrap). The automation then just filters for days_until = 7 or 0. Smart sheet, simple automation.'
+  - level: 2
+    hint: 'Two stages = two filter paths in one scenario: a router module splits after the sheet read - one branch filters days_until = 7 with the prepare message, the other days_until = 0 with the act-now message.'
+  - level: 3
+    hint: 'Test the year-wrap explicitly: add a fake person whose birthday was last month. If days_until shows negative or 300-something wrong, the formula needs the wrap fix - tell the AI "the formula breaks for birthdays earlier in the year than today" and it''ll add the +1 year logic.'
+reflection_prompts:
+  - Why is recurring time harder for computers than it looks?
+  - What other yearly recurrences deserve this exact machine?
+unlocks: [deadline-reminder-bot, birthday-message-generator, expense-logger]
+stretch_challenge: Connect it to your birthday-message-generator mission - the 7-day reminder includes a draft message in that person's profile style, ready to personalize and send. Two of your builds, joined into a system.
+safety_notes: Birthdays plus names are personal data - keep the sheet private, use initials in anything you share, and don't add people's birthdays to third-party tools beyond what the reminder needs.

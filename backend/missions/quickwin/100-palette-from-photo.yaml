@@ -1,0 +1,86 @@
+id: palette-from-photo
+version: 1
+title: Build a Color Palette Generator From Any Photo
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a tool that extracts a usable color palette from any photo - and learn why "the five most common colors" gives you mud instead of beauty.
+goal: A working palette extractor that produces a five-color, role-labeled palette from your photos - with the dominant-vs-distinct problem discovered and addressed.
+brief: |
+  Every beautiful photo contains a beautiful palette - sunset over your
+  town, your grandmother's tiles, the market spice rows. Designers pay
+  for tools that extract them. You're going to build one and discover a
+  genuinely interesting algorithm problem on the way.
+
+  Build a page: upload a photo, get a palette - five swatches with their
+  hex codes, click to copy. Then run your first photo and meet THE
+  PROBLEM: naive extraction (the five most COMMON colors) returns five
+  shades of brownish-gray, because photos are mostly shadows and midtones.
+  The eye-catching turquoise door that MAKES the photo? Statistically
+  rare. Welcome to dominant-versus-distinct - a real algorithm design
+  tension you can now feel.
+
+  Address it: ask for extraction that groups similar colors and picks
+  representatives spread ACROSS the photo's range (color clustering, in
+  plain words), not just frequency winners. Compare naive output against
+  clustered output on the same photo - that comparison is the mission's
+  beating heart.
+
+  Then make it a designer's tool: label each swatch with a ROLE -
+  background, text, accent (the rare-but-vivid one - the turquoise door
+  gets its due), and add a tiny preview card rendered IN the palette so
+  you see it working as a design, not stripes.
+
+  Test on three very different photos. Done when one extracted palette
+  is good enough that you'd use it on your next mission's page - and
+  you actually do.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate the extraction page; vision can also critique palettes.
+  - surface: claude_project
+    why: Good at explaining clustering in plain words while building it.
+  - surface: replit
+    why: Host it - a genuinely reusable tool deserves a URL.
+skills:
+  teaches: [debugging-loop, ui-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The tool with a photo loaded - swatches, hex codes, roles, and the preview card visible.
+  - type: prompt_log
+    description: The naive-versus-clustered comparison on the same photo, and the build conversation.
+  - type: reflection
+    description: Two sentences - explain dominant-versus-distinct in your own words, and which photo gave the best palette?
+evaluation:
+  deterministic_checks:
+    - id: tool_evidence
+      description: Screenshots show working extraction with five role-labeled swatches and hex codes.
+    - id: comparison_present
+      description: Log documents naive versus improved extraction on the same image.
+    - id: three_photos_tested
+      description: Evidence of three different photos processed.
+  rubric:
+    - criterion: The problem was discovered and addressed
+      looks_like: The mud-palette failure observed, the clustering approach requested and working, with the comparison demonstrating the difference.
+      weight: 0.4
+    - criterion: It's a designer's tool
+      looks_like: Role labels, copyable hex codes, and the in-palette preview card - output you can actually design with.
+      weight: 0.3
+    - criterion: The learner owns the concept
+      looks_like: The reflection explains dominant-versus-distinct plainly, and a palette was genuinely reused in other work (or held to that bar).
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Build naive first ON PURPOSE: "extract the 5 most frequent colors". See the mud with your own eyes - the failure is the lesson, and you can''t appreciate the fix without it.'
+  - level: 2
+    hint: 'The fix request in plain words: "group similar pixels into clusters and return one representative color per cluster, choosing clusters that span the photo''s range - and always include the most saturated cluster even if small". That last clause rescues the turquoise door.'
+  - level: 3
+    hint: 'If swatches still look samey, the clusters are too close: "merge clusters that are visually similar and pick from fewer, more distinct groups". If an important color is missing, say which: "the red awning didn''t make the palette" - specific misses make tunable fixes.'
+reflection_prompts:
+  - Why does statistical frequency disagree with what eyes find important?
+  - Where else might "most common" be the wrong algorithm for "most meaningful"?
+unlocks: [click-color-art, mood-lamp, logo-concept-generator]
+stretch_challenge: Add a one-click export that generates the CSS variables block for the palette - your tool now feeds directly into every page you'll ever build.
+safety_notes: Your own photos as always. Palettes themselves are free as air - extract from the world generously.

@@ -1,0 +1,70 @@
+id: pet-tribute-visual
+version: 1
+title: A Funny Interactive Tribute to Your Pet (or Person)
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build an interactive page that celebrates your pet, friend, or family member - with animations and jokes only you could have written.
+goal: An interactive webpage starring someone you love (pet or person), with at least one animation and one clickable surprise.
+brief: |
+  Every pet deserves a fan page. Every grandma deserves a shrine. Today you build one.
+
+  Pick your star - your cat, your little brother, your best friend, your grandmother
+  who feeds everyone who enters her house. Write down what makes them THEM: the
+  sounds, the habits, the legendary incidents.
+
+  Now direct the AI: one HTML page, their name in lights, at least one animation
+  (a bouncing cat, falling treats, hearts that float up) and at least one clickable
+  surprise (click the cat - it meows in text - "MROW. FEED ME."). Your details are
+  what make this gold. "A page about my cat" gets you a template. "My cat Zaatar
+  screams at the fridge every morning at 6am" gets you comedy.
+
+  Done when it moves, it responds to clicks, and it could ONLY be about them.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview the page in one place, free.
+  - surface: claude_project
+    why: Great at turning your anecdotes into funny page copy, previews HTML in chat.
+skills:
+  teaches: [ui-basics, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The page in a browser, showing the star and at least one visible interactive element.
+  - type: prompt_log
+    description: Your description of the star (the specific details you fed in) and at least one change request.
+  - type: reflection
+    description: One sentence - what detail made the page feel truly theirs?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 50 characters.
+  rubric:
+    - criterion: Unmistakably personal
+      looks_like: The page contains at least three specific details (names, habits, catchphrases, incidents) that a stranger could never have invented.
+      weight: 0.4
+    - criterion: Interactive and animated
+      looks_like: Evidence shows at least one animation and at least one click-triggered response working.
+      weight: 0.35
+    - criterion: Affectionate humor
+      looks_like: The jokes celebrate the star. The subject would smile, not cringe, on seeing it.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: List five facts first, before touching the AI - a sound they make, a habit, a favorite thing, a famous incident, a nickname. That list is 80% of the mission.
+  - level: 2
+    hint: Ask for "a single self-contained HTML file" and describe each element separately - the headline, the animation, what happens on click. Small clear requests beat one giant vague one.
+  - level: 3
+    hint: If the animation doesn't show, tell the AI what you see instead ("the page loads but nothing moves") and ask it to use simple CSS animations instead of libraries.
+reflection_prompts:
+  - What would the star of your page say if they saw it?
+  - Which was harder - getting the page to work, or making it feel like them?
+unlocks: [virtual-pet, week-in-comic]
+stretch_challenge: Add a "feed them" button with a counter that tracks total snacks given, and a special message at 10 snacks.
+safety_notes: If your star is a person, get their OK before sharing the page anywhere, and don't include their photo, full name, or contact details on a page you publish.

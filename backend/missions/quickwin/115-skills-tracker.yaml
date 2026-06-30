@@ -1,0 +1,86 @@
+id: skills-tracker
+version: 1
+title: Build a "Skills I'm Learning" Tracker You Update Weekly
+track: portfolio
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Design an evidence-based skill tracker - levels defined by what you can DO, claims backed by artifacts - and run your first honest self-assessment.
+goal: A working skills tracker with do-based level definitions you wrote, your honest current assessment with evidence links, and a weekly update ritual you've run at least once.
+brief: |
+  "I'm getting better at AI stuff" - probably true, totally unmeasurable.
+  Today you build the instrument that turns fuzzy progress into visible,
+  evidence-backed levels - and take your first honest reading.
+
+  The design centerpiece is DO-BASED LEVELS, because "beginner/
+  intermediate/advanced" means nothing without definitions. For each
+  skill you're tracking (prompting, building pages, automations,
+  debugging, working with clients - your mission history IS the skill
+  list), define 4 levels by what you can DO: prompting level 1 "can get
+  useful answers", level 2 "can write instructions that hold a
+  personality", level 3 "can build rule systems others can reuse",
+  level 4 "can teach it". Writing these definitions teaches you more
+  about the skills than most courses would.
+
+  Then the iron rule: NO LEVEL WITHOUT EVIDENCE. Every claimed level
+  links to an artifact - the mission, the screenshot, the thing a real
+  person used. Self-assessment without evidence drifts toward flattery;
+  with evidence, it becomes the rarest skill of all: accurate self-
+  knowledge.
+
+  Build it (a sheet works; a page is prettier), run your first full
+  assessment honestly - some level-1s will sting and that's the
+  instrument working - then define the WEEKLY RITUAL: five minutes,
+  same day each week: what did I build, did any level change, what's
+  next week's target skill. Run the ritual once for real. Done when
+  the tracker shows you something true you hadn't admitted - too low
+  OR too high.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Skills-by-levels grid with evidence links - the natural home.
+  - surface: notion
+    why: Prettier tracker with the weekly ritual as a template.
+  - surface: google_ai_studio
+    why: Help drafting do-based definitions and an optional tracker page.
+skills:
+  teaches: [self-evaluation, proof-of-work]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The tracker with skills, level definitions, your assessment, and evidence links visible.
+  - type: prompt_log
+    description: Your do-based definitions and the reasoning from your first assessment, including a level you revised.
+  - type: reflection
+    description: Two sentences - which assessment stung or surprised, and when is your weekly ritual scheduled?
+evaluation:
+  deterministic_checks:
+    - id: tracker_evidence
+      description: Screenshot shows skills with 4-level do-based definitions and a completed assessment.
+    - id: evidence_links_present
+      description: Every claimed level above 1 links to a concrete artifact.
+    - id: ritual_run_present
+      description: One weekly ritual completed and documented.
+  rubric:
+    - criterion: Levels are defined by doing
+      looks_like: Each level names a demonstrable capability, distinct from its neighbors - definitions that two people could apply and agree.
+      weight: 0.35
+    - criterion: Assessment is evidence-bound
+      looks_like: Claims trace to artifacts, at least one level was revised during honest review, and the stings were kept rather than inflated away.
+      weight: 0.35
+    - criterion: The ritual is real
+      looks_like: A scheduled five-minute weekly review, run at least once, producing a what-changed note and a next-target.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Skill list shortcut: scan your completed missions and ask "what was each one really training?" Five-to-seven skills is the sweet spot - track fewer things more honestly.'
+  - level: 2
+    hint: 'Definition drafting with the AI: "Here''s a skill and what I''ve done with it - draft 4 do-based levels where each is observably different from the last." Then YOU adjust until level 2 versus 3 would be obvious from evidence alone.'
+  - level: 3
+    hint: 'The honesty mechanism: assess each skill twice - gut first, then evidence-check ("what artifact proves this?"). Where gut and evidence disagree, evidence wins and the gap itself goes in your notes; that gap is self-knowledge being calibrated.'
+reflection_prompts:
+  - Where did your gut and your evidence disagree?
+  - Why does defining levels teach the skill itself?
+unlocks: [portfolio-page, ai-assisted-cv, explain-it-rebuild-it]
+stretch_challenge: Add a trajectory view after four weekly rituals - levels over time as a simple chart. A month of honest data showing real movement is more motivating than any quote your coach bot ever generated.
+safety_notes: The tracker measures skills, not worth - level-1 columns are starting lines, not verdicts. Keep it private or share selectively; it's an instrument for you, not a scoreboard for others.

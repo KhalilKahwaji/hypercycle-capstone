@@ -1,0 +1,71 @@
+id: roast-me-kindly
+version: 1
+title: Build a "Roast Me Kindly" Page About Yourself
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Make a funny webpage that affectionately teases you about your own habits - written by AI, directed by you, never actually mean.
+goal: A one-page site that delivers gentle, funny roasts about you, where every joke landed because you tuned the tone yourself.
+brief: |
+  The funniest comedy is about yourself - and today you're the headliner.
+
+  Feed the AI five harmless facts about you. The good material: you check your
+  phone "one last time" eleven times, you've never once finished a water bottle,
+  your camera roll is 90% the same selfie. Then have it build a single HTML page
+  that serves one gentle roast per click.
+
+  Here's the actual skill: TONE CONTROL. First version will probably be too soft
+  (boring) or too sharp (ouch). Your job is to steer it - "warmer", "more absurd",
+  "tease the habit, never the person". Getting an AI to hit a precise tone is a
+  real, paid skill. You're learning it through jokes about your phone habits.
+
+  Done when you genuinely laughed at least once and you'd happily show the page
+  to the person who loves you most.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Chat to tune the jokes, then generate the HTML page in the same place.
+  - surface: claude_project
+    why: Strong at tone control and can preview the page in chat.
+skills:
+  teaches: [prompt-iteration, responsible-use]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The page showing one of your favorite roasts.
+  - type: prompt_log
+    description: Your tone instructions, including at least one correction where you adjusted how sharp or soft the jokes were.
+  - type: reflection
+    description: Two sentences - where is the line between funny and hurtful, and how did you tell the AI about it?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists, min 200 characters, contains at least one tone-adjustment instruction.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 100 characters.
+  rubric:
+    - criterion: Tone is affectionate, not cruel
+      looks_like: Jokes target habits and quirks, never appearance, intelligence, or things a person can't change. A parent could read it and smile.
+      weight: 0.4
+    - criterion: Deliberate tone steering
+      looks_like: The prompt log shows the learner correcting tone with specific direction ("less sarcastic", "more absurd"), not accepting the first output.
+      weight: 0.35
+    - criterion: It's actually about them
+      looks_like: The roasts clearly come from the learner's real facts, not generic "people be like" jokes.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Struggling for facts? Ask someone who knows you well - "what's my most harmless annoying habit?" - and use what they say.
+  - level: 2
+    hint: Give the AI a tone rule with an example - "Tease me like my best friend would. Example - 'You don't lose your keys, you give them adventures.'" Examples teach tone faster than adjectives.
+  - level: 3
+    hint: For the page, ask for "one self-contained HTML file with a button labeled 'Roast me' that shows a random roast from this list" and paste your final, approved roasts into the message.
+reflection_prompts:
+  - Which instruction changed the humor the most?
+  - What rule would you give an AI writing jokes about someone ELSE?
+unlocks: [pet-tribute-visual, movie-trailer-me]
+stretch_challenge: Add a second button - "Now be nice" - that switches the page to sincere compliments using the same facts.
+safety_notes: You are the only roast target in this mission. Never build roast content about another real person without their enthusiastic permission - and even then, keep the same kindness rules.

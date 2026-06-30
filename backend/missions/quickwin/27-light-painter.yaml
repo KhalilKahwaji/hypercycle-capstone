@@ -1,0 +1,73 @@
+id: light-painter
+version: 1
+title: Draw With Light - A Canvas of Glowing Trails
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a dark canvas where your cursor paints with glowing, fading light trails - then create and save three light paintings.
+goal: A light-painting page with a glow effect and fade behavior you tuned, plus three saved paintings made with it.
+brief: |
+  Long-exposure light painting - waving a sparkler in the dark - usually needs
+  a camera and a tripod. You're building it as a webpage.
+
+  Ask for a black page where moving the cursor leaves a glowing trail. The
+  craft is in two decisions. GLOW: a hard thin line reads as scribble; light
+  is a bright core with a soft halo that bleeds outward - ask for exactly
+  that. FADE: does the trail vanish in a second (calligraphy in air), linger
+  for ten (light sculpture), or stay forever (neon graffiti)? Each is a
+  different instrument. Pick one - or add a key to switch modes.
+
+  Add a color dimension: trails that shift hue as you draw, or speed-based
+  color (slow strokes deep blue, fast flicks white-hot).
+
+  Then make ART, deliberately: a signature, a creature, an abstract sweep.
+  Save three paintings. Done when one of them looks like it took talent -
+  because it did, just a new kind.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; glow and fade tweaks are fast.
+  - surface: claude_project
+    why: Previews in chat; translates "light" language into canvas effects well.
+skills:
+  teaches: [ui-basics, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: Your three light paintings (screenshots or saved images).
+  - type: prompt_log
+    description: Your glow and fade decisions, plus at least two tuning requests.
+  - type: reflection
+    description: One sentence - which fade behavior did you choose and what does it make the tool feel like?
+evaluation:
+  deterministic_checks:
+    - id: paintings_present
+      description: At least three image artifacts attached.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: It looks like light
+      looks_like: Trails have a bright core and soft glow against dark - clearly light-painting, not a marker line on black.
+      weight: 0.35
+    - criterion: Deliberate instrument design
+      looks_like: Fade behavior and color logic were chosen on purpose, with at least one alternative considered or tested.
+      weight: 0.3
+    - criterion: The art is intentional
+      looks_like: The three paintings are recognizable attempts at something (a word, a figure, a composition) - not three random scribbles.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: Ask for "a black full-screen canvas where the mouse leaves a glowing trail - bright white core, soft colored halo, fading out over 3 seconds".
+  - level: 2
+    hint: If the trail looks like a plain line, say - "it needs to glow - draw each point as a soft radial gradient, bright center fading to transparent, and let overlapping strokes brighten each other".
+  - level: 3
+    hint: For speed-based color, ask - "track how fast the mouse moves; slow movement draws deep blue, fast movement shifts toward white". Then practice strokes - your hand is half the instrument.
+reflection_prompts:
+  - How did the fade time change what you could draw?
+  - What did you have to practice - the tool stayed the same, but did you get better?
+unlocks: [zen-garden, pixel-art-editor, particle-screensaver]
+stretch_challenge: Add symmetry mode - your stroke mirrors live on the other half of the canvas, turning sketches into instant emblems.
+safety_notes: Nothing sensitive here - share your paintings proudly.

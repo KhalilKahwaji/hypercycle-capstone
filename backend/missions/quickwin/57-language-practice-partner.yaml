@@ -1,0 +1,80 @@
+id: language-practice-partner
+version: 1
+title: Build a Language Practice Partner (Arabic, French, English)
+track: language
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a conversation partner for a language you're learning - with a correction style YOU designed so practice feels good instead of crushing.
+goal: A language partner bot with your chosen level, topics, and correction policy, validated by a real ten-message conversation in the target language.
+brief: |
+  The hardest part of learning a language is finding someone patient enough to
+  practice with daily. Today you build infinite patience.
+
+  Pick your target language and be honest about your level - "I can order
+  food and panic" is a level. The design decision that makes or breaks this
+  bot is the CORRECTION POLICY, because correction style is the difference
+  between practice you crave and practice you avoid. Decide: does it correct
+  every error (exhausting), only errors that block meaning (kind), or
+  collect corrections for the end (flow-preserving)? How does it correct -
+  inline with the fix, or by modeling the right version in its reply? Write
+  the policy YOU would want from the kindest teacher you've had.
+
+  Configure the rest: conversation topics you actually care about (football,
+  cooking, your week - not "the library is next to the bank"), vocabulary
+  level matching yours, and the rule that it stays IN the target language
+  except when explaining.
+
+  Then have the real conversation - ten messages minimum, about your actual
+  day. Note what it corrected and whether the style worked. Tune once. Done
+  when you finish the conversation wanting another one - that's the only
+  metric language practice has.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold level and policy; conversations run free daily.
+  - surface: claude_project
+    why: Strong multilingual conversation with consistent correction behavior.
+  - surface: any_chat_ui
+    why: A pinned setup prompt works in any AI chat.
+skills:
+  teaches: [prompt-success-criteria, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your full configuration - language, level, topics, and the correction policy with its reasoning.
+  - type: transcript
+    description: The ten-message practice conversation in the target language.
+  - type: reflection
+    description: Two sentences - did the correction style work for you, and what did you change after the first conversation?
+evaluation:
+  deterministic_checks:
+    - id: config_present
+      description: Prompt log exists, min 300 characters, includes an explicit correction policy.
+    - id: conversation_present
+      description: Transcript shows ten or more messages substantially in the target language.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The correction policy is designed
+      looks_like: A deliberate choice of what gets corrected, when, and how - with reasoning about the learner's own psychology, and the transcript shows the bot following it.
+      weight: 0.4
+    - criterion: Real conversation happened
+      looks_like: Ten genuine exchanges about the learner's actual life at an appropriate level - not a scripted textbook dialogue.
+      weight: 0.35
+    - criterion: Tuned from experience
+      looks_like: At least one configuration change made after the first real conversation, with the reason.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'A starter policy that works for most people: "Correct only mistakes that change meaning, inline, in one short parenthesis - then continue the conversation. At the end, list my three most useful corrections."'
+  - level: 2
+    hint: 'Calibrate level with one instruction: "Use vocabulary slightly above mine - if I clearly don''t understand, rephrase simpler without making it a lesson."'
+  - level: 3
+    hint: 'If the bot drifts into English (or your strong language), add: "Stay in [language] always. If I write in another language, gently answer in [language] and encourage me back." Drift is the number one config bug.'
+reflection_prompts:
+  - What did designing the correction policy teach you about how you learn?
+  - Which correction from the conversation will you actually remember?
+unlocks: [trilingual-flashcards, vocab-trainer, bilingual-menu-helper]
+stretch_challenge: Add a weekly role-play mode - the bot plays a shopkeeper, a taxi driver, or a relative at a family gathering, and you must navigate the scene entirely in the target language.
+safety_notes: The bot may make errors in less-common languages or dialects - when a phrasing matters (a real message to a real person), verify with a native speaker.

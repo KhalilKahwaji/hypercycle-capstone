@@ -1,0 +1,81 @@
+id: mnemonics-generator
+version: 1
+title: Build a Mnemonics Generator for Anything You Must Memorize
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a memory-trick factory that turns any list into stories, acronyms, and images weird enough to stick - personalized to YOUR world.
+goal: A mnemonics generator with technique rules and your personal interest profile, tested on real memorization material, with one mnemonic proven by recall the next day.
+brief: |
+  The brain forgets lists but cannot forget a story where the mitochondria
+  is an angry power-plant manager screaming at lazy ribosomes. Mnemonics
+  weaponize this glitch - and weirdness is the active ingredient. Today you
+  build the factory.
+
+  Build the generator with the classic techniques encoded as options:
+  ACRONYMS (first letters make a word), STORY CHAINS (items become
+  characters in one absurd narrative), the KEYWORD method for foreign words
+  (the word sounds like X, so picture X doing the meaning), and NUMBER PEGS
+  for ordered lists. Plus the quality rules: vivid beats sensible, motion
+  beats static, funny beats neutral, and - the personalization secret -
+  YOUR world beats generic. Feed it your interests (your team, your
+  neighborhood, your favorite food) so mnemonics get built from materials
+  your brain already loves.
+
+  Test on real memorization homework: a process order in biology, French
+  irregular verbs, history dates, the periodic table chunk you keep
+  failing. Generate three options per item, pick the stickiest, and reject
+  the lazy ones ("My Very Educated Mother..." exists already; demand fresh).
+
+  The proof is RECALL: tomorrow, before looking at anything, write down
+  what the mnemonic was protecting. If it's there, your factory works.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold techniques and your profile; generation is instant.
+  - surface: claude_project
+    why: Excellent at absurd vivid imagery on demand.
+  - surface: any_chat_ui
+    why: A pinned generator prompt works anywhere.
+skills:
+  teaches: [prompt-examples, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your technique rules, interest profile, and the generation session with options compared.
+  - type: file_upload
+    description: Your chosen mnemonics for the real material.
+  - type: reflection
+    description: The next-day recall result - what survived, what didn't, and which technique won.
+evaluation:
+  deterministic_checks:
+    - id: generator_present
+      description: Prompt log exists, min 300 characters, contains techniques, quality rules, and a personal interest profile.
+    - id: real_material_present
+      description: Mnemonics for genuine current coursework attached.
+    - id: recall_test_present
+      description: Reflection exists, min 100 characters, reports an actual next-day recall attempt.
+  rubric:
+    - criterion: Techniques are correctly encoded
+      looks_like: The generator offers distinct named techniques and applies them properly - story chains actually chain, keywords actually sound-bridge.
+      weight: 0.3
+    - criterion: Personalization is doing work
+      looks_like: Mnemonics visibly use the learner's interests and world - their team, places, people - not stock imagery.
+      weight: 0.3
+    - criterion: Proven by recall
+      looks_like: An honest next-day test with results reported, including what failed - the only benchmark mnemonics answer to.
+      weight: 0.4
+hint_ladder:
+  - level: 1
+    hint: 'Build your interest profile first - ten things your brain already loves: team, players, foods, places, shows, inside jokes. Mnemonics built from pre-loved materials get free storage.'
+  - level: 2
+    hint: 'Demand options: "give me one acronym, one story chain, and one keyword version for this item". The first idea is rarely the stickiest - comparison shopping for memories is the workflow.'
+  - level: 3
+    hint: 'If a mnemonic isn''t sticking, it''s usually not weird enough - send it back with "make it more absurd, add motion and sound, make the items physically interact". Embarrassing-to-explain is the right intensity.'
+reflection_prompts:
+  - Why does absurdity outperform logic for memory?
+  - Which technique fits which kind of material - and when would you skip mnemonics entirely?
+unlocks: [vocab-trainer, flashcard-generator, self-grading-study-test]
+stretch_challenge: Build a memory palace mode - the bot places your items along a walk through YOUR actual house, room by room. Then walk it physically once while reciting. This is the technique memory champions use, and it's absurdly effective.
+safety_notes: Mnemonics carry facts - verify the underlying facts first, because a sticky mnemonic for a wrong fact is a long-term problem. Keep the absurdity kind; no mnemonics built on mocking real people.

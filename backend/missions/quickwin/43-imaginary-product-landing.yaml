@@ -1,0 +1,76 @@
+id: imaginary-product-landing
+version: 1
+title: Build a Landing Page for a Product You Invented
+track: business
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Invent a product the world arguably needs, then build the landing page that sells it - headline, benefits, social proof, and a call to action.
+goal: A complete landing page for your invented product with all five persuasion blocks, an honest-but-magnetic pitch, and one fake-signup conversion.
+brief: |
+  Every product you've ever wanted began as someone's "what if". Today you get
+  one of your own - and learn the anatomy of persuasion while you're at it.
+
+  Invent something. Useful-absurd is the sweet spot: an alarm that won't stop
+  until you solve a math problem, a fridge camera that texts you what you're
+  out of, headphones that auto-mute when someone says your name. Pick the one
+  you WISH existed - belief sells.
+
+  Landing pages are a science with five organs, and yours needs all of them.
+  HERO: headline + one-liner that makes a stranger stop ("Wake up. No,
+  actually."). PROBLEM: the pain your product kills. SOLUTION: three benefits -
+  what it does FOR you, not what it has. SOCIAL PROOF: three invented (clearly
+  fictional) testimonials with personality. CALL TO ACTION: one big button.
+
+  Study the structure as you build - you'll start seeing these five blocks on
+  every real product page you visit, forever. Then test the only metric that
+  matters: show it to someone and ask "would you click?" Iterate until yes.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview; good at generating the full five-block structure.
+  - surface: claude_project
+    why: Strong at punchy headline iterations and benefit-vs-feature rewrites.
+  - surface: replit
+    why: Publish it and A/B test headlines on your friends.
+skills:
+  teaches: [prompt-decomposition, user-feedback]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: The full landing page, all five blocks visible.
+  - type: prompt_log
+    description: Your product concept, the five-block plan, and at least one headline iteration.
+  - type: reflection
+    description: Two sentences - did your tester say they'd click, and what changed their mind (or didn't)?
+evaluation:
+  deterministic_checks:
+    - id: page_screenshot_present
+      description: Screenshot shows a complete landing page.
+    - id: five_blocks_present
+      description: Prompt log or page evidences all five blocks - hero, problem, solution, proof, call to action.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: All five persuasion blocks work
+      looks_like: Each block does its job - the hero stops you, the problem stings, benefits are outcomes not features, testimonials have voice, the CTA is singular and clear.
+      weight: 0.4
+    - criterion: Benefits, not features
+      looks_like: The solution section says what the user GETS ("never oversleep again") rather than what the product HAS ("advanced alarm algorithm").
+      weight: 0.3
+    - criterion: Tested on a human
+      looks_like: A real person evaluated it, and at least one change came from their reaction.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Product idea generator: finish the sentence "I''m always annoyed when..." - then invent the thing that deletes that annoyance. Annoyance is unmet demand.'
+  - level: 2
+    hint: 'Headline formula that always works: the outcome, stated with attitude. Not "Smart Alarm Clock 2.0" but "Mornings, fixed." Generate ten with the AI, pick the one you''d screenshot.'
+  - level: 3
+    hint: For testimonials with personality, give the AI characters - "a sleep-deprived university student, a mom of three, a guy who's missed four flights" - and ask what EACH would say after a month with the product.
+reflection_prompts:
+  - Which of the five blocks was hardest to write well?
+  - Now that you know the anatomy - where did you see these blocks in the wild this week?
+unlocks: [family-business-page, me-quiz, shop-content-studio]
+stretch_challenge: Write a second hero section with a completely different angle (fear vs. aspiration), show both to two people, and declare a winning headline - your first A/B test.
+safety_notes: Make clear on the page that the product is a concept ("a concept by [name]") - fictional testimonials are a writing exercise here, but real pages misusing them is false advertising. Know the difference.

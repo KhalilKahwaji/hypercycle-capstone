@@ -1,0 +1,86 @@
+id: hashtag-assistant
+version: 1
+title: Build a Hashtag and Post-Idea Assistant for a Hobby Account
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a content strategist for a hobby account - post ideas in researched formats and hashtags chosen by strategy, not superstition.
+goal: A content assistant configured for a real or planned hobby account, producing a researched two-week content plan with strategically-tiered hashtags, with one post actually made.
+brief: |
+  Every hobby account faces the same two questions, endlessly: "what do I
+  post?" and "what tags?". Most people answer both by vibes. You're going
+  to answer them with a SYSTEM.
+
+  Define the account first: the hobby (your drawing, baking, football
+  analysis, plant rescue operation), the audience (fellow hobbyists?
+  beginners who want in?), and the personality (teacher? chaos
+  documenter? quiet expert?).
+
+  Then RESEARCH before generating - the step that separates strategy from
+  superstition: study 5-6 accounts in your hobby that are a step ahead of
+  you. What POST FORMATS recur? (Before/after. Process video. "Three
+  mistakes I made." The fail post - beloved everywhere.) Formats recur
+  because they work; collect them like the thumbnail patterns you may
+  have studied before.
+
+  Build the assistant with your research encoded: it generates post ideas
+  AS formats ("before/after: the cake that collapsed vs. today's") and
+  hashtags in deliberate TIERS - a few big-reach tags, several
+  medium community tags, and a couple of small specific ones where your
+  post can actually be seen (all-big-tags is shouting into a stadium;
+  all-small is whispering in an empty room - the mix is the strategy).
+
+  Generate a two-week plan, then POST ONE for real (or fully draft it if
+  the account isn't live yet). Done when the system answers both eternal
+  questions on demand - and the plan looks like something you'd actually
+  enjoy making.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold account config and research; plans generate fast.
+  - surface: claude_project
+    why: Good at format-based ideation and tier reasoning.
+  - surface: canva
+    why: For making the actual post when you get there.
+skills:
+  teaches: [context-grounding, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your account definition, format research findings, and the assistant's configuration.
+  - type: file_upload
+    description: The two-week content plan with tiered hashtags per post.
+  - type: screenshot
+    description: The real post made (or the complete draft).
+evaluation:
+  deterministic_checks:
+    - id: research_present
+      description: Prompt log contains observed post formats from real accounts in the hobby.
+    - id: plan_present
+      description: A two-week plan exists with format-based ideas and tiered hashtags.
+    - id: post_present
+      description: One post made or fully drafted.
+  rubric:
+    - criterion: Research grounds the system
+      looks_like: Real formats observed from real accounts, encoded into the assistant - ideas come out as formats, not vague topics.
+      weight: 0.35
+    - criterion: Hashtags are tiered strategy
+      looks_like: Each post's tags mix reach sizes deliberately, and the learner can explain the stadium-versus-empty-room logic.
+      weight: 0.3
+    - criterion: The plan is real and lived
+      looks_like: Two weeks of ideas the learner would actually make, with one genuinely executed - strategy that touched reality.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Research with a notebook: for each step-ahead account, write its three most-repeated post formats. Fifteen minutes, 5 accounts, and you''ll hold a format library most accounts never consciously build.'
+  - level: 2
+    hint: 'Tier instructions: "For each post, suggest hashtags as: 2 large (broad hobby terms), 4 medium (specific community terms), 2 small (exact technique/niche terms). Label the tiers." Checking real tag sizes on the platform takes seconds - spot-check a few.'
+  - level: 3
+    hint: 'If post ideas feel generic, feed the assistant your specifics: your three best past posts (or favorite things you''ve made), and the rule "every idea must use MY actual work as its subject - no hypothetical content". Generic in, generic out; specific in, yours out.'
+reflection_prompts:
+  - Why do formats repeat across successful accounts?
+  - What's the actual job of each hashtag tier?
+unlocks: [caption-generator, shop-content-studio, thumbnail-idea-generator]
+stretch_challenge: Add a review loop - after a week of posting, feed real results back (which posts did best?) and have the assistant revise the next two weeks toward what worked. Strategy that learns is just strategy with a memory.
+safety_notes: A hobby account shares the hobby, not your life - keep location patterns, school, and personal details out of the system. Post on your own schedule; the plan serves you, not an algorithm's appetite.

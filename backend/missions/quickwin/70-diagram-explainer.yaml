@@ -1,0 +1,83 @@
+id: diagram-explainer
+version: 1
+title: Build an "Explain This Diagram" Helper With Image Upload
+track: study
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a helper that explains any diagram you photograph - cell structures, circuits, maps, graphs - and learn to verify what AI claims to see.
+goal: A diagram explainer with an explanation protocol you designed, tested on three real diagrams from your coursework, including one verification catch where you checked its reading against the source.
+brief: |
+  Textbooks are full of diagrams that explain everything - to someone who
+  already understands them. The labeled cell. The circuit. The water cycle
+  with seventeen arrows. Today you build the assistant that reads them WITH
+  you.
+
+  Modern AI models can see images, and your job is to harness that with a
+  protocol. Design how a diagram should be explained: first the BIG PICTURE
+  ("this shows how blood moves through the heart"), then a guided tour in a
+  sensible order (not random parts - the order the process flows), then the
+  relationships (what causes what, what the arrows actually mean), and
+  finally the "why it matters" connection to your course topic. End with
+  one check question to you.
+
+  Then the lesson inside the lesson: VERIFICATION. Vision models misread
+  diagrams - they mislabel parts, invent arrows, confuse similar structures.
+  So your protocol includes the rule: "describe only what is visibly in the
+  image; if a label is unclear, say so rather than guessing". Test on three
+  real diagrams from your textbooks - and for at least one, check its
+  reading against the textbook's own caption and labels. If it claimed
+  something the diagram doesn't show, you've caught your first vision
+  hallucination. Document the catch.
+
+  Done when one diagram you'd been avoiding finally makes sense - and you
+  know exactly how far to trust the explainer.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Image upload plus system instructions - the full build in one place.
+  - surface: claude_project
+    why: Strong diagram reading with honest uncertainty when instructed.
+  - surface: chatgpt_gpt
+    why: Same pattern with image input if you prefer.
+skills:
+  teaches: [prompt-decomposition, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your explanation protocol including the no-guessing rule.
+  - type: transcript
+    description: Three diagrams explained, with images referenced, including the verification check on one.
+  - type: reflection
+    description: Two sentences - what did verification reveal, and which diagram finally clicked?
+evaluation:
+  deterministic_checks:
+    - id: protocol_present
+      description: Prompt log exists, min 250 characters, contains the ordered protocol and no-guess rule.
+    - id: three_diagrams_present
+      description: Transcript shows three distinct coursework diagrams explained.
+    - id: verification_present
+      description: One explanation checked against the source's own labels/caption, with result documented.
+  rubric:
+    - criterion: The protocol structures understanding
+      looks_like: Explanations follow big-picture, ordered tour, relationships, course connection, check question - visible in all three transcripts.
+      weight: 0.35
+    - criterion: Verification was real
+      looks_like: One reading compared against the textbook's ground truth, with the match or mismatch honestly documented.
+      weight: 0.35
+    - criterion: Real study value
+      looks_like: The diagrams are from actual current coursework, and the reflection names a genuine click moment.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Photograph diagrams flat and well-lit - half of "AI misread my diagram" is actually "my photo was a blurry trapezoid". Straight-on, full frame, readable labels.'
+  - level: 2
+    hint: 'The order rule matters most for process diagrams: "explain in the order the process flows, following the arrows, naming each arrow''s meaning as you pass it". Random-order explanations of cycles explain nothing.'
+  - level: 3
+    hint: 'For the verification, pick the diagram with the most labels and ask the bot to list every label it can read, verbatim, before explaining. Compare that list to the actual figure - any invented or misread label shows you the failure mode immediately.'
+reflection_prompts:
+  - Why are diagrams hard in a way text isn't?
+  - How would you explain to a classmate when to trust the explainer and when to check?
+unlocks: [math-step-explainer, chapter-summary-tool, explain-like-five-bot]
+stretch_challenge: Reverse it - describe a process from your course in words and have the AI generate a diagram description or simple SVG of it, then check whether ITS diagram would pass your teacher's standards.
+safety_notes: Use diagrams from your own course materials. The explainer aids understanding - exam answers should come from your verified knowledge, not from an unverified machine reading.

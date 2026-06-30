@@ -1,0 +1,80 @@
+id: city-guide-bot
+version: 1
+title: Build a Travel Guide Bot for Your Own City
+track: heritage
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a city guide powered by knowledge no tourist site has - yours - and watch grounding turn a generic bot into a local.
+goal: A city guide bot grounded in your written local knowledge, with at least one corrected AI assumption, tested on five realistic visitor questions.
+brief: |
+  Ask a generic AI about your city and you'll get the Wikipedia tour - the
+  same five landmarks, the airport, a restaurant that closed in 2019. You
+  know better. Today you bottle what you know.
+
+  Step one is the KNOWLEDGE DUMP, and it's worth half the hour: write what
+  only locals know. Where you ACTUALLY eat (and what to order there). What's
+  overrated and what to do instead. The walk that's beautiful at sunset. How
+  much things should cost so visitors don't get tourist-priced. What's open
+  during siesta hours. The thing everyone photographs versus the thing they
+  should. Aim for 15-20 entries of real, specific, current knowledge.
+
+  Step two: build the bot with one law - YOUR knowledge wins. When the AI's
+  general training disagrees with your dump (it will - it may "know" outdated
+  or plain wrong things about your area), your entry overrides. Test exactly
+  this: ask it something where you know the AI's default answer is wrong,
+  and check your correction took. That's retrieval-grounding in miniature,
+  the architecture behind every serious AI product.
+
+  Then run five realistic visitor questions - "one day, what do I do?",
+  "where's lunch near the old town?", "is it walkable?". Done when the
+  answers sound like a local friend, not a brochure.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the knowledge dump; test questions run free.
+  - surface: claude_project
+    why: Project knowledge files make the grounding explicit and editable.
+  - surface: chatgpt_gpt
+    why: Same pattern as a custom GPT if you prefer.
+skills:
+  teaches: [context-grounding, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your full knowledge dump and the override rule, plus the case where you corrected the AI's wrong default.
+  - type: transcript
+    description: Five visitor questions answered by your grounded bot.
+  - type: reflection
+    description: Two sentences - what did the ungrounded AI get wrong about your city, and did your grounding fix it?
+evaluation:
+  deterministic_checks:
+    - id: knowledge_dump_present
+      description: Prompt log exists, min 500 characters, contains 15+ specific local entries.
+    - id: five_questions_present
+      description: Transcript shows five distinct visitor questions answered.
+    - id: correction_present
+      description: Reflection or log documents one AI default corrected by grounding.
+  rubric:
+    - criterion: The knowledge is genuinely local
+      looks_like: Entries contain specifics no tourist site has - named places with what-to-order, honest prices, timing quirks, overrated/underrated calls.
+      weight: 0.4
+    - criterion: Grounding demonstrably wins
+      looks_like: At least one tested case where the bot's answer follows the learner's entry over the AI's general (wrong) knowledge.
+      weight: 0.35
+    - criterion: Answers sound like a friend
+      looks_like: The five test answers are warm, specific, and opinionated - drawing visibly from the dump rather than generic filler.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Knowledge dump prompts to ask yourself: where do I take visiting cousins? What do tourists always do wrong? What costs what? What''s the best hour for the famous spot? Where''s the bathroom situation honest?'
+  - level: 2
+    hint: 'The override rule, stated plainly: "Answer ONLY from my local notes where they apply. If my notes don''t cover something, say ''that one I''d double-check locally'' rather than guessing from general knowledge."'
+  - level: 3
+    hint: 'To find the AI''s wrong default, ask the UNgrounded model (fresh chat, no instructions) three questions about your area first. Whatever it gets wrong - outdated places, wrong prices, invented details - those are your test cases.'
+reflection_prompts:
+  - Why does the AI confidently get your city wrong?
+  - What would it take to keep this guide accurate a year from now?
+unlocks: [heritage-guide, landmark-tourism-guide, hometown-trivia-quiz]
+stretch_challenge: Add personas - the bot asks "traveling with kids, on a budget, or here for the food?" first, and routes its recommendations accordingly.
+safety_notes: Keep recommendations public and safe - no private addresses, no "locals only" spots that residents wouldn't want broadcast. Current info beats colorful info; mark anything you haven't verified recently.

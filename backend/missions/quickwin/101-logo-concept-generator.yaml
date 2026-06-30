@@ -1,0 +1,86 @@
+id: logo-concept-generator
+version: 1
+title: Build a Logo Concept Generator for an Imaginary Brand
+track: business
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Invent a brand, build a generator that produces logo concepts from brand personality - and learn why words must come before images in design.
+goal: A logo concept generator that translates brand personality into structured visual concepts, used on your invented brand, with one concept executed as a simple mark.
+brief: |
+  Bad logos happen when someone opens a design tool before thinking. Good
+  logos start as WORDS - personality, feeling, promise - that only then
+  become shapes. Today you build the machine that enforces the right
+  order.
+
+  Invent your brand first: a juice stand, a game studio, a tutoring
+  service, your future freelance self. Then write its PERSONALITY SHEET -
+  the input your generator will run on: three personality words (pick
+  hard: "friendly, fast, trustworthy" produces a different logo than
+  "bold, mysterious, premium"), the customer, the feeling at first
+  glance, and one thing the brand would NEVER be (the never-word is
+  secretly the most clarifying input in branding).
+
+  Then the generator: from a personality sheet, it produces three logo
+  CONCEPTS, each structured as: the core idea (one sentence), mark
+  description (what shape, exactly), typography direction (the
+  personality of the letters), color rationale (tied to a personality
+  word each), and a where-it-lives test (does it survive as a tiny app
+  icon?). Structure makes concepts comparable - and comparison is how
+  design decisions get made.
+
+  Generate for your brand, pick the strongest concept, and EXECUTE it
+  simply: Canva shapes, or an AI image generation, or hand-drawn and
+  photographed. Rough is fine - the mission is the pipeline: personality
+  to concept to mark. Done when someone guesses your three personality
+  words from the logo alone... or close enough to prove the pipeline
+  transmits.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the concept structure; can also generate the mark.
+  - surface: canva
+    why: Shape-based execution keeps the mark simple and yours.
+  - surface: claude_project
+    why: Strong at concept structure and color rationale.
+skills:
+  teaches: [prompt-decomposition, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your brand personality sheet, the generator instructions, and all three structured concepts.
+  - type: file_upload
+    description: The executed mark.
+  - type: reflection
+    description: Two sentences - what did the guess-test return, and which personality word proved hardest to make visible?
+evaluation:
+  deterministic_checks:
+    - id: personality_sheet_present
+      description: Prompt log contains personality words, customer, feeling, and the never-word.
+    - id: three_concepts_present
+      description: Three concepts each with idea, mark, typography, color rationale, and icon test.
+    - id: mark_present
+      description: An executed logo mark file is attached.
+  rubric:
+    - criterion: Words drove the visuals
+      looks_like: Every concept element traces to the personality sheet - colors justified by personality words, the never-word visibly steering away from something.
+      weight: 0.4
+    - criterion: Concepts are structured and distinct
+      looks_like: Three genuinely different directions in comparable structure - a real design decision was available, and a reasoned pick was made.
+      weight: 0.3
+    - criterion: The pipeline completed
+      looks_like: A real mark exists, executed from its concept, and the guess-test (or equivalent) checked transmission.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Personality words must exclude as much as they include - test each pair: can a logo be both "playful" and "premium"? Maybe! Both "minimal" and "explosive"? Pick a fight between your words and resolve it BEFORE generating.'
+  - level: 2
+    hint: 'The icon test in the instructions: "For each concept, state whether the mark survives at 32 pixels - if it needs detail to work, simplify the mark description until it doesn''t." Logos live small; concepts must too.'
+  - level: 3
+    hint: 'For execution in Canva: basic shapes plus your typography direction goes shockingly far - a circle, a triangle, the right font, your colors. If using AI generation, feed it your EXACT mark description, then simplify whatever it overcomplicates. You are the art director; it is the intern.'
+reflection_prompts:
+  - Why does the never-word clarify more than another yes-word?
+  - What did executing reveal that the concept stage hid?
+unlocks: [imaginary-product-landing, palette-from-photo, thumbnail-idea-generator]
+stretch_challenge: Make the brand kit page - logo, palette, typography sample, and the personality sheet, all on one page. You've just produced what agencies call brand guidelines, junior edition.
+safety_notes: Invent your brand - don't generate look-alikes of real logos. If the imaginary brand ever becomes real (it happens!), check the name isn't taken before falling in love.

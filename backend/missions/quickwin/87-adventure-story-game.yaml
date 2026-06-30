@@ -1,0 +1,81 @@
+id: adventure-story-game
+version: 1
+title: Build a Choose-Your-Own-Adventure Story Game
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Design a branching story with real choices and multiple endings, map it before building, and ship it as a playable game.
+goal: A playable branching adventure with 8+ scenes, 3+ meaningfully different endings, and a story map you drew before writing a word of it.
+brief: |
+  Every game, app, and form you've ever used is secretly a branching
+  structure - screens connected by choices. Today you learn to design one
+  by building the most fun version: an adventure where readers choose.
+
+  THE MAP COMES FIRST, before any writing - this is the mission's hill to
+  die on. Draw your story as boxes and arrows: scenes are boxes, choices
+  are arrows, endings are boxes with no exits. Plan 8-12 scenes with at
+  least 3 genuinely different endings (triumph, disaster, and the secret
+  weird one). Two design rules separate good branching from fake: choices
+  must MATTER (both arrows lead somewhere genuinely different - "take the
+  mountain path / take the river path" arriving at the same scene is a
+  lie), and merging is allowed (branches can rejoin - or your scene count
+  explodes exponentially; feel that pressure, it's why game writers merge).
+
+  Set it anywhere - your school during a mysterious blackout, a souk with
+  a door that shouldn't exist, a football final with supernatural stakes.
+  Write scene text WITH the AI (you direct tone and stakes), then have it
+  built as a page: scene text, choice buttons, and the state to track
+  where the player is.
+
+  Test every single path - unreachable scenes and dead-end bugs hide in
+  branches. Done when a friend plays twice and gets different endings.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Co-write scenes and generate the playable page from your map.
+  - surface: claude_project
+    why: Strong story collaborator; previews the game in chat.
+  - surface: replit
+    why: Host it - adventures deserve shareable URLs.
+skills:
+  teaches: [prompt-decomposition, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: Your story map - boxes and arrows, drawn or typed - dated before the build.
+  - type: screenshot
+    description: The game running, plus evidence of reaching two different endings.
+  - type: reflection
+    description: Two sentences - what did the map catch that writing-first would have missed, and which ending do players prefer?
+evaluation:
+  deterministic_checks:
+    - id: map_present
+      description: A branching map with 8+ scenes and 3+ endings is attached.
+    - id: game_evidence
+      description: Screenshots show the playable game and two distinct endings reached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The map is real architecture
+      looks_like: Scenes, choices, merges, and endings planned as a structure first - with evidence the build followed the map.
+      weight: 0.35
+    - criterion: Choices genuinely matter
+      looks_like: Different choices produce different scenes and endings - no fake branches - and at least one branch merge shows scope control.
+      weight: 0.35
+    - criterion: Fully tested and playable
+      looks_like: Every path walked, no dead ends or unreachable scenes, and a real second player reached an ending the builder didn't steer them to.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Map shape that works for a first adventure: opening scene → 2 choices → each leads to 2 more scenes → merge some → final choices → 3 endings. Draw it with pen and paper in five minutes; photograph it. That photo is a design document.'
+  - level: 2
+    hint: 'Write scene text in batches by giving the AI your map plus tone: "Scene 4: the player chose to follow the cat. 80-120 words, tension rising, end with these two choices: [your choices]." You architect; it drafts; you edit.'
+  - level: 3
+    hint: 'For the build: "one HTML file - each scene is a hidden section, choice buttons show the target scene and hide the current one". Test by playing every path with your map in hand, ticking arrows as you traverse them. Untested branches are where bugs live.'
+reflection_prompts:
+  - Why did the map have to come first?
+  - Where else do you now see branching structures hiding?
+unlocks: [twenty-questions-game, browser-maze-game, week-in-comic]
+stretch_challenge: Add one stateful item - a key found in an early scene unlocks a different option in a late one. Inventory is one variable away from what you built, and it changes everything.
+safety_notes: Keep the peril fictional and the tone right for younger siblings who might play. If you set it somewhere real, fictionalize details - no real people as characters without their delighted consent.

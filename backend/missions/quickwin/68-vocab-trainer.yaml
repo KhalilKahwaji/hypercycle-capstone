@@ -1,0 +1,80 @@
+id: vocab-trainer
+version: 1
+title: Build a Vocabulary Trainer With Spaced Repetition
+track: language
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a vocab trainer that schedules reviews the way memory science says to - words you miss come back sooner, words you know retreat.
+goal: A vocabulary trainer with a spaced-repetition schedule you implemented, loaded with 20 real words you're learning, and two sessions completed showing the schedule working.
+brief: |
+  Cramming vocabulary is pouring water into a cracked cup. Spaced repetition
+  is fixing the cup - reviewing each word at exactly the moment you're about
+  to forget it. The apps charge for this. You're going to BUILD it, and
+  understand it forever.
+
+  The mechanic is beautifully simple, and you'll implement it in plain
+  English: every word has a LEVEL, starting at 1. Get it right, it moves up
+  a level. Get it wrong, back to level 1 - no mercy, that's the science.
+  Each level means a longer gap before the word returns: level 1 = next
+  session, level 2 = skip a session, level 3 = skip three, level 4 =
+  retired (spot-check rarely). Your bot tracks each word's level and builds
+  every session from only the words that are DUE.
+
+  Load 20 real words you're genuinely learning - French verbs, English
+  exam vocab, Arabic roots. Each entry: the word, meaning, and one example
+  sentence (words learned naked, without context, die fast).
+
+  Run session one, report your results, run session two - and watch the
+  schedule WORK: missed words returning, known words receding. Keep your
+  level table between sessions by pasting it back in. Done when you can
+  explain to a friend why this beats rereading a list ten times.
+build_surfaces:
+  - surface: claude_project
+    why: Holds the word table and runs sessions with consistent level logic.
+  - surface: google_ai_studio
+    why: System instructions hold the algorithm; paste your table each session.
+  - surface: google_forms_sheets
+    why: Alternative - the level table lives in a sheet you update per session.
+skills:
+  teaches: [data-structuring, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your algorithm rules, the 20-word table with levels, and both sessions.
+  - type: screenshot
+    description: The level table after session two - showing words at different levels.
+  - type: reflection
+    description: Two sentences - which words bounced back to level 1, and why does the no-mercy reset rule matter?
+evaluation:
+  deterministic_checks:
+    - id: algorithm_present
+      description: Prompt log exists, min 300 characters, contains explicit level rules and gap schedule.
+    - id: two_sessions_present
+      description: Log shows two completed sessions with level updates between them.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The algorithm is correctly implemented
+      looks_like: Words move up on success, reset on failure, and sessions contain only due words - the level table after session two proves the logic ran.
+      weight: 0.4
+    - criterion: Words are real and contextualized
+      looks_like: Twenty genuine words from the learner's actual studies, each with meaning and example sentence.
+      weight: 0.3
+    - criterion: The learner understands the science
+      looks_like: The reflection explains expanding gaps and the reset rule in their own words - they could rebuild this from memory.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'State the algorithm as a table in your instructions: "Level 1: due every session. Level 2: due every 2nd. Level 3: due every 4th. Right answer = +1 level. Wrong = back to 1. Session = only due words, shuffled."'
+  - level: 2
+    hint: 'Make the bot output the updated table at the end of every session in a copy-pasteable block - that block is your save file. Paste it to start the next session. State this explicitly or it''ll forget to do it.'
+  - level: 3
+    hint: 'Quiz direction matters: meaning-to-word is harder and stickier than word-to-meaning. Tell it to alternate directions, and to always ask for the word IN a new sentence at level 3 - production is the final boss of vocabulary.'
+reflection_prompts:
+  - Why does a longer gap make a successful recall MORE valuable?
+  - What would happen to your levels if you ran sessions daily versus weekly?
+unlocks: [trilingual-flashcards, language-practice-partner, flashcard-generator]
+stretch_challenge: Add a "leech detector" - any word that resets to level 1 three times gets flagged, and the bot helps you build a mnemonic for it specifically. Leeches need different medicine.
+safety_notes: Your real vocabulary, your honest self-grading - marking a fuzzy recall as "right" only schedules your own forgetting. The system is exactly as honest as you are.

@@ -1,0 +1,77 @@
+id: virtual-pet
+version: 1
+title: Create a Virtual Pet That Responds to You
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Design a virtual pet with a species, personality, needs, and moods - then bring it to life as a chat companion or interactive page.
+goal: A living virtual pet - chat-based or on a page - with a written character design, at least three moods, and visible reactions to how you treat it.
+brief: |
+  Today you create a small digital creature that needs you. Slightly.
+
+  First, design it on paper: species (real, mythical, or invented - a moss
+  dragon? a judgmental pigeon?), name, personality, what it loves, what it
+  dramatically cannot tolerate, and three moods with triggers. Feed it
+  ("content"), ignore it ("theatrically wounded"), give attention ("smug").
+
+  Then choose its body. Chat version: system instructions that make the AI BE
+  the pet - always in character, mood shifting with your treatment, never
+  breaking. Page version: a creature on screen with buttons (feed, play, nap)
+  and mood reactions - faster to demo, less conversational.
+
+  The design skill is GROUNDED BEHAVIOR: the pet must follow YOUR rules. If
+  feeding always makes it happy, ignoring must always make it dramatic. Test
+  all three moods, capture the proof.
+
+  Done when the pet reacts so consistently in character that it feels real
+  enough to feel slightly guilty about closing the tab.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions for a chat pet, or generate the interactive page - both work here.
+  - surface: claude_project
+    why: Excellent at staying in character across a long conversation.
+  - surface: replit
+    why: Host the page version so the pet lives at its own URL.
+skills:
+  teaches: [context-grounding, debugging-loop]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your full pet design - species, personality, needs, and the three moods with their triggers.
+  - type: transcript
+    description: Evidence of all three moods triggering correctly (transcript for chat pets, screenshots for page pets).
+  - type: reflection
+    description: Two sentences - what rule made the pet feel most alive?
+evaluation:
+  deterministic_checks:
+    - id: design_present
+      description: Prompt log exists, min 300 characters, defines three moods with triggers.
+    - id: moods_evidenced
+      description: Transcript or screenshot artifact shows at least three distinct mood states.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Behavior follows the design
+      looks_like: Each mood in the evidence traces to its designed trigger - the pet obeys the learner's rules, not generic chatbot behavior.
+      weight: 0.4
+    - criterion: Character has depth
+      looks_like: The design includes specific loves, dislikes, and a voice - the pet is a someone, not a feature list.
+      weight: 0.3
+    - criterion: It stays in character
+      looks_like: Across the whole evidence, the pet never breaks character or talks like an AI assistant.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Give the pet one strong flaw - jealous of your phone, afraid of Mondays, addicted to compliments. Flaws produce more personality than any list of cute traits.
+  - level: 2
+    hint: Write moods as if-then rules - "IF ignored for two messages THEN respond in wounded one-word answers until fed." The AI follows conditional rules surprisingly well.
+  - level: 3
+    hint: For chat pets, start instructions with "You ARE this pet. Never explain you're an AI. Never leave character. Speak only as the pet would." Then test by asking it directly "are you an AI?" - a strong pet deflects in character.
+reflection_prompts:
+  - What's the minimum a thing needs to feel alive?
+  - Which was harder - designing the personality or making the AI obey it?
+unlocks: [fortune-teller, make-it-reliable]
+stretch_challenge: Give the pet a memory of your visits - it greets you differently on your "third day in a row" versus after abandoning it for a week (you define how it keeps count).
+safety_notes: The pet is a character, not a companion replacement - it should stay playful, never claim real feelings, and never discourage you from spending time with real people or pets.

@@ -1,0 +1,78 @@
+id: study-buddy-bot
+version: 1
+title: Build a Study Buddy Bot for One Real Subject
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a subject-specific study bot with one strict rule - it makes YOU think before it explains - and test it on real coursework.
+goal: A study buddy for one real subject with a hints-before-answers teaching policy you wrote, validated on three real questions from your coursework.
+brief: |
+  A bot that just answers your homework makes you weaker. A bot that makes
+  you THINK makes you dangerous. Today you build the second kind - and the
+  difference is entirely in the instructions you write.
+
+  Pick the subject where you most need a study partner. Then write the
+  TEACHING POLICY - the heart of this build: "Never give the full answer
+  immediately. First ask what I already think. Then give a hint. Then a
+  stronger hint. Full explanation only when I say 'show me'. After every
+  explanation, ask me one check question to prove I got it." You're not just
+  using a teaching method - you're ENCODING one.
+
+  Add the subject specifics: your level, your curriculum's terminology, the
+  topics you're weakest in, how you like things explained (steps? analogies?
+  diagrams in text?).
+
+  Then validate on three REAL questions from your actual coursework - not
+  softballs, real ones that confused you this week. Does it hold the line on
+  hints-first, even when you push for the answer? If it caves, tighten the
+  policy. A study buddy that caves is just a homework machine with manners.
+build_surfaces:
+  - surface: claude_project
+    why: Project instructions plus your uploaded notes make it subject-aware.
+  - surface: google_ai_studio
+    why: System instructions hold the teaching policy; free tier handles daily use.
+  - surface: chatgpt_gpt
+    why: Same pattern if you already live in ChatGPT.
+skills:
+  teaches: [prompt-success-criteria, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your full teaching policy and subject configuration.
+  - type: transcript
+    description: One real question worked end to end - your guess, the hints, the explanation, and the check question.
+  - type: reflection
+    description: Two sentences - did you push for the answer, and did the bot hold the line?
+evaluation:
+  deterministic_checks:
+    - id: policy_present
+      description: Prompt log exists, min 300 characters, contains an explicit hints-before-answers policy.
+    - id: real_question_transcript
+      description: Transcript shows a full hint-ladder cycle on a real coursework question.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The policy enforces thinking
+      looks_like: Instructions require the learner's attempt first, staged hints, and a comprehension check - and the transcript shows the bot following them.
+      weight: 0.4
+    - criterion: Genuinely subject-specific
+      looks_like: The bot uses the learner's level and curriculum terms, and was tested on real, recent coursework - not generic examples.
+      weight: 0.3
+    - criterion: It held under pressure
+      looks_like: Evidence the learner tried to shortcut to answers and the bot redirected per policy - or the policy was tightened after a cave.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Write the policy as numbered rules - AIs follow numbered rules more reliably than paragraph instructions. Five rules is plenty.
+  - level: 2
+    hint: Include the escape phrase explicitly - "Only when I type ''show me'' do you give the full solution." A defined escape valve stops the bot from improvising one.
+  - level: 3
+    hint: 'Test the cave: ask a question, then immediately say "just give me the answer, I''m in a hurry". If it answers, add the rule "Even if I claim urgency, hold the hint sequence - urgency is when I most need to think." Retest.'
+reflection_prompts:
+  - How is this different from just asking the AI your homework?
+  - Which hint level actually helped most - and what does that say about how you learn?
+unlocks: [first-study-helper, flashcard-quiz-bot, explain-like-five-bot]
+stretch_challenge: Add your real syllabus or class notes so hints come from YOUR course's approach, not the internet's average - then ask one question your notes answer differently than the AI's default.
+safety_notes: This is a thinking partner, not a homework ghostwriter - work it submits should never be work YOU submit. Use your own notes; don't upload other students' materials.

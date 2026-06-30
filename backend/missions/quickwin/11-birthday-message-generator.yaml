@@ -1,0 +1,72 @@
+id: birthday-message-generator
+version: 1
+title: Build a Birthday Message Generator for Your Family
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Never send "hbd 🎂" again - build a generator that writes warm, personal birthday messages tuned to each family member.
+goal: A birthday message generator grounded in real facts about three family members, producing messages each person would believe you wrote.
+brief: |
+  Somewhere in your family chat, someone just typed "Happy birthday!! 🎉" for the
+  ninth year running. You're about to end that era.
+
+  Build a generator that takes a name plus your relationship facts and produces
+  a birthday message that sounds like YOU wrote it on your best day. The secret
+  is a profile per person: how you talk to them (teasing? formal? voice-note
+  energy?), a shared memory, an inside joke, what they did for you this year.
+
+  Set up profiles for three real family members. Then tune the OUTPUT VOICE -
+  the first drafts will sound like a greeting card factory. Push back: "shorter",
+  "less poetic", "more like a text message", "add the joke about the parking".
+  The test for every message: would they believe you typed it yourself?
+
+  Done when all three messages pass that test - and bonus glory if a birthday
+  is actually coming up.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the family profiles; generate per person on demand.
+  - surface: claude_project
+    why: Keeps profiles across sessions, strong at matching your writing voice.
+skills:
+  teaches: [context-grounding, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your three family profiles (first names or roles only - "Uncle F" is fine) and the generator instructions.
+  - type: file_upload
+    description: The three final messages, one per person.
+  - type: reflection
+    description: Two sentences - what made the messages sound like YOU instead of a greeting card?
+evaluation:
+  deterministic_checks:
+    - id: profiles_present
+      description: Prompt log exists, min 300 characters, contains three distinct person profiles.
+    - id: messages_present
+      description: A file with three messages attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Messages are person-specific
+      looks_like: Each message contains details (memories, jokes, shared references) that only fit that one person - swap two messages and they'd make no sense.
+      weight: 0.4
+    - criterion: Voice sounds human
+      looks_like: Messages read like a real text from the learner - right length, right warmth - with greeting-card clichés edited out through iteration.
+      weight: 0.35
+    - criterion: Profiles are well structured
+      looks_like: Each profile captures relationship tone, at least one memory, and one current-year fact in a reusable format.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: For each person, answer three questions - how do I actually talk to them, what moment did we share this year, what's one joke only we get? That's a profile.
+  - level: 2
+    hint: Paste a real message you once sent that person (any message) and say "match this voice and length". Your own texts are the best style sample that exists.
+  - level: 3
+    hint: If output still sounds like a card, ban the clichés explicitly - "no 'another year around the sun', no 'many happy returns', no poems unless I ask". Then regenerate.
+reflection_prompts:
+  - Why does the same generator need different instructions per person?
+  - What would break if you used one generic profile for everyone?
+unlocks: [mood-to-lyrics, compliment-generator]
+stretch_challenge: Add languages - generate each message in Arabic or French too, keeping the warmth and the inside jokes intact, and check it with a native speaker.
+safety_notes: Keep profiles kind and private - use first names or roles, don't include birthdates or contact info in your submission, and don't share family facts beyond what the message needs.

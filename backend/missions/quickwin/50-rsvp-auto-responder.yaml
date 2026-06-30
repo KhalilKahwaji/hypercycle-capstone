@@ -1,0 +1,76 @@
+id: rsvp-auto-responder
+version: 1
+title: Build an RSVP Form That Replies By Itself
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build an RSVP form that automatically sends each guest a confirmation - your first taste of "set it up once, it works forever".
+goal: A working RSVP pipeline for a real event - form in, automatic personalized confirmation out - tested end to end with real submissions.
+brief: |
+  Until today, everything you built needed you present. This mission is
+  different: you're building something that works WHILE YOU SLEEP.
+
+  The pipeline: a guest fills your RSVP form → their answer lands in a
+  spreadsheet → a confirmation email goes back to them automatically with
+  the event details. Form, sheet, response - three links in a chain, no
+  human in the middle. That chain is the atom of all automation, and once
+  you've built one, you'll see chains everywhere.
+
+  Use Google Forms with the response receipt setting, or level up with an
+  Apps Script / Make scenario for a custom message ("You're in, Sara!
+  Saturday, 7pm - bring nothing but yourself"). Personalization is the
+  difference between a receipt and a welcome.
+
+  THEN TEST IT LIKE AN ENGINEER: submit as yourself, submit as a friend,
+  submit weird input (no name, strange email). Does every path work? What
+  breaks? Fix the breaks. Done when a real guest RSVPs and gets their
+  confirmation without you touching anything - and you feel the small
+  electric thrill of a machine doing your job.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Forms plus response receipts is the gentlest first automation; Apps Script unlocks custom messages.
+  - surface: make
+    why: Visual automation builder if you want the full form-to-custom-email scenario.
+skills:
+  teaches: [automation-trigger-action, tool-assembly]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The pipeline working - a submitted RSVP and the automatic confirmation it triggered.
+  - type: prompt_log
+    description: Your setup steps and your test plan - the three test submissions and what each revealed.
+  - type: reflection
+    description: Two sentences - what broke during testing, and how did you fix it?
+evaluation:
+  deterministic_checks:
+    - id: pipeline_evidence_present
+      description: Screenshots show both a form submission and its automatic confirmation.
+    - id: test_plan_present
+      description: Prompt log exists, min 250 characters, documents at least three test submissions including one edge case.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The chain works end to end
+      looks_like: Form submission automatically produces a confirmation with no manual step - verified by a real test, ideally by someone other than the builder.
+      weight: 0.4
+    - criterion: Tested like an engineer
+      looks_like: At least three test cases including a weird one, with observed results and at least one fix or documented limitation.
+      weight: 0.35
+    - criterion: The confirmation is useful
+      looks_like: The reply contains the event details a guest actually needs, ideally personalized - not a bare "response recorded".
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Start with the built-in version: in Google Forms settings, turn on "collect email addresses" and "send responders a copy". That''s already an automation - get it working before customizing.'
+  - level: 2
+    hint: For custom messages, ask the AI - "write me a Google Apps Script that triggers on form submit and emails the responder a confirmation using their name from the form" - then paste it into the Sheet's Apps Script editor and authorize it.
+  - level: 3
+    hint: 'If the email never arrives: check spam first, then check the trigger is installed (Apps Script > Triggers > on form submit), then check the script reads the right column for the email. Debug the chain link by link.'
+reflection_prompts:
+  - What's the difference between a tool you use and an automation you install?
+  - What in your weekly life is secretly a form-to-confirmation chain waiting to be built?
+unlocks: [event-invite-page, signup-confirmation-pipeline, volunteer-signup-automation]
+stretch_challenge: Add a capacity rule - after 20 "yes" responses, new submissions get a "waitlist" message instead. Conditional logic is automation level two.
+safety_notes: Guest emails are personal data - use them only for the confirmation, never share the response sheet publicly, and delete the data after the event.

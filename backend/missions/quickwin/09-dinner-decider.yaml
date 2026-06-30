@@ -1,0 +1,75 @@
+id: dinner-decider
+version: 1
+title: Build the "What Should I Eat Tonight?" Decision Spinner
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: End the nightly food debate forever - build a spinning decision wheel loaded with your real dinner options, with a dramatic reveal.
+goal: A working spinner page loaded with your actual regular meals, that animates, picks one, and announces it with flair.
+brief: |
+  "What do you want to eat?" - "I don't know, what do YOU want?" Tonight this
+  conversation dies. You're building its replacement.
+
+  List your REAL options first: the meals in your house rotation, the three
+  delivery places, the sandwich that's always there for you. Real data makes
+  it useful; fake data makes it a demo.
+
+  Then have the AI build a single HTML page: a wheel (or slot machine, or
+  dramatic card flip - your call) that spins through your options and lands on
+  one with a satisfying reveal. You'll need to iterate on FEEL: the spin should
+  build suspense - too fast feels random, too slow is boring. "Make it slow
+  down gradually like a real wheel" is the kind of note a real product person
+  gives.
+
+  Done when it spins, lands, announces dinner with drama, and you actually used
+  it for a real decision tonight.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview the spinner page in one place.
+  - surface: claude_project
+    why: Previews HTML in chat; good at "make it feel right" iterations.
+  - surface: replit
+    why: Host it at a URL so the whole family can use it.
+skills:
+  teaches: [ui-basics, debugging-loop]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The spinner mid-spin or showing its final pick.
+  - type: prompt_log
+    description: Your option list and at least two iteration requests about the spin feel or reveal.
+  - type: reflection
+    description: One sentence - what did it pick, and did you obey the wheel?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: It works end to end
+      looks_like: Evidence shows real options going in, an animated selection, and a clear winner announced.
+      weight: 0.4
+    - criterion: Iteration on feel
+      looks_like: The prompt log shows at least two refinements about timing, suspense, or the reveal - judgment about experience, not just function.
+      weight: 0.35
+    - criterion: Built on real data
+      looks_like: The options are recognizably the learner's actual meals/places, and the tool got used for a real decision.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Keep version 1 stupid-simple - a button that picks a random option from your list and shows it big. Get that working, THEN ask for the spinning animation.
+  - level: 2
+    hint: Describe the feeling, not the code - "it should slow down gradually and tease the result like a game show". The AI translates feelings into easing functions.
+  - level: 3
+    hint: If the wheel breaks or options overlap, paste the error or describe what you see and ask for "a simpler version using a shuffling text animation instead of a rotating wheel". Simpler that works beats fancy that doesn't.
+reflection_prompts:
+  - What's the difference between random and FEELING fair?
+  - What other decision in your life deserves a spinner?
+unlocks: [food-debate-bot, fortune-teller]
+stretch_challenge: Add a veto button - each person gets ONE re-spin per night, and the page tracks who wasted theirs.
+safety_notes: Nothing sensitive here - just don't include private info like your home address next to delivery options if you publish the page.

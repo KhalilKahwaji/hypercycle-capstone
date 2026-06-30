@@ -1,0 +1,82 @@
+id: thumbnail-idea-generator
+version: 1
+title: Build a Thumbnail Idea Generator for a Video Channel
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Reverse-engineer what makes thumbnails clickable, encode it as a generator, and produce concept boards for real video ideas - taste, systematized.
+goal: A thumbnail concept generator built from your own analysis of effective thumbnails, producing structured concepts (not vague vibes) for three real video ideas, with one mocked up.
+brief: |
+  Before anyone watches a video, they judge a 300-pixel rectangle for half
+  a second. Thumbnails are the highest-stakes design format alive - and
+  today you reverse-engineer the craft and build a machine that speaks it.
+
+  RESEARCH FIRST, like a designer: open a video platform and study 10
+  thumbnails from channels you actually click. What do the good ones
+  share? You'll find patterns fast: one big readable face or object,
+  high contrast, three words max in huge text, a question or tension the
+  title doesn't resolve, color that fights the platform's white. Write
+  YOUR findings down - your generator gets built from your analysis, not
+  from "make it clickbait".
+
+  Then encode the generator: input is a video concept ("I tested every
+  man'oushe place in town"), output is THREE structured thumbnail
+  concepts, each specified as: focal point, text overlay (exact words),
+  color scheme, emotion, and composition notes. Structured concepts are
+  buildable; "something eye-catching" is not - the spec format IS the
+  product.
+
+  Run three real video ideas through (yours, or a channel you'd start).
+  Then mock ONE concept up in Canva to prove the spec translates to
+  pixels. Done when the mockup sits convincingly next to real thumbnails
+  in your research set - cover the channel name and squint.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your patterns; concepts generate structured.
+  - surface: canva
+    why: The mockup stage - templates make one thumbnail in fifteen minutes.
+  - surface: claude_project
+    why: Good analysis partner for the research stage.
+skills:
+  teaches: [prompt-decomposition, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your thumbnail research findings, the generator instructions, and concepts for three video ideas.
+  - type: file_upload
+    description: The Canva mockup of your chosen concept.
+  - type: reflection
+    description: Two sentences - which pattern from your research mattered most, and does your mockup pass the squint test?
+evaluation:
+  deterministic_checks:
+    - id: research_present
+      description: Prompt log contains original analysis of real thumbnails with named patterns.
+    - id: structured_concepts_present
+      description: Three video ideas each have concepts specifying focal point, text, color, emotion, composition.
+    - id: mockup_present
+      description: A completed thumbnail mockup file is attached.
+  rubric:
+    - criterion: The research is real analysis
+      looks_like: Specific observed patterns from actual thumbnails the learner clicks - findings in their own words, not recycled listicle advice.
+      weight: 0.35
+    - criterion: Concepts are buildable specs
+      looks_like: Every concept could be handed to a stranger and produce roughly the intended image - the structure does its job.
+      weight: 0.35
+    - criterion: The mockup proves the pipeline
+      looks_like: The Canva execution matches its spec and holds up next to the research set - concept to pixels, complete.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'For the research, screenshot your platform homepage and ask of each thumbnail: would I click? Then: WHY? The why-pile becomes your pattern list in ten minutes.'
+  - level: 2
+    hint: 'Force the structure in the instructions: "Output each concept as exactly five labeled fields: FOCAL POINT / TEXT (max 3 words) / COLORS / EMOTION / COMPOSITION. No field may be vague." The format constraint is doing the teaching.'
+  - level: 3
+    hint: 'In Canva: search "youtube thumbnail" templates, then OVERRIDE the template with your spec - your focal point, your exact text, your colors. The template gives proportions; your spec gives everything that matters.'
+reflection_prompts:
+  - Why does structure turn a vague idea into a buildable one?
+  - Which of your researched patterns is really about psychology, not design?
+unlocks: [caption-generator, logo-concept-generator, notes-to-script-tool]
+stretch_challenge: Generate two competing thumbnails for the same video and run a quick A/B vote with five friends - data over taste, even at this scale.
+safety_notes: Study real thumbnails; don't copy one. Honest tension beats false promises - thumbnails that lie train audiences to never click you again, which is also a research finding.

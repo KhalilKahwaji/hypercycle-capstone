@@ -1,0 +1,69 @@
+id: compliment-generator
+version: 1
+title: Build a Compliment Generator for Your Best Friend
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Make a one-button page that generates endless, weirdly specific compliments about your best friend - then actually send it to them.
+goal: A working compliment generator page about a real friend, delivered to that friend, with their reaction captured.
+brief: |
+  Mission: industrial-scale kindness.
+
+  Think of your best friend. Now feed the AI what makes them great - not "nice"
+  and "funny" (everyone says that) but the REAL stuff: they remember everyone's
+  exam dates, they defend your food order, their playlists fix bad days.
+
+  First, workshop compliments in chat until they sound like you wrote them -
+  specific beats generic every time. "You're kind" is wallpaper. "You're the only
+  person who texts back during a crisis in under 90 seconds" is a gift.
+
+  Then ask for a single HTML page: friend's name on top, one big button, each
+  press shows a random compliment from YOUR approved list. Test it, then the
+  final step - actually send it to them. The mission isn't complete until a real
+  human smiled because of something you built. Screenshot their reaction.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Workshop the compliments and generate the page in one session.
+  - surface: claude_project
+    why: Strong copywriting partner, previews the page in chat.
+skills:
+  teaches: [prompt-examples, shipping-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The generator showing one compliment.
+  - type: screenshot
+    description: Your friend's reaction after you sent it (message reply, with their permission).
+  - type: prompt_log
+    description: The friend-facts you fed in and one example of pushing a compliment from generic to specific.
+evaluation:
+  deterministic_checks:
+    - id: screenshots_present
+      description: At least two screenshot artifacts attached.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+  rubric:
+    - criterion: Compliments are specific
+      looks_like: At least three compliments reference real habits or moments unique to this friend - things no template could produce.
+      weight: 0.4
+    - criterion: It shipped to a human
+      looks_like: Evidence shows the friend actually received it and reacted. Building is half; delivering is the other half.
+      weight: 0.35
+    - criterion: Working generator
+      looks_like: The page shows a name, a button, and produces different compliments on different presses.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Generic compliments come from generic input. Ask yourself - what does this friend do that nobody else does? Start your list there.
+  - level: 2
+    hint: Show the AI one example of the tone you want, then say "write 10 more in exactly this style about these facts". One good example beats five adjectives.
+  - level: 3
+    hint: Ask for "a single self-contained HTML file with [name] as the heading, one button, and this exact list of compliments shown randomly on click" - and paste your final list so it can't improvise worse ones.
+reflection_prompts:
+  - Which compliment got the biggest reaction, and why do you think that is?
+  - What did you learn about the difference between generic and specific output?
+unlocks: [nickname-generator, birthday-message-generator]
+stretch_challenge: Add a "compliment intensity" slider that switches between "mild appreciation" and "best friend in the universe" modes.
+safety_notes: Ask your friend before posting their name or reaction anywhere public. Keep it kind - no backhanded compliments.

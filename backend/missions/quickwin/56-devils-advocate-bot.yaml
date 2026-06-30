@@ -1,0 +1,78 @@
+id: devils-advocate-bot
+version: 1
+title: Build a Debate Partner That Always Takes the Other Side
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a bot that argues the opposite of whatever you believe - respectfully, intelligently, and just annoyingly well enough to sharpen you.
+goal: A devil's advocate bot with debate-quality rules you wrote, plus a full practice debate where it genuinely challenged one of your real opinions.
+brief: |
+  The most useful person in any room is the one who disagrees with you
+  intelligently. Today you build them - on demand, tireless, never offended.
+
+  The design challenge is QUALITY of opposition. A bot that just says "no
+  you're wrong" is useless; a bot that finds your weakest premise and pushes
+  exactly there is a sparring partner. Write its debate code: always argue
+  the opposite of the user's stated position, attack the argument never the
+  person, lead with the opponent's STRONGEST case (not the easy strawman),
+  concede points that are actually good ("fair - but consider..."), and ask
+  one sharp question per turn.
+
+  Then feed it a real opinion you hold - something you actually care about.
+  School uniforms, whether homework works, the best way to spend a summer,
+  a football take. Debate it for at least eight turns. Notice what happens:
+  either your opinion survives and gets STRONGER (you now know its best
+  defense), or it bends (you learned something). Both outcomes win.
+
+  Done when the bot lands one argument you couldn't immediately answer -
+  and you write that argument down instead of pretending it didn't happen.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the debate code; long arguments run free.
+  - surface: claude_project
+    why: Excellent at steelmanning - arguing the strong version of the other side.
+  - surface: any_chat_ui
+    why: A pinned debate-code prompt works anywhere.
+skills:
+  teaches: [prompt-success-criteria, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your debate code - the full ruleset.
+  - type: transcript
+    description: An eight-plus-turn debate on a real opinion of yours.
+  - type: reflection
+    description: The argument that stumped you, written down honestly, plus whether your opinion changed, strengthened, or got more careful.
+evaluation:
+  deterministic_checks:
+    - id: debate_code_present
+      description: Prompt log exists, min 250 characters, contains explicit debate-quality rules.
+    - id: debate_transcript_present
+      description: Transcript shows eight or more turns on one topic.
+    - id: stumper_recorded
+      description: Reflection exists, min 100 characters, quotes the argument that landed.
+  rubric:
+    - criterion: Opposition has quality rules
+      looks_like: The code requires steelmanning, concessions, civility, and probing questions - and the transcript shows them happening.
+      weight: 0.35
+    - criterion: A real opinion was risked
+      looks_like: The debated position is something the learner actually holds, defended with real effort across the full eight turns.
+      weight: 0.3
+    - criterion: Honest intellectual accounting
+      looks_like: The reflection genuinely records the best opposing argument and its effect - no pretending to have won every exchange.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'The keystone rule is steelmanning: "Always present the STRONGEST version of the opposing view, as its smartest defender would." Without it you get a strawman bot, which teaches nothing.'
+  - level: 2
+    hint: 'Add the concession rule: "When my point is genuinely strong, say so explicitly before countering." Bots that never concede feel like walls; bots that concede feel like minds.'
+  - level: 3
+    hint: If it's too gentle, escalate - "after turn four, stop softening - press your strongest attack on my weakest premise". If it's exhausting, add "one argument per turn, maximum 120 words". Tune the sparring intensity like a coach would.
+reflection_prompts:
+  - What does it feel like to lose a point to a machine - and why is that useful?
+  - Which of your opinions would you NOT feed to this bot, and what does that tell you?
+unlocks: [food-debate-bot, interview-practice-bot, spot-the-hallucination]
+stretch_challenge: Run the same debate twice - once with steelmanning ON, once with it removed - and compare transcripts. You'll never trust a strawman argument again.
+safety_notes: This bot argues positions it doesn't hold - remember that's the design, not deception. Skip topics that touch your personal wellbeing; spar over ideas, not wounds.

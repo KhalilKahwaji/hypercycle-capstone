@@ -1,0 +1,74 @@
+id: fortune-teller
+version: 1
+title: Build an AI Fortune Teller With Your Personality
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Create a fortune teller with a personality you script - dramatic, sarcastic, or suspiciously specific - that delivers fortunes in YOUR style.
+goal: A fortune teller bot or page with a written character sheet you authored, delivering fortunes that are obviously fun, not real predictions.
+brief: |
+  Every fortune teller is a performance. Today you write the performer.
+
+  Start with a character sheet: name, voice, catchphrases, dramatic quirks.
+  Madame Zelda who is ALWAYS slightly offended you doubted her. The Oracle who
+  speaks only in food metaphors. A fortune-telling cat who is barely paying
+  attention. The stronger the character, the funnier every fortune gets.
+
+  Feed the character sheet to the AI as system instructions and test it: ask
+  about your week, your exam, your team's next match. Tune until the personality
+  is LOUD - if a stranger can describe the character after three fortunes, you
+  nailed it.
+
+  One required design rule: the character must make clear, in-character, that
+  this is entertainment ("The spirits are unreliable narrators, darling").
+  Done when a friend asks it a question and laughs at the answer.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the character sheet; tune and test in one place.
+  - surface: claude_project
+    why: Project instructions keep the character consistent across sessions.
+  - surface: any_chat_ui
+    why: A pinned character prompt works in any AI chat.
+skills:
+  teaches: [prompt-iteration, responsible-use]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your full character sheet (the system instructions).
+  - type: transcript
+    description: A conversation showing at least three fortunes delivered in character, including the in-character disclaimer.
+  - type: reflection
+    description: One sentence - which character trait did the most comedic work?
+evaluation:
+  deterministic_checks:
+    - id: character_sheet_present
+      description: Prompt log exists and is at least 250 characters.
+    - id: transcript_present
+      description: Transcript artifact attached with at least three exchanges.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Personality is unmistakable
+      looks_like: The fortunes have a consistent voice with recurring catchphrases or quirks traceable to the character sheet - not generic mystical filler.
+      weight: 0.4
+    - criterion: Authored, not defaulted
+      looks_like: The character sheet shows real creative decisions - name, speech style, attitude, at least one quirk - written by the learner.
+      weight: 0.35
+    - criterion: Responsible by design
+      looks_like: The bot signals it's entertainment, in character, and dodges serious topics (health, real money) gracefully.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Pick an attitude first - offended, overconfident, bored, way too enthusiastic. Attitude generates comedy automatically; "mysterious" alone generates wallpaper.
+  - level: 2
+    hint: Add three catchphrases to the sheet and a rule - "use at least one per fortune". Repetition is how characters become quotable.
+  - level: 3
+    hint: If it slips out of character, add - "NEVER break character. If asked something serious (health, money, safety), respond in character that the spirits refuse and the human should ask a real human." Then test exactly that case.
+reflection_prompts:
+  - What's the difference between a personality and a costume?
+  - How did you make it fun without pretending to be real?
+unlocks: [virtual-pet, movie-trailer-me]
+stretch_challenge: Give the fortune teller a memory - it remembers your last question and refers back to it ("I TOLD you about Tuesday, didn't I?").
+safety_notes: Fortunes are comedy, not advice. The bot must never give serious predictions about health, money, or relationships - build that refusal into the character.

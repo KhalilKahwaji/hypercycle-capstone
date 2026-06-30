@@ -1,0 +1,83 @@
+id: daily-riddle-page
+version: 1
+title: Build a Daily Riddle Page That Updates Itself
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Curate a riddle library, then build a page that serves a different riddle each day automatically - content scheduling without a server.
+goal: A self-updating daily riddle page running on a date-indexed library you curated, with a reveal interaction and proof it changes across days.
+brief: |
+  A page that's DIFFERENT every time you visit - without anyone touching
+  it - feels like magic. The trick is one idea: use the DATE as a pointer
+  into a content library. Today's date decides today's riddle. No server,
+  no schedule, no maintenance - just math on the calendar.
+
+  First, the LIBRARY: collect and curate 15-20 riddles. Mix classics with
+  AI-generated ones - and test every generated riddle on a human before
+  it earns a slot, because AI riddles are confidently terrible at a
+  startling rate: answers that don't follow, double answers, "riddles"
+  that are just descriptions. Your quality bar - "would this make someone
+  groan-smile when they get it?" - is the curation. Order them by
+  difficulty if you're fancy.
+
+  Then the BUILD: a page holding the whole library in its code, computing
+  today's index from the date (day-of-year modulo library size is the
+  classic), and showing only that riddle. Add the REVEAL design: answer
+  hidden behind a "Give up?" button - with a hint button between (hints
+  earn their place: a riddle page without hints loses visitors; one with
+  instant answers loses the point).
+
+  Verify the rotation honestly: check today's riddle, then test tomorrow
+  arrives correctly (change the index math temporarily, or your device
+  clock). Done when it's live and someone asks you the next morning -
+  "wait, it changed?"
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate riddle candidates and the date-indexed page.
+  - surface: claude_project
+    why: Good riddle co-writer and tester - it can check if answers actually follow.
+  - surface: replit
+    why: Host it - daily content needs a stable address people revisit.
+skills:
+  teaches: [data-structuring, prompt-success-criteria]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your curation - candidates considered, your quality bar, at least two generated riddles rejected with reasons.
+  - type: screenshot
+    description: The page on two different dates (or with the rotation demonstrated), reveal interaction visible.
+  - type: reflection
+    description: Two sentences - explain the date-as-index trick in your own words, and name your best riddle.
+evaluation:
+  deterministic_checks:
+    - id: curated_library_present
+      description: Prompt log shows 15+ riddles with curation decisions including rejections.
+    - id: rotation_evidence
+      description: Screenshots demonstrate different riddles on different dates.
+    - id: index_explanation_present
+      description: Reflection explains the date-index mechanism in the learner's own words.
+  rubric:
+    - criterion: Curation had a real bar
+      looks_like: Generated riddles were human-tested, bad ones rejected with reasons, and the surviving library is genuinely good.
+      weight: 0.35
+    - criterion: The rotation mechanism works
+      looks_like: Date-based indexing serves the right riddle, wraps correctly when the library runs out, and the learner understands the math.
+      weight: 0.35
+    - criterion: The reveal is designed
+      looks_like: Hint and answer staging that protects the fun - tested on a real visitor.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Test generated riddles by asking a friend WITHOUT the answer available - if they reach a different valid answer, the riddle is broken (or secretly better - then change the official answer). Riddles are tested on humans, never on vibes.'
+  - level: 2
+    hint: 'The index math in one line: day-of-year mod library-length gives a number that walks your library daily and wraps automatically. Ask the AI to explain that line until you could teach it - it''s the whole trick.'
+  - level: 3
+    hint: 'To verify tomorrow without waiting: temporarily add +1 to the computed index and reload - tomorrow''s riddle appears. Remove the +1 after. Time travel for testing purposes is a proud engineering tradition.'
+reflection_prompts:
+  - What else could the date-as-index trick power?
+  - Why did so many AI-generated riddles fail your bar - what was missing?
+unlocks: [daily-quote-poster, twenty-questions-game, me-quiz]
+stretch_challenge: Add a streak counter - the page remembers (in the browser) how many consecutive days the visitor solved before revealing, and shows their streak. Daily content plus streaks is the entire retention playbook, now yours.
+safety_notes: Curate riddles appropriate for every age that might visit. Credit classic riddles as "traditional" - and never claim a generated one is ancient folklore; invented provenance is misinformation in a party hat.

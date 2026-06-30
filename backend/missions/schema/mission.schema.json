@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://aibuddy.dev/schemas/mission.schema.json",
+  "title": "AI Buddy Mission",
+  "description": "A single mission document. Authored missions live as YAML in missions/<cohort>/ and are validated against this schema before sync. Generated missions (from the next-mission agent) MUST also validate against this schema before being stored.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "version", "title", "track", "difficulty_tier", "min_age_band",
+    "est_minutes", "languages", "summary", "goal", "brief", "build_surfaces",
+    "skills", "evidence_required", "evaluation", "hint_ladder",
+    "reflection_prompts", "unlocks"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Slug, unique across the catalog. Matches missions.id in the database."
+    },
+    "version": { "type": "integer", "minimum": 1 },
+    "title": { "type": "string", "minLength": 3, "maxLength": 80 },
+    "track": {
+      "enum": ["study", "business", "community", "heritage", "language", "portfolio", "automation", "core"]
+    },
+    "difficulty_tier": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "min_age_band": { "enum": ["band_15_17", "band_18_plus"] },
+    "est_minutes": { "type": "integer", "minimum": 10, "maximum": 480 },
+    "languages": {
+      "type": "array",
+      "items": { "enum": ["en", "ar", "fr"] },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Languages this mission's content is available in (v1 docs are authored in en; ar/fr come with localization)."
+    },
+    "ai_light_checkpoint": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the mission must be completed with reduced or no AI assistance (anti-dependency checkpoint)."
+    },
+    "summary": { "type": "string", "maxLength": 200, "description": "One-line card text." },
+    "goal": { "type": "string", "maxLength": 300, "description": "What the learner will have MADE when done. Always an artifact, never 'understand X'." },
+    "brief": { "type": "string", "minLength": 100, "description": "The mission briefing shown to the learner. Markdown. Energetic, concrete, no school language." },
+    "build_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surface", "why"],
+        "properties": {
+          "surface": { "enum": ["claude_project", "chatgpt_gpt", "google_ai_studio", "ollama_local", "make", "n8n", "google_forms_sheets", "replit", "github", "canva", "notion", "any_chat_ui"] },
+          "why": { "type": "string", "maxLength": 200 }
+        }
+      },
+      "description": "Acceptable tools, most recommended first. Missions state surfaces, not steps — the learner chooses."
+    },
+    "skills": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["teaches"],
+      "properties": {
+        "teaches": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/skillId" }, "uniqueItems": true },
+        "requires": { "type": "array", "items": { "$ref": "#/definitions/skillId" }, "uniqueItems": true }
+      }
+    },
+    "mission_prerequisites": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+      "uniqueItems": true,
+      "description": "Mission ids that must be completed first. Skill requirements usually suffice; use sparingly."
+    },
+    "evidence_required": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "description"],
+        "properties": {
+          "type": { "enum": ["repo_url", "live_url", "file_upload", "screenshot", "prompt_log", "reflection", "transcript", "other_link"] },
+          "description": { "type": "string", "maxLength": 300 },
+          "optional": { "type": "boolean", "default": false }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deterministic_checks", "rubric"],
+      "properties": {
+        "deterministic_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "description"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+              "description": { "type": "string", "maxLength": 300, "description": "Machine-checkable condition: artifact present, URL reachable, file parseable, count >= N. Run BEFORE any LLM judging." }
+            }
+          }
+        },
+        "rubric": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["criterion", "looks_like", "weight"],
+            "properties": {
+              "criterion": { "type": "string", "maxLength": 120 },
+              "looks_like": { "type": "string", "maxLength": 400, "description": "What good looks like, written concretely enough for an LLM judge AND a human mentor to apply consistently." },
+              "weight": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+            }
+          },
+          "description": "Weights must sum to 1.0 (validated by tooling). Used by the LLM judge as a SECONDARY scorer and by mentors in the human audit queue."
+        }
+      }
+    },
+    "hint_ladder": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["level", "hint"],
+        "properties": {
+          "level": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "hint": { "type": "string", "maxLength": 500 }
+        }
+      },
+      "description": "Ordered from gentlest nudge to near-solution. The coach agent serves level N+1 only after level N plus a real attempt. Never serves the full solution."
+    },
+    "reflection_prompts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": { "type": "string", "maxLength": 300 }
+    },
+    "unlocks": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+      "description": "Mission ids suggested next on completion. The curriculum engine may override based on the learner's skill graph."
+    },
+    "stretch_challenge": { "type": "string", "maxLength": 500 },
+    "safety_notes": {
+      "type": "string",
+      "maxLength": 600,
+      "description": "Learner-facing safety/privacy guidance specific to this mission (e.g. don't upload other people's personal data)."
+    }
+  },
+  "definitions": {
+    "skillId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Must exist in the skills table (cross-checked by scripts/validate_missions.py)."
+    }
+  }
+}

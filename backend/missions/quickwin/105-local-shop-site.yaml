@@ -1,0 +1,82 @@
+id: local-shop-site
+version: 1
+title: Build a One-Page Site for a Local Shop or Café
+track: community
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Approach a real local business as a stranger-client, pitch them a free one-page site, and deliver something they actually approve - cold-outreach client work, level one.
+goal: A one-page site for a real local business you don't have family ties to, built from their answers, revised on their feedback, and approved by the owner.
+brief: |
+  If you did the family-business mission, this is the level-up: a client
+  who DOESN'T love you in advance. A real shop, café, salon, or stall in
+  your town - approached, pitched, interviewed, and delivered to. The
+  social courage is half the mission, and it's the half that builds
+  careers.
+
+  The PITCH is one honest sentence: "I'm learning to build websites and
+  I'd like to make your shop a free one-page site - if you like it, it's
+  yours, no catch." Most owners say yes to free and earnest. (Bring a
+  phone showing a previous mission's page - proof beats promises.)
+
+  Then the client interview, professional edition: what do customers ask
+  most? What are you known for? Hours, location, contact - and what
+  should the page NOT say? Photograph the shop (with permission) - real
+  photos of the actual place beat any stock image ever taken.
+
+  Build warm and simple: the shop's character in pixels - then the
+  moment that matters: SHOW THE OWNER. Watch their face. Change what
+  they ask, even when your designer heart disagrees (log your
+  disagreement professionally - "noted my concern, made the change" -
+  that sentence is the entire client-services industry). Deliver the
+  link or files. Done when the owner says some version of "that's my
+  shop!" - and you've completed your first cold-client engagement.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and iterate the page from interview notes.
+  - surface: replit
+    why: Publish it - delivery means a working URL they can share.
+  - surface: claude_project
+    why: Strong at warm small-business copy in the owner's register.
+skills:
+  teaches: [user-feedback, shipping-basics]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: The finished page, and (with permission) the owner seeing it or their approval message.
+  - type: prompt_log
+    description: Your pitch, interview notes, and the feedback-revision log including any professional disagreement.
+  - type: reflection
+    description: Two sentences - what was the hardest moment of the cold approach, and what did the owner change that surprised you?
+evaluation:
+  deterministic_checks:
+    - id: page_evidence
+      description: Screenshots show a complete page for a real, named local business.
+    - id: interview_and_revision_present
+      description: Log contains real interview answers and at least one owner-requested revision.
+    - id: approval_present
+      description: Owner approval evidenced (message, photo with permission, or described delivery).
+  rubric:
+    - criterion: Real cold-client engagement
+      looks_like: A genuine non-family business approached and pitched, with interview answers only a real conversation produces.
+      weight: 0.35
+    - criterion: The page serves customers
+      looks_like: What-when-where-how-to-reach answered in 30 seconds on a phone, with real photos and the shop's actual character.
+      weight: 0.3
+    - criterion: Professional feedback handling
+      looks_like: Owner feedback honored and logged, disagreements handled gracefully, and final approval obtained - client work done like client work.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Pick a shop where you''re already a familiar face - the corner shop that knows your order. "Cold" outreach with a warm nod is the right difficulty for mission one of client work.'
+  - level: 2
+    hint: 'If the owner is busy (they always are), compress the interview: "three questions, two minutes" - customers'' top question, the thing they''re proudest of, and what the sign outside doesn''t say. Build from that; refine at the showing.'
+  - level: 3
+    hint: 'At the showing, ask one question and then be quiet: "what would you change?" Silence does the work - owners who say "nothing, it''s lovely" while frowning at one section will, given three seconds, point at the section. The frown is the feedback.'
+reflection_prompts:
+  - What did the cold approach teach you that the build couldn't?
+  - How did owner-feedback differ from friend-feedback on your earlier missions?
+unlocks: [family-business-page, bilingual-menu-helper, shop-content-studio]
+stretch_challenge: Offer one follow-up improvement a week later (a photo update, an added section) - the second visit is what turns a project into a client relationship, and you'll feel the difference immediately.
+safety_notes: Publish only with explicit owner permission and only owner-approved contact details. Their business reputation rides on the page - accuracy is a duty, not a courtesy. If they decline the pitch, thank them warmly; a graceful no received is also professional experience.

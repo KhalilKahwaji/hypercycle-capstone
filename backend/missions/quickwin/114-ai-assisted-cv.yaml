@@ -1,0 +1,86 @@
+id: ai-assisted-cv
+version: 1
+title: Create an AI-Assisted CV From a Blank Page in One Hour
+track: portfolio
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build your first real CV with AI as interviewer and editor - discovering you have more to put on it than you think, and that every word must survive a follow-up question.
+goal: A complete one-page CV built through an AI-driven extraction interview, with every line truthful and follow-up-proof, formatted clean and exported ready to send.
+brief: |
+  "I have nothing to put on a CV" - says every student, wrongly. You've
+  built tools people use. You've handled a client. You speak languages.
+  You've shipped things. The problem was never emptiness; it's that
+  nobody ever interviewed you properly about yourself. Today the AI
+  does, and a CV falls out.
+
+  Phase one, EXTRACTION: set the AI up as a CV interviewer whose job is
+  asking, not writing - school and standout subjects, languages (and
+  honest levels), every mission-built project ("tell me about something
+  you made that someone else used"), responsibilities (tutoring a
+  cousin counts; ask anyone who's done it), clubs, teams, the thing
+  people always ask your help with. Answer everything; let the pile
+  grow before judging it.
+
+  Phase two, TRANSLATION: raw answers become CV lines - with the iron
+  rule that makes this mission matter: TRUTHFUL AND FOLLOW-UP-PROOF.
+  Every line must survive the interview question it invites. "Built a
+  bilingual support bot used weekly by family members" - you can talk
+  about that for ten minutes. "Expert in AI" - you cannot, delete it.
+  The AI drafts punchy; YOU verify honest. Action verbs yes, inflation
+  no.
+
+  Phase three, FORMAT: one page, clean, readable in the six seconds
+  reviewers actually give it - then export as PDF with a sensible
+  filename. Done when someone who knows you reads it and says "this is
+  accurate AND impressive" - the two words that almost never travel
+  together, except on CVs built like this.
+build_surfaces:
+  - surface: claude_project
+    why: Strong interviewer and honest-editor combination.
+  - surface: google_ai_studio
+    why: Same pipeline; can also generate the formatted document.
+  - surface: canva
+    why: Clean CV templates for the formatting phase.
+skills:
+  teaches: [proof-of-work, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: The finished one-page CV as PDF.
+  - type: prompt_log
+    description: The extraction interview and at least two lines you deflated or deleted for being follow-up-unsafe.
+  - type: reflection
+    description: Two sentences - what did the interview surface that you'd forgotten, and which line are you most ready to be asked about?
+evaluation:
+  deterministic_checks:
+    - id: cv_present
+      description: A one-page CV PDF is attached.
+    - id: interview_present
+      description: Prompt log shows a real extraction interview preceding the drafting.
+    - id: deflation_present
+      description: At least two documented edits where inflation was caught and corrected.
+  rubric:
+    - criterion: Extraction found real material
+      looks_like: The interview surfaced genuine projects, skills, and responsibilities - including mission work presented as the real experience it is.
+      weight: 0.3
+    - criterion: Every line is follow-up-proof
+      looks_like: Claims are specific, verifiable, and the learner could speak to each for minutes - with the deflation edits proving the standard was enforced.
+      weight: 0.4
+    - criterion: Format respects the six seconds
+      looks_like: One page, scannable hierarchy, no clutter, sensible PDF filename - a document ready to actually send.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Interviewer setup: "You are a CV coach interviewing me. Ask one question at a time about my education, skills, projects, and responsibilities. Dig for specifics - if I''m vague, ask for an example. Don''t write anything yet." The don''t-write-yet clause keeps extraction pure.'
+  - level: 2
+    hint: 'The follow-up test, applied: for each drafted line, ask the AI "what would an interviewer ask about this line?" - then answer it out loud. Stumble = rewrite the line until you don''t. This rehearsal is secretly interview prep too.'
+  - level: 3
+    hint: 'Project lines that work follow built-used-result: "Built [thing] using [tools]; used by [who]; [result]". Your missions slot straight in - the volunteer form, the shop site, the study tools. You weren''t doing homework all this time; you were generating CV lines.'
+reflection_prompts:
+  - What did you have that you didn't know counted?
+  - Why is a deflated truthful line stronger than an inflated one?
+unlocks: [interview-practice-bot, cover-letter-assistant, portfolio-page]
+stretch_challenge: 'Make the second version targeted - pick a real opportunity (a part-time job, a program application) and reorder/reword the same truthful material for THAT reader. Same facts, tuned emphasis: the skill behind every good application ever sent.'
+safety_notes: Everything on the CV must be true - inflation collapses at the first follow-up question and takes your credibility with it. Include contact details only when actually sending it somewhere, and have a parent or mentor look it over before it goes out.

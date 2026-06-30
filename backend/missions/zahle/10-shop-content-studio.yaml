@@ -1,0 +1,74 @@
+id: shop-content-studio
+version: 1
+title: Content Studio for a Local Business
+track: business
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 150
+languages: [en]
+summary: Build a tool that generates a month of social posts for a real Zahle business in their voice - then put it in front of them and survive the feedback.
+goal: A reusable content-generation tool tuned to one real business's voice, improved through at least one round of feedback from a real person.
+brief: |
+  Local businesses know they should post online. They don't have time. You're about
+  to be the person who solves that - with a tool, not with your evenings.
+
+  Build a content studio for one real business (the FAQ mission's business is perfect):
+
+  1. Capture their voice: 3-5 example posts or descriptions in the style they like -
+     or draft them together with the owner. Formal or playful? Arabic, French, mixed?
+     Emojis or never?
+  2. Build the generator: instructions + voice examples + business facts in, month of
+     post drafts out - structured (date, caption, suggested image idea), not a text blob.
+  3. The real test: show 10 drafts to the owner or someone who knows the business.
+     Record what they'd post as-is, what they'd edit, what they'd never post. That
+     feedback is your gold. Tune the tool and show the improvement.
+
+  Posts they would actually use - that's the bar. Not posts that are technically fine.
+build_surfaces:
+  - surface: claude_project
+    why: Voice examples and business facts live in the project; generation is repeatable.
+  - surface: chatgpt_gpt
+    why: Same pattern, sharable with the owner as a GPT.
+  - surface: canva
+    why: Optional - pair captions with visuals for the full package.
+skills:
+  teaches: [user-feedback, shipping-basics]
+  requires: [tool-assembly]
+mission_prerequisites: [zahle-business-faq]
+evidence_required:
+  - type: prompt_log
+    description: The studio's instructions including voice examples.
+  - type: file_upload
+    description: Generated content batch - at least 10 structured post drafts.
+  - type: file_upload
+    description: Feedback notes - what the reviewer said, sorted into use / edit / never.
+  - type: reflection
+    description: What did the feedback teach you that you could not have guessed?
+evaluation:
+  deterministic_checks:
+    - id: batch_present
+      description: Content batch has at least 10 structured drafts.
+    - id: feedback_present
+      description: Feedback artifact exists with use/edit/never categorization.
+  rubric:
+    - criterion: Voice fidelity
+      looks_like: Drafts sound like THIS business - reviewer confirms several would post as-is or with light edits.
+      weight: 0.35
+    - criterion: Feedback loop closed
+      looks_like: Specific feedback led to specific tool changes, with before/after examples of improvement.
+      weight: 0.4
+    - criterion: Reusability
+      looks_like: The owner could plausibly run next month's batch without the learner - inputs and steps are clear.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: No voice examples exist? Sit with the owner for 15 minutes and write 3 posts together by hand. Those become your gold standard examples.
+  - level: 2
+    hint: Output too generic? Generic in, generic out. Add real specifics to the business facts - signature dishes, the dog that sleeps in the doorway, the Friday ritual. Specifics make voice.
+  - level: 3
+    hint: Reviewer says "it's just not us" but can't say why? Show them two versions of the same post and ask which is closer. Repeat. You're doing binary search on taste.
+reflection_prompts:
+  - You watched a real person react to AI output about THEIR business. What did they care about that the AI had no way to know?
+unlocks: [explain-it-rebuild-it, ship-for-zahle]
+stretch_challenge: Add a second output mode - the same tool generates a WhatsApp Status version of each post, shorter and more personal.
+safety_notes: The owner approves anything actually published. Never post on a real business's behalf without explicit permission - drafts are drafts until they say go.

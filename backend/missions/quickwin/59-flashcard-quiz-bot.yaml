@@ -1,0 +1,78 @@
+id: flashcard-quiz-bot
+version: 1
+title: Build a Bot That Quizzes You With Flashcards
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a quizmaster bot that drills you on your real study material - one card at a time, tracking misses, and never letting you off easy.
+goal: A flashcard quiz bot loaded with 15+ cards from your real coursework, with quiz rules you wrote, and one full session's miss-list turned into a focus round.
+brief: |
+  Flashcards work because of one brutal mechanic: you must ANSWER before you
+  see the answer. Most students sabotage this by peeking. Today you build a
+  quizmaster that makes peeking impossible.
+
+  First, the deck: 15+ cards from something you're actually studying this
+  week. Paste your notes and generate question-answer pairs - then check
+  them, because a flashcard with a wrong answer is a machine for learning
+  mistakes (you know this drill by now).
+
+  Then write the QUIZ PROTOCOL, the part that makes it a bot and not a
+  document: one card at a time, never show the answer until I've attempted,
+  judge my attempt fairly (close enough counts for concepts, exact required
+  for dates and formulas - tell it which is which), track what I miss, and
+  after the deck, RE-QUIZ ME on only my misses. That last rule is the gold:
+  missed cards looping back is the entire science of effective recall
+  practice, and you just encoded it in plain English.
+
+  Run a full session honestly. Done when your miss-list shrinks between
+  round one and the focus round - visible proof your bot teaches.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the protocol; sessions run free daily.
+  - surface: claude_project
+    why: Holds your deck in project files; judges attempts fairly.
+  - surface: any_chat_ui
+    why: A pinned protocol prompt works anywhere.
+skills:
+  teaches: [context-grounding, prompt-success-criteria]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your quiz protocol and the deck, including at least one card you corrected after generation.
+  - type: transcript
+    description: A full quiz session - first round plus the misses-only focus round.
+  - type: reflection
+    description: Two sentences - how many did you miss in round one versus the focus round, and which card refuses to stick?
+evaluation:
+  deterministic_checks:
+    - id: deck_present
+      description: Prompt log exists, min 400 characters, contains 15+ verified cards.
+    - id: full_session_present
+      description: Transcript shows a complete round plus a misses-only focus round.
+    - id: reflection_present
+      description: Reflection exists, min 80 characters, with real miss counts.
+  rubric:
+    - criterion: The protocol enforces recall
+      looks_like: Answer-before-reveal is enforced, judging criteria distinguish exact-required from close-enough, and the miss-loop rule exists and fired.
+      weight: 0.4
+    - criterion: The deck is real and verified
+      looks_like: Cards come from current coursework, and at least one generated card was caught and fixed.
+      weight: 0.3
+    - criterion: Evidence of learning
+      looks_like: Honest miss counts both rounds, with the focus round showing improvement - and a stubborn card identified for tomorrow.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Generation prompt: "From these notes, make 15 flashcards as question-answer pairs. Mix definitions, why-questions, and apply-it questions - not just ''define X''." Why-cards stick better than what-cards.'
+  - level: 2
+    hint: 'The anti-peek rule, stated plainly: "Never reveal an answer until I''ve typed an attempt. If I say ''skip'' or ''just tell me'', count it as a miss and move on." Skips ARE misses - that honesty is the system.'
+  - level: 3
+    hint: 'If its judging is too strict or too kind, calibrate with examples: "''Photosynthesis makes food from light'' should PASS for the photosynthesis card; ''plants eat sun'' should FAIL." Two examples teach fairness better than a paragraph.'
+reflection_prompts:
+  - Why does attempting before seeing the answer matter so much?
+  - What kind of card do you keep missing - and what does that pattern say?
+unlocks: [flashcard-generator, trilingual-flashcards, self-grading-study-test]
+stretch_challenge: Add session memory - end each session by having the bot output your stubborn-cards list, and start tomorrow's session by pasting it back in. You've built manual spaced repetition.
+safety_notes: Verify generated cards against your notes before drilling - drilling wrong answers is worse than not studying. Your deck, your notes, your honest attempts.

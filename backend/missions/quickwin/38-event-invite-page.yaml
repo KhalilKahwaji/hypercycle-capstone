@@ -1,0 +1,76 @@
+id: event-invite-page
+version: 1
+title: Build an Event Invitation Page People Actually Open
+track: community
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build an invitation page for a real gathering - birthday, study group, match night - that answers everything and builds excitement.
+goal: A published invite page for a real upcoming event, with all essential info, a mood that matches the occasion, and at least one RSVP received.
+brief: |
+  A text saying "party saturday u coming?" gets ignored. A LINK with music in
+  its colors and a countdown ticking? People show up. Invitation is a design
+  problem, and you're solving it today.
+
+  Pick a real event - birthday, study session before the exam, game night,
+  family iftar, neighborhood match. Real event, real guests, real RSVPs:
+  that's what makes this a mission and not an exercise.
+
+  An invite page has exactly one job, done twice. INFORM: what, when, where,
+  what to bring, how to confirm - a guest should never have to ask a follow-up
+  question. EXCITE: the page's mood should match the event's mood. Neon and
+  bold for game night; warm and soft for the family dinner. Same information,
+  completely different page.
+
+  Add a countdown to the event ("2 days, 14 hours...") - cheap to build,
+  weirdly effective at building anticipation. Send the link to real guests and
+  collect at least one RSVP (a reply message counts).
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview the page with the countdown working.
+  - surface: replit
+    why: Publish it - invites need a URL you can drop in the group chat.
+  - surface: canva
+    why: Alternative if you want a designed invite image plus a simple page.
+skills:
+  teaches: [ui-basics, shipping-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The invite page, countdown visible.
+  - type: screenshot
+    description: At least one real RSVP (a reply in your chat, name blurred if needed).
+  - type: reflection
+    description: One sentence - what mood did you design for and how did the page express it?
+evaluation:
+  deterministic_checks:
+    - id: page_screenshot_present
+      description: Invite page screenshot attached showing event info and countdown.
+    - id: rsvp_present
+      description: RSVP evidence attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 50 characters.
+  rubric:
+    - criterion: Zero follow-up questions needed
+      looks_like: What, when, where, what to bring, and how to confirm are all present and instantly findable.
+      weight: 0.35
+    - criterion: Mood matches the event
+      looks_like: Colors, typography, and tone were chosen for THIS event's feeling, and the learner can name the intended mood.
+      weight: 0.35
+    - criterion: Real guests engaged
+      looks_like: The link went to actual invitees and at least one RSVP came back.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Write the five facts first - what, when, where, bring, confirm-by. If any is undecided, decide it now; the page can't be vaguer than reality.
+  - level: 2
+    hint: Describe the event's mood in three words and hand them to the AI - "cozy, golden, family" or "loud, neon, competitive" - with "design the page to feel like this".
+  - level: 3
+    hint: For the countdown, ask - "add a live countdown to [date and time] showing days, hours, minutes, updating every second". If it shows wrong numbers, tell it your timezone.
+reflection_prompts:
+  - What does a page communicate that a text message can't?
+  - Which design choice did guests comment on?
+unlocks: [countdown-page, thank-you-page, volunteer-signup-automation]
+stretch_challenge: Add an RSVP button that opens a pre-written WhatsApp message to you - one tap from invite to confirmation.
+safety_notes: Don't put a private home address on a public page - share the precise location in the group chat instead, or password-protect details. No guest names without permission.

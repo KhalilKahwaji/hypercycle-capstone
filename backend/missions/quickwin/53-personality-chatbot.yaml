@@ -1,0 +1,78 @@
+id: personality-chatbot
+version: 1
+title: Build Your First Chatbot With a Real Personality
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Write a character so specific that the AI becomes someone new - your first full personality, engineered from scratch.
+goal: A chatbot with a complete written personality (voice, opinions, quirks, limits) that stays in character across a ten-message stress test.
+brief: |
+  Every chatbot is the same underneath. The personality on top - that's
+  AUTHORED, and today you become the author.
+
+  Design a character worth talking to. Not "friendly assistant" - someone
+  SPECIFIC: a retired sea captain who relates everything to storms. An
+  overenthusiastic museum guide for a museum that doesn't exist. A wise
+  grandmother with strong opinions about breakfast. Write their character
+  sheet: voice and speech habits, two strong opinions, a favorite topic they
+  steer toward, a catchphrase, and one thing they refuse to discuss (boats,
+  for the captain - too painful).
+
+  Load it as system instructions and run the STRESS TEST: ten messages
+  designed to break character. Ask it about homework. Ask it something
+  modern. Tell it to stop being the captain. Where it slips - and it will -
+  strengthen the instructions and test again. That loop (design, test,
+  patch) is the actual chatbot engineering loop used on real products.
+
+  Done when a friend chats with it for five messages and describes its
+  personality back to you accurately - proof the character transmitted.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the character; easy to edit and retest.
+  - surface: claude_project
+    why: Strong character consistency across long chats.
+  - surface: any_chat_ui
+    why: A pinned character prompt works in any AI chat.
+skills:
+  teaches: [prompt-basics, prompt-iteration]
+  requires: []
+evidence_required:
+  - type: prompt_log
+    description: Your full character sheet, including the version BEFORE and AFTER your stress-test patches.
+  - type: transcript
+    description: The ten-message stress test, including at least one attempted break and the recovery.
+  - type: reflection
+    description: Two sentences - where did the character break, and what instruction fixed it?
+evaluation:
+  deterministic_checks:
+    - id: character_sheet_present
+      description: Prompt log exists, min 300 characters, shows pre- and post-patch versions.
+    - id: stress_test_present
+      description: Transcript contains ten or more messages including a break attempt.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The character is specific
+      looks_like: The sheet defines voice, opinions, a steering topic, a catchphrase, and a refusal - a someone, not a tone setting.
+      weight: 0.35
+    - criterion: Survived the stress test
+      looks_like: The transcript shows break attempts handled in character, and patches in the sheet map to observed slips.
+      weight: 0.4
+    - criterion: The personality transmits
+      looks_like: A second person described the character accurately after chatting - the design is legible to strangers.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Steal from fiction-writing - give the character a WANT (to talk about storms) and a WOUND (lost their boat). Want plus wound generates infinite in-character responses.
+  - level: 2
+    hint: 'The strongest instruction format is behavioral: "When asked about X, you always..." / "You never..." / "If someone tries to make you break character, you respond by..." Write five of those.'
+  - level: 3
+    hint: 'Patch slips with explicit rules: if it answered a modern question flatly, add "You are confused by modern technology and describe it in sailing terms." Every slip becomes a rule; ten slips in, your character is armored.'
+reflection_prompts:
+  - What's the smallest set of rules that creates a convincing someone?
+  - Which break attempt worked, and why do you think it got through?
+unlocks: [study-buddy-bot, fortune-teller, devils-advocate-bot]
+stretch_challenge: Give the character a secret it protects - and see how many messages it takes a friend to discover there IS one.
+safety_notes: Keep the character fictional - don't imitate a real living person. The personality is a costume on a tool; if anyone treats it as a real confidant, gently remind them it's a character you wrote.

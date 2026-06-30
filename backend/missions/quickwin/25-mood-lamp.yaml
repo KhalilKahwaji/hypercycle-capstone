@@ -1,0 +1,75 @@
+id: mood-lamp
+version: 1
+title: Build a Digital Mood Lamp With Sliders
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a full-screen mood lamp controlled by sliders - warmth, brightness, breathing speed - and design three named presets.
+goal: A mood lamp page with at least three working sliders and three named presets you designed for real moments in your day.
+brief: |
+  Tonight your screen becomes a lamp - and you learn the design pattern behind
+  every settings panel ever made: PARAMETERS.
+
+  Build a full-screen page of soft, slowly shifting color, controlled by
+  sliders. Choose your three parameters - the classics are WARMTH (icy blue to
+  candle orange), BRIGHTNESS, and BREATHING (how fast the light gently pulses).
+  Each slider must visibly change the light in real time. That connection -
+  slider in, light out - is the whole lesson.
+
+  Then design THREE PRESETS as buttons, named for real moments in YOUR day:
+  "Studying at 11pm", "Friday feeling", "Pretending to wake up". A preset is
+  just saved slider positions - but choosing them is design.
+
+  Tune the transitions too: light should MELT between settings, never snap.
+  Done when you dim the room, put your lamp on full-screen, and it actually
+  changes the mood of the space.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview the page with working sliders in one shot.
+  - surface: claude_project
+    why: Previews in chat; good at smooth color transition requests.
+  - surface: replit
+    why: Host it and run it on a tablet or second screen as a real lamp.
+skills:
+  teaches: [ui-basics, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The lamp at two visibly different slider settings (two screenshots).
+  - type: prompt_log
+    description: Your parameter choices, preset definitions (names plus slider values), and one tuning request.
+  - type: reflection
+    description: One sentence - which preset do you actually use, and when?
+evaluation:
+  deterministic_checks:
+    - id: screenshots_present
+      description: At least two screenshots attached showing different lamp states.
+    - id: prompt_log_present
+      description: Prompt log exists, min 200 characters, contains three named presets with values.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Sliders control the light
+      looks_like: Evidence shows at least three parameters that each visibly change the lamp in real time.
+      weight: 0.35
+    - criterion: Presets are designed, not random
+      looks_like: Three named presets map to real moments in the learner's life, with deliberate slider values - parameters organized into reusable settings.
+      weight: 0.35
+    - criterion: Quality of light
+      looks_like: Transitions are smooth, colors feel soft rather than harsh, and at least one tuning pass addressed how the light FEELS.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Ask for "a full-screen page with a slowly shifting background color and three sliders in a corner - warmth, brightness, breathing speed - each updating the light live".
+  - level: 2
+    hint: For presets, just tell the AI the three names and describe each in words - "Studying = warm, dim, very slow breathing". It will translate to slider values; adjust from there.
+  - level: 3
+    hint: If colors snap instead of melting, ask for "all color changes eased over 2-3 seconds, including preset switches". If colors feel harsh, ask to "keep saturation low - lamp light, not disco light".
+reflection_prompts:
+  - Why are sliders better than buttons for some controls, and worse for others?
+  - What other tool you use daily is secretly just parameters and presets?
+unlocks: [weird-clock, zen-garden, season-rain]
+stretch_challenge: Add a "schedule mode" - the lamp slowly shifts itself toward your "wind down" preset as the evening gets later, using the device clock.
+safety_notes: Avoid rapid flashing modes - keep all transitions slow and gentle, especially if you share the lamp with others.

@@ -1,0 +1,72 @@
+id: click-color-art
+version: 1
+title: Generative Art That Repaints Itself With Every Click
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a generative art piece that redraws in a new color world on every click - same rules, never the same painting twice.
+goal: A generative art page that produces a visibly different composition and palette on every click, driven by rules you designed.
+brief: |
+  Generative art means you don't paint the picture - you design the RULES, and
+  the computer paints a new one every time. Today you become a rule designer.
+
+  Choose your ingredients: shapes (circles? arcs? scattered lines?), how many,
+  how they arrange themselves (random scatter? grid with mistakes? rings?).
+  Then the star of this mission: the PALETTE LOGIC. Each click should re-roll
+  the colors into a new mood - one click sunset, next click deep ocean, next
+  click neon night. Describe palettes as moods and let the AI translate.
+
+  Generate, click through a dozen variations, and study them. Which ones are
+  beautiful? Which are mud? Adjust the rules - "never more than three colors at
+  once", "backgrounds always dark", "shapes can overlap but only slightly".
+  Each rule change reshapes the entire universe of possible paintings.
+
+  Done when three clicks in a row each produce something you'd screenshot.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Quick generate-and-preview loop for rule tweaks.
+  - surface: claude_project
+    why: Previews the art in chat and is good at translating mood words into palettes.
+skills:
+  teaches: [prompt-success-criteria, ui-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: Three different clicks of your final piece - showing three distinct palettes/compositions.
+  - type: prompt_log
+    description: Your rule set, including at least one rule you added AFTER seeing ugly outputs.
+  - type: reflection
+    description: One sentence - what rule killed the ugly outputs?
+evaluation:
+  deterministic_checks:
+    - id: variations_present
+      description: At least three screenshots attached showing distinct outputs.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: True variation per click
+      looks_like: The three screenshots are clearly different in palette and arrangement, while still feeling like the same artwork family.
+      weight: 0.35
+    - criterion: Rules were refined against bad outputs
+      looks_like: The log shows at least one constraint added specifically because outputs were ugly or chaotic, with the reasoning.
+      weight: 0.4
+    - criterion: Taste is visible
+      looks_like: The final piece has a coherent aesthetic the learner can describe ("calm", "electric", "messy on purpose").
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Start with one shape and one rule - "200 circles, random sizes, random positions, palette re-rolls per click". Get that boring version working, then add personality.
+  - level: 2
+    hint: 'Describe palettes as moods, not hex codes - "each click picks one mood: desert dusk, deep sea, candy shop, thunderstorm". The AI knows what those look like.'
+  - level: 3
+    hint: If outputs look like noise, constrain harder - "all shapes share one base color with small variations, only ONE accent color, background nearly black". Restriction is what makes generative art look intentional.
+reflection_prompts:
+  - Why do fewer choices often make better art?
+  - Which surprised you more - your best output or your worst?
+unlocks: [photo-kaleidoscope, illusion-gallery, name-starfield]
+stretch_challenge: Add a "save this one" button that downloads the current composition as an image file.
+safety_notes: Nothing sensitive here - just make your own rules rather than asking the AI to imitate a named artist's style.

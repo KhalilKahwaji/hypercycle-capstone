@@ -1,0 +1,73 @@
+id: first-study-helper
+version: 1
+title: Build Your First AI Study Helper
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: In one session, build an AI helper that actually helps you study for a real class you have this week.
+goal: A working AI study helper, set up with instructions you wrote, that answers questions about one of your real subjects.
+brief: |
+  Welcome to your first build. No theory first - we make something today.
+
+  Pick one real subject you're studying right now (math, biology, French, history, anything).
+  Your mission: turn a general AI chat into YOUR study helper for that subject.
+
+  A study helper is just an AI with good instructions. You will write those instructions.
+  Tell it: what subject, what level, how you like things explained, and what it should
+  do when you're confused (hint first? example first? quiz you?).
+
+  Then test it with three real questions from your actual coursework. If an answer is
+  confusing or wrong-sounding, change your instructions and try again. That re-trying
+  IS the skill - nobody writes perfect instructions first time.
+
+  When it genuinely helps you with a real question, you're done. Capture the proof and submit.
+build_surfaces:
+  - surface: claude_project
+    why: Custom instructions plus your own files in one place, free tier works.
+  - surface: chatgpt_gpt
+    why: Same idea if you already use ChatGPT.
+  - surface: any_chat_ui
+    why: A pinned instruction message in any AI chat works for v1.
+skills:
+  teaches: [prompt-basics, prompt-success-criteria]
+  requires: []
+evidence_required:
+  - type: prompt_log
+    description: The full instructions you gave your helper (copy-paste them).
+  - type: screenshot
+    description: Your helper answering one real question from your coursework.
+  - type: reflection
+    description: Two sentences - what did you change after your first test, and why?
+evaluation:
+  deterministic_checks:
+    - id: instructions_present
+      description: Prompt log artifact exists and is at least 200 characters.
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 100 characters.
+  rubric:
+    - criterion: Instructions are specific to the learner
+      looks_like: The instructions name a real subject and level, and say HOW the helper should respond (tone, steps, hints vs answers) - not just "help me study".
+      weight: 0.4
+    - criterion: Evidence of iteration
+      looks_like: The reflection or prompt log shows at least one deliberate change made after testing, with a reason.
+      weight: 0.35
+    - criterion: The helper visibly helps
+      looks_like: The screenshot shows a real coursework question and a response shaped by the learner's instructions.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Stuck on what to write? Start by telling the AI three things - your subject, your level, and one thing that annoys you about explanations you usually get.
+  - level: 2
+    hint: Add a rule about behavior, e.g. "When I'm confused, give me a hint before the full answer" or "Always end with one question to check I understood."
+  - level: 3
+    hint: Here is a skeleton to adapt - "You are my study helper for [subject], grade [X]. Explain in simple steps. Use examples from [something I like]. When I ask a question, first ask me what I already think."
+reflection_prompts:
+  - What is one instruction you wrote that clearly changed how the AI behaved?
+  - If a classmate copied your helper, what would they need to change for it to work for them?
+unlocks: [make-it-reliable, trilingual-flashcards]
+stretch_challenge: Add one of your real class documents (notes, syllabus) to the helper and make it answer FROM that document only.
+safety_notes: Use your own notes and questions. Don't paste other people's personal information, and don't submit graded homework written by the AI as your own.

@@ -1,0 +1,77 @@
+id: hobby-fan-page
+version: 1
+title: Build a Fan Page for Your Favorite Hobby
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a page that makes a stranger care about your hobby in 30 seconds - enthusiasm, structured.
+goal: A one-page fan site for your hobby that informs AND infects - with a hook, organized sections, and one interactive element.
+brief: |
+  You know that feeling when you talk about your hobby and your eyes light up?
+  Today you bottle it into a webpage.
+
+  Pick the thing - football, baking, a game, drawing, fishing, mechanical
+  keyboards, whatever you'd happily explain for an hour. Then structure your
+  enthusiasm like an editor: a HOOK headline that grabs even non-fans ("The
+  90 minutes where nothing else exists"), a "what is it really about" intro
+  for outsiders, your three favorite things about it with WHY, a beginner's
+  first step ("how to start this weekend"), and one wild fact most people
+  don't know.
+
+  That structure is the lesson: raw passion is a flood; a page needs channels.
+  Work out the sections BEFORE generating, then build with the AI and make it
+  look like the hobby feels - energetic, cozy, sleek, whatever fits.
+
+  Add one interactive touch: a mini quiz, a clickable "myth vs fact", a gallery.
+  Done when someone who doesn't share the hobby reads it and says "okay, that's
+  actually cool".
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview the page; good at structuring your raw enthusiasm.
+  - surface: claude_project
+    why: Strong at headlines and section copy that keeps your voice.
+  - surface: replit
+    why: Publish it so fellow fans can actually find it.
+skills:
+  teaches: [data-structuring, prompt-decomposition]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The full page (or live URL if you published).
+  - type: prompt_log
+    description: Your section plan written before generating, and the content you provided.
+  - type: reflection
+    description: Two sentences - what did the non-fan you showed it to say?
+evaluation:
+  deterministic_checks:
+    - id: page_evidence_present
+      description: Screenshot or URL artifact attached.
+    - id: section_plan_present
+      description: Prompt log exists, min 250 characters, shows a section plan preceding generation.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Structured enthusiasm
+      looks_like: The page has distinct, planned sections (hook, intro, favorites, first step, wild fact) rather than one wall of excited text.
+      weight: 0.35
+    - criterion: Written for outsiders
+      looks_like: A non-fan can follow everything - jargon is explained or avoided, and the "first step" is genuinely doable this weekend.
+      weight: 0.35
+    - criterion: Voice and energy survive
+      looks_like: The page sounds like the learner talking, not encyclopedia text - specific opinions, real reasons, one interactive element working.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Test your hook on yourself - would you stop scrolling for it? "All about football" is invisible. "The sport where 90 minutes feels like 9" earns a pause.
+  - level: 2
+    hint: For each favorite thing, force a WHY in your notes - not "the matches are great" but "the matches are great BECAUSE for 90 minutes the whole neighborhood holds its breath together".
+  - level: 3
+    hint: For the interactive element, easiest wins - ask for "a 3-question myth-vs-fact quiz about my hobby with these questions and answers" and paste your three. Reveal-on-click, no scoring needed.
+reflection_prompts:
+  - What did structuring your passion teach you about it?
+  - Which section was hardest to write, and why?
+unlocks: [top-five-showcase, neighborhood-gallery, family-recipe-page]
+stretch_challenge: Add a "convert a friend" section - your three best arguments tailored to the most common objection ("it's boring", "it's too hard").
+safety_notes: Use your own photos or describe images for AI generation - don't copy images from fan sites or official media, which are usually copyrighted.

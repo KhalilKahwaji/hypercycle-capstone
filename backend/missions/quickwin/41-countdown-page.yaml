@@ -1,0 +1,78 @@
+id: countdown-page
+version: 1
+title: Build a Countdown Page to Something You Can't Wait For
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a live countdown page to something you're genuinely excited about - where the design makes the wait itself feel good.
+goal: A live countdown page to a real future date, accurate to the second, designed to amplify the anticipation, with one evolving element.
+brief: |
+  Waiting is usually the worst part. Today you build a page that makes waiting
+  feel GOOD - anticipation, engineered.
+
+  Pick something real you're counting down to: a trip, a game release, the
+  last exam, a birthday, the World Cup. Your excitement is a build material -
+  the page should radiate it.
+
+  The technical heart is live time math: days, hours, minutes, seconds ticking
+  down accurately, every second. Test it properly - does it show the right
+  numbers? What happens at zero? (Design that moment! "IT'S TIME" with
+  fireworks beats a sad row of zeros.)
+
+  The design heart is anticipation: build the page so the wait feels exciting.
+  Theme it to the event - sand and sun for the trip, dark and epic for the
+  game. Then add one EVOLVING element, the pro touch: a progress bar filling
+  toward the date, a daily message that changes ("23 days: time to find the
+  passport"), or a background that warms as the day approaches.
+
+  Keep it open in a tab. Done when checking it becomes a tiny daily joy.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview; countdown logic generates reliably.
+  - surface: replit
+    why: Publish it so the countdown lives at a URL you can check anywhere.
+  - surface: claude_project
+    why: Previews in chat; good at themed design directions.
+skills:
+  teaches: [ui-basics, debugging-loop]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The countdown page running, with correct numbers for your date.
+  - type: prompt_log
+    description: Your build conversation, including your zero-moment design and the evolving element.
+  - type: reflection
+    description: One sentence - how did you verify the countdown math was right?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: Screenshot attached showing the live countdown.
+    - id: prompt_log_present
+      description: Prompt log exists, min 200 characters, includes zero-moment and evolving element.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Accurate live countdown
+      looks_like: The numbers are correct for the stated date (learner verified the math), ticking live, with timezone handled.
+      weight: 0.35
+    - criterion: The zero moment is designed
+      looks_like: Something deliberate and celebratory happens when the countdown ends - tested by setting a near-future date.
+      weight: 0.3
+    - criterion: Anticipation in the design
+      looks_like: The theme matches the event, and the evolving element makes the page worth revisiting - the learner reports actually checking it.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Be exact about the target: "countdown to June 30, 2026, 6:00 PM in my timezone (Beirut, UTC+3)". Vague dates produce wrong math.'
+  - level: 2
+    hint: To test the zero moment without waiting weeks, temporarily set the target to two minutes from now, watch what happens, then set the real date back. That's real QA technique.
+  - level: 3
+    hint: To verify the math, calculate the days yourself once (count weeks on a calendar) and compare. If it's off by a day, tell the AI - "the countdown shows N days but the real answer is M - check the timezone handling".
+reflection_prompts:
+  - What makes waiting feel exciting instead of painful?
+  - How did you test something designed to only happen once?
+unlocks: [event-invite-page, link-in-bio, season-rain]
+stretch_challenge: Add milestone celebrations - at 30, 7, and 1 day(s) left, the page changes mood and acknowledges the moment.
+safety_notes: If you publish it, the event date is public - fine for a game release, but think twice before broadcasting travel dates for your whole family.

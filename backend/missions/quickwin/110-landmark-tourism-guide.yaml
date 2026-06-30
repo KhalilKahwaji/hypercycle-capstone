@@ -1,0 +1,85 @@
+id: landmark-tourism-guide
+version: 1
+title: Create a Tourism Mini-Guide for One Local Landmark
+track: heritage
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Pick one landmark in your town and build the guide page it deserves - researched like a journalist, verified like a historian, written like a local.
+goal: A polished one-landmark guide page combining verified history, practical visitor info you confirmed in person, and local knowledge no external guide has - with every fact sourced.
+brief: |
+  Every town has a landmark the internet describes in two lazy sentences -
+  the old church or mosque, the Ottoman bridge, the famous square, the
+  tree everyone meets under. You know it deserves better. Today you give
+  it the guide it's owed.
+
+  Pick ONE landmark and go deep, through three layers. LAYER ONE, the
+  verified history: research with the AI as your draft-assistant, then
+  verify every date and claim - you know the drill by now (the AI will
+  confidently misdate your bridge by a century; an older relative, the
+  municipality page, or a local history book is your cross-check). Every
+  fact in the guide gets a source you could name.
+
+  LAYER TWO, the practical: visiting hours, how to reach it, what's
+  nearby for food and shade, the best light for photos - and here's the
+  twist that makes your guide better than the internet's: CONFIRM IN
+  PERSON. Walk there. Check the hours sign. Note where the shade
+  actually falls at 2pm. Five minutes of fieldwork beats five sources.
+
+  LAYER THREE, the local layer - your unfair advantage: the story
+  everyone's grandmother tells about it, what locals actually call it,
+  the detail tourists walk past (the inscription? the cannonball mark?
+  the best man'oushe within 100 meters?).
+
+  Build it as a beautiful page - photos you took, the three layers
+  woven. Done when a visitor could use it AND a local would learn from
+  it - the double test all great guides pass.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Research drafting and the guide page build.
+  - surface: claude_project
+    why: Good research partner that handles being fact-checked gracefully.
+  - surface: replit
+    why: Publish it - a guide is for finding.
+skills:
+  teaches: [ai-limits, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The finished guide page with all three layers visible.
+  - type: prompt_log
+    description: Your fact list with a source per fact, including at least one AI claim you corrected, and your fieldwork notes.
+  - type: reflection
+    description: Two sentences - what did the AI get wrong about your landmark, and what did fieldwork add that research couldn't?
+evaluation:
+  deterministic_checks:
+    - id: guide_evidence
+      description: Screenshots show a complete guide with history, practical, and local layers.
+    - id: sourced_facts_present
+      description: Log lists facts with named sources and at least one corrected AI claim.
+    - id: fieldwork_present
+      description: In-person confirmation notes (and original photos) documented.
+  rubric:
+    - criterion: History is verified, not vibes
+      looks_like: Dates and claims cross-checked against real sources, with the AI's confident error caught and documented - heritage treated with rigor.
+      weight: 0.35
+    - criterion: Fieldwork shows
+      looks_like: Practical details carry in-person texture (the actual hours sign, the real shade, original photos) that no remote guide could fake.
+      weight: 0.3
+    - criterion: The local layer earns its name
+      looks_like: At least two pieces of genuine local knowledge - names, stories, overlooked details - that exist nowhere else online.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Research opener that surfaces both gold and errors: ask the AI "tell me everything about [landmark], with your confidence level per claim" - then verify the high-confidence claims FIRST. Confident errors are the dangerous ones (your trivia-quiz instinct, applied).'
+  - level: 2
+    hint: 'The grandmother interview is layer-three''s engine: "what do you remember about [landmark]?" asked of anyone over sixty produces stories no archive has. Record (with permission), quote with attribution like the journalist you''re being.'
+  - level: 3
+    hint: 'For the page, structure as a visit: "Before you go" (history that makes you care), "Getting there and being there" (practical), "What locals know" (the layer-three reveal). Guides that follow the visitor''s journey read like company, not Wikipedia.'
+reflection_prompts:
+  - Why was the AI confidently wrong about a place YOU can walk to - and what does that imply about places you can't?
+  - Which layer was hardest to fill, and which makes the guide?
+unlocks: [heritage-guide, hometown-trivia-quiz, city-guide-bot]
+stretch_challenge: Make it bilingual with your menu-helper policy instincts, and propose it to the municipality or a local tourism page - guides this good have a way of becoming official.
+safety_notes: Photograph the landmark, not strangers visiting it. Credit oral sources by name only with their permission. Heritage accuracy is a duty - a wrong date on a published guide outlives its author.

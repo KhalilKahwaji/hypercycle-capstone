@@ -1,0 +1,73 @@
+id: explain-it-rebuild-it
+version: 1
+title: "Checkpoint: Explain It, Rebuild It"
+track: core
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 90
+languages: [en]
+ai_light_checkpoint: true
+summary: The no-AI checkpoint. Explain one of your builds with the AI switched off, then rebuild its core from a blank page. Prove the skills live in YOU.
+goal: A recorded or written unaided explanation of one of your builds, plus its core rebuilt from scratch without AI assistance.
+brief: |
+  Every mission so far, the AI built WITH you. Fair question: what's left when it's off?
+
+  Today we find out - not as an exam, as a checkpoint. Athletes test without assistance
+  sometimes. Same logic.
+
+  Pick your best build so far. Then, with NO AI chat open:
+
+  1. EXPLAIN IT. Voice note, video, or written - in your own words: what it does, how
+     it works, what each part of the instructions is for, what failed on the way and
+     how you fixed it. 3-5 minutes of talking or about a page. No script, no AI polish.
+
+  2. REBUILD THE CORE. Blank page. Rewrite your build's core instructions from memory
+     and understanding - not word-for-word, but capturing what matters. Then (AI back on,
+     as the test subject only) run both versions on the same 3 questions and compare.
+
+  If the rebuild roughly matches the original's quality - the skill is yours, locked in.
+  If it doesn't - you found exactly what you understood less than you thought, which is
+  the most valuable thing this platform can ever tell you. Either result completes
+  the mission. Honesty is the deliverable.
+build_surfaces:
+  - surface: any_chat_ui
+    why: Only at the END, to run the comparison - not to help write anything.
+skills:
+  teaches: [explain-your-build]
+  requires: [shipping-basics]
+evidence_required:
+  - type: file_upload
+    description: Your unaided explanation - audio, video, or written.
+  - type: prompt_log
+    description: The from-scratch rebuild of your core instructions.
+  - type: transcript
+    description: Same 3 questions on original vs rebuild, side by side.
+  - type: reflection
+    description: Where was the gap between what you thought you knew and what you knew?
+evaluation:
+  deterministic_checks:
+    - id: explanation_present
+      description: Explanation artifact exists (audio/video file or 1500+ character text).
+    - id: rebuild_present
+      description: Rebuild artifact exists and is not a copy of the original (similarity check).
+  rubric:
+    - criterion: Explanation depth
+      looks_like: The learner explains WHY parts exist (why this rule, why this example), not just WHAT is there - includes a real failure-and-fix story.
+      weight: 0.4
+    - criterion: Rebuild fidelity
+      looks_like: The rebuild captures the original's key mechanisms - role, criteria, behavior rules - even with different wording; comparison shows comparable quality OR an honest gap analysis.
+      weight: 0.35
+    - criterion: Self-assessment honesty
+      looks_like: The reflection names a real gap or genuine surprise - "it went fine" with no specifics is the only failing answer here.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Blank-page panic is normal and passes. Start the rebuild by listing on paper the 3 jobs your instructions do. Then write each as a sentence. That's the skeleton.
+  - level: 2
+    hint: For the explanation, imagine teaching a cousin who's never used AI. The moment you reach for jargon you can't unpack - that's a gap. Note it and keep going.
+reflection_prompts:
+  - What could you rebuild blindfolded now, and what evaporated the moment the AI was off?
+  - Has the AI been your tool, or have you been its operator? What's the difference?
+unlocks: [ship-for-zahle]
+stretch_challenge: Explain your build to an actual person - family member, friend - and have them ask questions. Live questions find gaps that recordings don't.
+safety_notes: This checkpoint only works if it's honest - there is no grade, no pass/fail, and a found gap counts as success. The only way to fail is to fake it.

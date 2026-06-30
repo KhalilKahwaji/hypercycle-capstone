@@ -1,0 +1,80 @@
+id: email-to-chat-automation
+version: 1
+title: Connect Your Email to a Chat App - Your First Automation
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build your first real trigger-action automation - important emails automatically become chat messages - and learn the pattern behind all automation.
+goal: A working email-to-chat automation with a filter you designed, tested with real emails, plus a diagram of the trigger-action chain in your own words.
+brief: |
+  Today you learn the sentence that runs the modern world: WHEN this happens,
+  DO that. Every automation ever built is that sentence wearing different
+  clothes - and you're about to write your first one.
+
+  The build: when an email matching YOUR filter arrives, a message appears
+  in your chat app (Slack, Discord, or Telegram - whichever you actually
+  use). The filter is the design work: ALL email forwarded to chat is just
+  noise relocated. Decide what deserves interruption - emails from school?
+  Containing "deadline"? From one specific sender? That decision is
+  automation design in miniature: separating signal from noise BEFORE
+  building, not after.
+
+  Use Make (free tier) - connect your email as the trigger, add your
+  filter, connect the chat app as the action. The connecting will involve
+  authorizing accounts and a few confused minutes; that's normal and part
+  of the skill. Test honestly: send yourself a matching email (should
+  arrive in chat) AND a non-matching one (should NOT). Both tests matter -
+  an automation that fires on everything fails differently than one that
+  never fires, and you need to know yours does neither.
+
+  Finish by drawing the chain - trigger, filter, action - in your own words
+  or boxes. If you can diagram it, you own the pattern, and every future
+  automation is this diagram with different boxes.
+build_surfaces:
+  - surface: make
+    why: Visual trigger-action builder with free tier - the standard first automation tool.
+  - surface: n8n
+    why: Open-source alternative if you prefer it.
+skills:
+  teaches: [automation-trigger-action, api-concept]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The working scenario in Make, plus a chat message produced by a real email.
+  - type: prompt_log
+    description: Your filter design with its reasoning, and both test results (match and non-match).
+  - type: file_upload
+    description: Your trigger-filter-action diagram, any format.
+evaluation:
+  deterministic_checks:
+    - id: automation_evidence
+      description: Screenshots show the configured scenario and a successfully delivered chat message.
+    - id: both_tests_present
+      description: Log documents a matching email that fired and a non-matching one that correctly didn't.
+    - id: diagram_present
+      description: A trigger-filter-action diagram in the learner's own words is attached.
+  rubric:
+    - criterion: The chain works end to end
+      looks_like: A real email automatically produced a chat message with no manual step, verified live.
+      weight: 0.35
+    - criterion: The filter is designed
+      looks_like: A deliberate signal/noise decision with reasoning - and the negative test proves the filter actually filters.
+      weight: 0.35
+    - criterion: The pattern is owned
+      looks_like: The diagram correctly maps trigger, filter, action in the learner's own words - transferable understanding, not just a working config.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'In Make: create a scenario, choose your email service as the trigger module ("watch emails"), authorize it, then add your chat app as the action module ("send message"). The filter goes between them - look for the wrench/filter icon on the connecting line.'
+  - level: 2
+    hint: Start with the simplest reliable filter - sender contains your school's domain, or subject contains one keyword. Get THAT working before fancy conditions; a working simple filter beats a broken clever one.
+  - level: 3
+    hint: 'If nothing fires: check the scenario is turned ON (the toggle), check the trigger is set to watch the right folder/label, and use Make''s "Run once" button while sending yourself a test email - it shows you exactly what data arrived and where the chain broke.'
+reflection_prompts:
+  - What other when-then sentences exist in your week, waiting to be built?
+  - Why did the non-match test matter as much as the match test?
+unlocks: [daily-weather-message, attachment-saver, deadline-reminder-bot]
+stretch_challenge: "Add a second action to the same trigger - matching emails ALSO get logged to a spreadsheet row. One trigger, two actions: you've just built a fan-out."
+safety_notes: You're authorizing tools to read your email - use your own account, grant only the permissions the trigger needs, and revoke access (Google account > Security > third-party access) when you finish experimenting. Never automate someone else's inbox.

@@ -1,0 +1,74 @@
+id: food-debate-bot
+version: 1
+title: Build an AI That Debates Your Two Favorite Foods
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Stage the ultimate showdown - man'oushe vs pizza, shawarma vs burger - with an AI debater for each side and you as the judge.
+goal: A two-sided AI debate about your two favorite foods, with distinct debater personas you wrote and your scored verdict on who won.
+brief: |
+  Two foods enter. One leaves victorious. You're building the courtroom.
+
+  Pick your two favorites - the more personal the rivalry, the better. Write two
+  debater personas, one per food: a name, a debate style (passionate poet?
+  smug lawyer? data nerd?), and three signature arguments. Then run the debate:
+  opening statements, one rebuttal each, closing lines.
+
+  Two ways to run it: two separate chats (one persona each, you ferry the
+  arguments between them) or one chat instructed to switch hats cleanly.
+
+  Here's the secret lesson: you're watching an AI argue PASSIONATELY for both
+  sides. It doesn't believe either. By the end you'll know in your bones that
+  confidence is not evidence - in food debates and everywhere else AI speaks.
+  Score the debate on a rubric YOU define (best argument, best comeback, style
+  points) and crown a winner.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Run two chats side by side, one persona each.
+  - surface: claude_project
+    why: Handles clean persona-switching in a single conversation.
+  - surface: any_chat_ui
+    why: Any AI chat can host the showdown.
+skills:
+  teaches: [self-evaluation, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: transcript
+    description: The full debate - openings, rebuttals, closings for both sides.
+  - type: prompt_log
+    description: Your two persona definitions.
+  - type: reflection
+    description: Your verdict with scores, plus two sentences - what did watching AI argue both sides teach you about trusting confident answers?
+evaluation:
+  deterministic_checks:
+    - id: transcript_present
+      description: Transcript attached containing at least six debate turns (three per side).
+    - id: personas_present
+      description: Prompt log exists, min 250 characters, contains two distinct persona definitions.
+    - id: verdict_present
+      description: Reflection exists, min 150 characters, includes scores and a winner.
+  rubric:
+    - criterion: Personas are distinct
+      looks_like: The two debaters argue in clearly different voices and strategies traceable to the learner's persona sheets - cover the names and you can still tell who's talking.
+      weight: 0.35
+    - criterion: Real debate structure
+      looks_like: Rebuttals actually respond to the other side's points rather than restating openings.
+      weight: 0.3
+    - criterion: The meta-lesson landed
+      looks_like: The reflection connects "AI argues anything convincingly" to a real insight about evaluating AI answers, in the learner's own words.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: Give each persona a flaw as well as a strength - the overconfident one ignores nutrition, the data nerd has no soul. Flaws create comedy and real debate.
+  - level: 2
+    hint: For rebuttals, paste side A's argument to side B and say "respond directly to these three points, in character". Direct quotes force real engagement.
+  - level: 3
+    hint: For your verdict rubric, score three things from 1-5 - strongest single argument, best direct rebuttal, most memorable line. Total wins. Write one sentence justifying each score.
+reflection_prompts:
+  - Could you tell which side the AI "really" believed? What does that mean?
+  - Which debater would you hire as a lawyer, and should you?
+unlocks: [spot-the-hallucination, virtual-pet]
+stretch_challenge: Add a third debater who argues both foods are inferior to a dark-horse candidate, and see if your scoring rubric survives a three-way fight.
+safety_notes: Keep the showdown about food, not the people who eat it - no arguments built on stereotypes about regions or cultures.

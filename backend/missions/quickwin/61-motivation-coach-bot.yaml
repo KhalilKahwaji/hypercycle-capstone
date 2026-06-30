@@ -1,0 +1,79 @@
+id: motivation-coach-bot
+version: 1
+title: Build a Motivational Coach With Your Own Catchphrases
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a personal hype coach that talks the way YOU need talking to - your catchphrases, your triggers, your kind of push.
+goal: A motivation bot tuned to your real psychology - what works on you, what backfires - with your own catchphrases, tested on a real unmotivated moment.
+brief: |
+  Generic motivation is wallpaper. "You've got this!" has never once gotten
+  anyone off the couch. What works is SPECIFIC - the exact words, from the
+  exact angle, that move YOU. Today you study yourself, then build the coach.
+
+  Start with the self-research, the real heart of this mission: what
+  actually gets you moving? Gentle encouragement or friendly trash talk?
+  Big-picture reminders ("this is for the future you") or tiny-step nudges
+  ("just open the book, that's all")? What BACKFIRES? (For many people,
+  "others have it harder" produces instant rage, not motivation.) Write
+  these down - works, backfires, neutral.
+
+  Then the fun layer: YOUR catchphrases. The thing your coach says before
+  training. Your dad's phrase. The line from a song that flips your switch.
+  A coach that speaks in your family's words hits different than one
+  speaking in poster quotes.
+
+  Encode it all, then test on a REAL moment - next time you genuinely don't
+  want to start something, open the coach and let it work. Done when it gets
+  you to actually start, even once. That's not a toy; that's a tool that
+  moves a human.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your psychology profile; always available when needed.
+  - surface: claude_project
+    why: Good at matching emotional register without going greeting-card.
+  - surface: any_chat_ui
+    why: Your coach should live wherever you already are.
+skills:
+  teaches: [prompt-examples, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your self-research (works/backfires lists), your catchphrases, and the coach instructions.
+  - type: transcript
+    description: The real-moment test - you genuinely unmotivated, the coach working on you.
+  - type: reflection
+    description: Two sentences - did you start the thing, and which line did it?
+evaluation:
+  deterministic_checks:
+    - id: self_research_present
+      description: Prompt log exists, min 250 characters, contains works/backfires lists and personal catchphrases.
+    - id: real_test_present
+      description: Transcript shows a genuine unmotivated-moment session.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 60 characters.
+  rubric:
+    - criterion: Built on real self-knowledge
+      looks_like: The works/backfires research is honest and specific to this learner - including at least one common motivational tactic flagged as a backfire.
+      weight: 0.4
+    - criterion: The voice is personal
+      looks_like: Catchphrases come from the learner's real life (family, coach, songs) and the bot uses them naturally, not as decoration.
+      weight: 0.3
+    - criterion: Field-tested on a real moment
+      looks_like: The test happened during genuine resistance, with an honest report of whether it worked.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'For the self-research, replay your last three "finally started" moments: what happened right before? A person? A thought? A deadline panic? Whatever it was, that''s your ignition - encode it.'
+  - level: 2
+    hint: 'Include the backfire list explicitly: "NEVER say ''just do it'', never compare me to others, never mention discipline." A coach defined by what it won''t say is half-built already.'
+  - level: 3
+    hint: 'Give it situational modes: "If I say ''I can''t start'', use tiny-step mode. If I say ''what''s the point'', use big-picture mode. If I say ''I''m scared'', drop the hype entirely and be calm." Matching the mode to the moment is what real coaches do.'
+reflection_prompts:
+  - What did the works/backfires list teach you about yourself?
+  - Why do your own catchphrases work better than famous quotes?
+unlocks: [homework-planner-bot, fortune-teller, personality-chatbot]
+stretch_challenge: Add a post-session rule - after you finish the task, you report back, and the coach logs the win in a running streak it quotes back to you next time.
+safety_notes: A motivation bot helps with ordinary procrastination - it's not support for persistent low mood or anxiety. If "can't start anything" is becoming your normal, that conversation belongs with a person who cares about you, not a bot.

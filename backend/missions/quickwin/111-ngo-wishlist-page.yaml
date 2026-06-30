@@ -1,0 +1,84 @@
+id: ngo-wishlist-page
+version: 1
+title: Build a Donations or Supplies Wishlist Page for a Local NGO
+track: community
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Partner with a real local NGO or charity drive and build the wishlist page that turns vague goodwill into specific donations - with the trust signals that make giving happen.
+goal: A wishlist page for a real organization or drive, built from their actual needs list, with specific items, clear handoff logistics, and organizational approval before any sharing.
+brief: |
+  "We accept donations" raises almost nothing. "We need 20 blankets, 50
+  notebooks, and a working printer - drop-off Saturdays 10-12 at the
+  parish hall" raises blankets, notebooks, and printers. Specificity is
+  generosity's best friend, and today you build the page that proves it.
+
+  Find your real partner: a local NGO, the scouts' winter drive, the
+  school's supply collection, the mosque or church committee's effort.
+  The INTERVIEW is the foundation (your client-work muscle, third
+  workout): what exactly do you need? What quantities? What do people
+  donate that you CAN'T use (every drive has a politely-unwanted pile -
+  putting "please no more X" on the page is a kindness to everyone)?
+  Where and when can people drop things? Who can they contact?
+
+  Then build with donation psychology in mind: SPECIFIC items with
+  quantities and progress where known ("12 of 20 blankets received"
+  makes the next blanket feel decisive), the no-list stated warmly,
+  logistics a donor can act on TODAY, and the trust signals that make
+  strangers give - who the organization is, what the drive is FOR, a
+  named contact person. Vagueness reads as risk; your page reads as
+  organized people doing real work.
+
+  Get the organization's APPROVAL on every word before it's shared
+  anywhere - their name carries the trust. Done when they approve it,
+  and ideally when the first donation arrives that the page can take
+  credit for.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build the page from interview notes with warm, clear copy.
+  - surface: replit
+    why: Publish it - a shareable URL is what group chats pass around.
+  - surface: canva
+    why: A matching printable flyer doubles the drive's reach.
+skills:
+  teaches: [user-feedback, shipping-basics]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: The finished wishlist page with specific items, logistics, and trust signals visible.
+  - type: prompt_log
+    description: Your interview notes including the can't-use list, and the approval exchange.
+  - type: reflection
+    description: Two sentences - what did the organization change before approving, and what did the can't-use list teach you?
+evaluation:
+  deterministic_checks:
+    - id: page_evidence
+      description: Screenshots show a complete wishlist with quantities, logistics, and contact.
+    - id: real_partner_present
+      description: Interview notes evidence a real organization or drive with their actual needs.
+    - id: approval_present
+      description: Organizational approval documented before sharing.
+  rubric:
+    - criterion: Specificity does the asking
+      looks_like: Named items with quantities, drop-off logistics actionable today, and the no-list present - a donor knows exactly how to help in 30 seconds.
+      weight: 0.35
+    - criterion: Trust is designed in
+      looks_like: The organization's identity, the drive's purpose, and a named contact - the page reads as accountable people, not an anonymous ask.
+      weight: 0.3
+    - criterion: Real partnership conduct
+      looks_like: Genuine interview, their corrections honored, approval before sharing - the organization's trust handled like the asset it is.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'The interview question that unlocks everything: "what did people donate last time that you couldn''t use?" The answer produces the no-list, reveals what they actually need, and usually comes with a story that becomes your page''s purpose section.'
+  - level: 2
+    hint: 'Structure the page as a donor''s three questions in order: WHAT do you need (the list, specific), HOW do I give it (logistics), WHY should I trust this (organization, purpose, contact). Don''t make a generous stranger hunt for any of the three.'
+  - level: 3
+    hint: 'For approval, send the draft with: "please mark anything to change - especially quantities, dates, and how we describe you". Naming what to check gets real review instead of a polite thumbs-up; their corrections are the final quality pass.'
+reflection_prompts:
+  - Why does specificity outperform emotional appeals?
+  - What responsibility comes with putting an organization's name on something you built?
+unlocks: [volunteer-form, local-events-board, local-shop-site]
+stretch_challenge: Add live progress - the organization updates a simple sheet as items arrive, and the page shows "12 of 20" bars automatically. Watching a bar fill is the most honest fundraising animation ever invented.
+safety_notes: Money is out of scope - physical items only, with cash needs referred to the organization's own official channels; a student-built page should never collect funds. Every word ships with organizational approval, and the contact person listed must have agreed to be listed.

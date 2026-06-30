@@ -1,0 +1,77 @@
+id: homework-planner-bot
+version: 1
+title: Build a Homework Planner That Breaks Big Into Small
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build an assistant that turns "essay due Friday" into tonight-sized steps - then run your real week through it.
+goal: A planner bot with a decomposition method you designed, tested on your real upcoming assignments, producing a plan you actually followed for one day.
+brief: |
+  "Study for exam" sits on a to-do list radiating guilt and getting nothing
+  done. The fix is decomposition - breaking the unstartable into the
+  obvious - and today you build a bot that does it relentlessly.
+
+  Design the breakdown method as instructions: every task entering the bot
+  must leave as steps that are SMALL (under 30 minutes each), CONCRETE
+  (starts with a verb - "read pages 40-52", never "work on essay"), and
+  ORDERED (what first, what after). Plus the rule that beats procrastination
+  itself: the first step must be so small it's embarrassing to skip. "Open
+  the document and write the title" is a legitimate step one - starting is
+  the whole war.
+
+  Then feed it your REAL week - actual assignments, actual deadlines, actual
+  "I also have training Tuesday". Make it produce tonight's plan. Here's the
+  honest test that separates this from productivity theater: FOLLOW the plan
+  for one evening, then report back to the bot what actually happened. Did
+  the 30-minute steps take 30 minutes? Recalibrate. A planner that never
+  learns your real pace is just a wishlist generator.
+build_surfaces:
+  - surface: claude_project
+    why: Keeps your week's context across the conversation; good at realistic decomposition.
+  - surface: google_ai_studio
+    why: System instructions hold your method; free for daily replanning.
+  - surface: any_chat_ui
+    why: Works as a pinned method prompt anywhere.
+skills:
+  teaches: [prompt-decomposition, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your decomposition rules and your real task list as you fed it in.
+  - type: transcript
+    description: The bot turning at least two real assignments into step plans.
+  - type: reflection
+    description: Two sentences - what actually happened when you followed the plan, and what did you recalibrate?
+evaluation:
+  deterministic_checks:
+    - id: method_present
+      description: Prompt log exists, min 250 characters, contains explicit decomposition rules.
+    - id: real_plans_present
+      description: Transcript shows two or more real assignments decomposed into verb-first steps.
+    - id: followup_present
+      description: Reflection exists, min 80 characters, reports real follow-through and one adjustment.
+  rubric:
+    - criterion: Steps meet the method's bar
+      looks_like: Output steps are under 30 minutes, verb-first, ordered, with an embarrassingly small first step - the rules visibly shaped the output.
+      weight: 0.35
+    - criterion: Real life went in
+      looks_like: Actual assignments, deadlines, and schedule constraints - the plan accounts for the learner's real week, not an idealized one.
+      weight: 0.3
+    - criterion: The loop closed
+      looks_like: The learner followed the plan, reported reality back, and recalibrated - planning treated as a cycle, not a ceremony.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Test your rules on the worst offender first: "study for the exam". If the bot''s breakdown still contains "review the material", your rules need the verb-first requirement stated harder.'
+  - level: 2
+    hint: 'Give the bot your true energy map: "I''m useless after 9pm, sharpest right after school." A plan that fights your biology loses every time.'
+  - level: 3
+    hint: 'For the recalibration, tell it plainly: "Step 2 took 50 minutes, not 25, and I skipped step 4." Then add the rule "assume my estimates run 1.5x" - personalized padding is what makes the next plan actually work.'
+reflection_prompts:
+  - Why does an embarrassingly small first step work on your brain?
+  - What did the gap between planned and actual time teach you?
+unlocks: [study-schedule-generator, study-buddy-bot, deadline-reminder-bot]
+stretch_challenge: Add a Sunday ritual mode - feed it the whole week every Sunday evening and have it produce a day-by-day map, then track how Wednesday-you feels about Sunday-you's optimism.
+safety_notes: The planner organizes your work; it doesn't do it. If the plan consistently doesn't fit your hours, the answer is talking to a teacher about workload - not a bot that plans your sleep away.

@@ -1,0 +1,82 @@
+id: notes-to-script-tool
+version: 1
+title: Build a "Turn My Notes Into a Script" Tool for Short Videos
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a converter that turns messy notes into tight 60-second video scripts - with the spoken-word rules that make scripts work out loud.
+goal: A notes-to-script tool encoding spoken-word writing rules, tested on real notes, with the script read aloud, timed, and revised from the reading.
+brief: |
+  You know things. You have notes. Between those notes and a 60-second
+  video that people actually watch stands a specific craft: writing for
+  the EAR instead of the eye. Today you build the tool that does the
+  conversion - and learn the craft by encoding it.
+
+  The rules of spoken-word writing go in your tool's instructions, and
+  they're learnable: sentences shorter than feel natural on paper (the
+  ear loses long clauses). First line is a HOOK, not an introduction -
+  "Three things your teachers never told you about exams" beats "Today
+  I want to talk about exams". One idea per breath. Repetition is a
+  feature out loud (it's how ears bookmark). And the structure for 60
+  seconds: hook (5s), promise (5s), three beats of content (15s each),
+  punchline-or-CTA (5s). With word budgets - speech runs ~150 words per
+  minute, so a 60-second script is ~140 words, BUDGETED per section.
+
+  Feed it real notes - study notes, your hobby knowledge, a rant you've
+  perfected verbally. Get the script, then the non-negotiable test: READ
+  IT ALOUD WITH A TIMER. Over 60 seconds? Cut (the tool can help: "cut
+  to 130 words keeping the hook and beat 2"). Stumbled anywhere? That
+  sentence is eye-writing - mark it, have it rewritten for the ear.
+
+  Done when one script reads aloud in under 60, no stumbles, and the
+  hook makes someone look up from their phone.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the spoken-word rules; conversion is instant.
+  - surface: claude_project
+    why: Strong at register-shifting from written to spoken.
+  - surface: any_chat_ui
+    why: A pinned converter prompt works anywhere.
+skills:
+  teaches: [prompt-success-criteria, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your spoken-word rules, the source notes, and the conversion with revisions.
+  - type: file_upload
+    description: The final script with section timings marked, plus your read-aloud time.
+  - type: reflection
+    description: Two sentences - where did you stumble on the first read, and what made that sentence eye-writing?
+evaluation:
+  deterministic_checks:
+    - id: rules_present
+      description: Prompt log contains explicit spoken-word rules including structure and word budgets.
+    - id: script_present
+      description: A final script with timing structure attached, from real notes.
+    - id: read_test_present
+      description: Reflection documents an actual timed read-aloud with results.
+  rubric:
+    - criterion: The rules encode the craft
+      looks_like: Hook-first, sentence length, one-idea-per-breath, and word budgets all present in the instructions and visible in output.
+      weight: 0.35
+    - criterion: The read-aloud loop closed
+      looks_like: Real timing recorded, stumbles identified as specific sentences, and revisions made because of the reading - the ear was the editor.
+      weight: 0.4
+    - criterion: The hook earns attention
+      looks_like: The first five seconds create curiosity or tension rather than announcing a topic.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Pick notes about something you''ve explained out loud before - your verbal version already discovered the good order and the punchlines. The tool''s job becomes capturing, not inventing.'
+  - level: 2
+    hint: 'Hook surgery: ask for ten hooks for the same script, in different modes - question, bold claim, "nobody tells you", tiny story. Pick by one test: would YOU stop scrolling? Hooks are a numbers game; play it.'
+  - level: 3
+    hint: 'For stumble-sentences, the fix request: "I stumble reading this aloud: [sentence]. Rewrite it the way I''d SAY it to a friend - contractions, shorter, natural word order." Eye-writing converts to ear-writing one sentence at a time.'
+reflection_prompts:
+  - What's the biggest difference between writing for eyes and ears?
+  - Why does the timer matter more than your sense of "feels about a minute"?
+unlocks: [podcast-episode-planner, movie-trailer-me, caption-generator]
+stretch_challenge: 'Actually film it - one take, phone propped on books, your script. The camera teaches a third register beyond eye and ear: writing for a face. Nobody needs to see it but you.'
+safety_notes: Script your own knowledge from your own notes. If a script states facts, the verification habit applies before anything gets filmed and shared - confident video spreads errors faster than text.

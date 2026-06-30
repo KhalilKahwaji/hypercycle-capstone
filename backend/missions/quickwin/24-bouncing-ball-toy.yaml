@@ -1,0 +1,75 @@
+id: bouncing-ball-toy
+version: 1
+title: Build a Bouncing-Ball Physics Toy You Can Flick Around
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a physics toy - balls you can grab, flick, and bounce off walls - then tune gravity and bounciness until it feels real.
+goal: A physics toy page where balls can be grabbed and thrown, bounce believably, and obey physics parameters you tuned by feel.
+brief: |
+  Today you build TOY PHYSICS - and discover that "feels right" is a real
+  engineering target.
+
+  Ask for a page with balls that fall under gravity, bounce off the floor and
+  walls, and - the crucial part - can be GRABBED with the mouse and FLICKED,
+  keeping the throw's speed and direction. That flick is what turns a demo
+  into a toy you can't stop playing with.
+
+  Then become a physics tuner. Three dials rule everything: GRAVITY (how hard
+  they fall), BOUNCINESS (how much energy survives each bounce), FRICTION (how
+  quickly things calm down). Wrong values feel instantly wrong - balloons on
+  the moon, or dead rocks. Tune by describing what's off: "they bounce forever,
+  make each bounce lose energy", "falls too floaty, this isn't the moon".
+
+  Add a click-to-spawn so you can fill the room with balls. Done when flicking
+  a ball into a satisfying ricochet makes you do it again immediately.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; physics tweaks regenerate fast.
+  - surface: claude_project
+    why: Translates "feel" complaints into parameter changes well.
+  - surface: replit
+    why: Host it and the toy works on a phone with touch.
+skills:
+  teaches: [debugging-loop, prompt-iteration]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The toy mid-chaos - multiple balls in motion (or a short recording of a grab-and-flick).
+  - type: prompt_log
+    description: Your build requests plus at least three physics-tuning notes and what each changed.
+  - type: reflection
+    description: One sentence - which parameter had the biggest effect on how "real" it felt?
+evaluation:
+  deterministic_checks:
+    - id: evidence_present
+      description: Screenshot or recording attached showing multiple balls.
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, with three or more tuning iterations.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Grab and flick works
+      looks_like: Evidence or log confirms balls can be grabbed and thrown with momentum preserved - the toy's defining interaction.
+      weight: 0.4
+    - criterion: Physics tuned by feel
+      looks_like: The log shows at least three tuning passes described in sensory terms (floaty, dead, frantic) with observed results - not accepting defaults.
+      weight: 0.35
+    - criterion: It invites play
+      looks_like: Spawning works, chaos is possible, and the learner reports actually playing with it - the toy test.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Build in two steps - first ask for balls that fall and bounce (no mouse). When that works, add "now let me grab a ball with the mouse and throw it, keeping my throw speed".
+  - level: 2
+    hint: Tune one parameter at a time and name it - "keep everything else, just make gravity stronger". Changing two things at once means you never know which one helped.
+  - level: 3
+    hint: If thrown balls teleport or jitter, describe it - "when I release, the ball jumps instead of flying smoothly" - and ask the AI to "calculate throw velocity from the last few mouse positions, not just the final one". That's the standard fix.
+reflection_prompts:
+  - How would you explain "game feel" to someone after this mission?
+  - What surprised you about how small parameter changes affect the experience?
+unlocks: [zen-garden, pixel-art-editor, keyboard-fireworks]
+stretch_challenge: Add one object with different physics - a heavy bowling ball or a balloon that floats up - and watch how it changes the toy.
+safety_notes: Nothing sensitive here - share the toy freely.

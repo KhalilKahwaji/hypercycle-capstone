@@ -1,0 +1,76 @@
+id: beat-visualizer
+version: 1
+title: Build a Music Visualizer That Pulses to a Beat
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a visualizer where shapes pulse, bloom, and travel in time with a beat - your first build where TIMING is the design material.
+goal: A working visualizer page with a steady beat driving at least two synchronized visual elements, with timing you tuned by eye.
+brief: |
+  Music visualizers look like magic. The trick underneath: things that react in
+  TIME. Today, time becomes your design material.
+
+  Start simple and honest: ask for a page with a built-in beat (a steady tick
+  at a BPM you choose - no music file needed yet) where a central shape PULSES
+  on every beat. Get that heartbeat working first. A circle that genuinely
+  pops on the beat is already mesmerizing.
+
+  Then build the show on top: a second element on the off-beats or every fourth
+  beat (rings that ripple outward, bars that jump, colors that shift). Different
+  elements on different beat patterns - that's literally how music works,
+  translated to pixels.
+
+  The tuning is about CRISPNESS: a pulse that swells lazily reads as wobble,
+  not beat. Ask for "instant snap up, smooth decay" - the shape of every
+  satisfying pulse. Set the BPM to a song you love, play it alongside, and
+  tune until the screen and the song agree.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; easy to iterate on animation timing.
+  - surface: claude_project
+    why: Previews in chat; understands timing language like "snap" and "decay".
+  - surface: replit
+    why: Host it; easier to test with real audio later.
+skills:
+  teaches: [prompt-decomposition, debugging-loop]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: The visualizer running (or short recording - movement is the point).
+  - type: prompt_log
+    description: Your element plan (what pulses on which beats), BPM choice, and at least two timing-tuning requests.
+  - type: reflection
+    description: Two sentences - what makes a pulse feel ON the beat versus NEAR the beat?
+evaluation:
+  deterministic_checks:
+    - id: evidence_present
+      description: Screenshot or recording artifact attached.
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, shows a beat-pattern plan and timing iterations.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Beat drives the visuals
+      looks_like: At least two elements respond to the beat on different patterns (every beat, off-beat, every fourth) per the learner's plan.
+      weight: 0.35
+    - criterion: Built in layers
+      looks_like: The log shows the heartbeat built and verified first, then elements added one at a time - decomposition in action.
+      weight: 0.35
+    - criterion: Timing tuned for crispness
+      looks_like: At least two iterations address attack/decay or sync feel, with language showing the learner judged timing by eye against real music.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: First message - "a page with a steady beat at 100 BPM and a central circle that pulses bigger on every beat, snapping up instantly and easing back down". Nothing else until that works.
+  - level: 2
+    hint: Add elements one per message - "now add expanding rings that fire every 4th beat" - and check each before the next. If you add three things at once and it breaks, you won't know which broke it.
+  - level: 3
+    hint: To test against real music, find your song's BPM (search "song name BPM"), set the visualizer to match, press play on both at the same time. Drift after a while is normal - nail the feel, not perfection.
+reflection_prompts:
+  - Why did building the heartbeat first matter?
+  - Where else does "instant attack, smooth decay" show up in things that feel good?
+unlocks: [keyboard-fireworks, light-painter, weird-clock]
+stretch_challenge: Ask the AI to use the microphone with a Web Audio analyser so the visuals react to REAL music playing in your room - the full magic trick.
+safety_notes: Keep volume reasonable when testing with music. If you add microphone input, it processes sound locally in your browser - still, close the tab when done.

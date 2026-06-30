@@ -1,0 +1,75 @@
+id: keyboard-fireworks
+version: 1
+title: A Fireworks Show You Play Like a Piano
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a fireworks display where every key launches a different firework - then compose and perform a 20-second grand finale.
+goal: A keyboard-triggered fireworks page with at least three distinct firework types mapped to different keys, plus a performed finale.
+brief: |
+  Tonight's show is brought to you by... your keyboard. Every key a rocket.
+
+  Build a dark night-sky page where pressing keys launches fireworks. The design
+  work is the MAPPING - this is your instrument, so decide: maybe vowels launch
+  big golden bursts, numbers fire quick crackling ones, SPACE unleashes the
+  monster shell that fills the sky. You need at least three visibly different
+  firework types - different size, color, shape, or behavior (burst, fountain,
+  spiral, glitter rain).
+
+  First version will likely be weak - fireworks too small, fading too fast, no
+  drama. Direct it like a show designer: "slower rise, then POP", "sparks should
+  fall with gravity and fade like embers", "bigger. BIGGER."
+
+  Final act: compose a 20-second finale - an actual key sequence you perform
+  (slow start, building rhythm, everything at once) - and capture it. You built
+  the instrument; now play it.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview in one place; fast iteration on the explosion feel.
+  - surface: claude_project
+    why: Previews HTML in chat; good at translating drama words into animation.
+  - surface: replit
+    why: Host it live and perform the finale on any screen.
+skills:
+  teaches: [ui-basics, prompt-decomposition]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The sky mid-finale - multiple fireworks at once (or a screen recording of the finale).
+  - type: prompt_log
+    description: Your key-mapping design (which keys, which fireworks) and at least two drama-tuning requests.
+  - type: reflection
+    description: One sentence - what makes a firework feel satisfying instead of just visible?
+evaluation:
+  deterministic_checks:
+    - id: finale_evidence_present
+      description: Screenshot or recording artifact attached showing multiple simultaneous fireworks.
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, includes an explicit key-to-firework mapping.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Three distinct firework types
+      looks_like: Evidence and mapping show at least three types that differ in behavior or look, not just color swaps.
+      weight: 0.35
+    - criterion: Deliberate instrument design
+      looks_like: The key mapping has logic the learner can explain (big keys = big booms, etc.), designed before generating - decomposing the show into parts.
+      weight: 0.35
+    - criterion: Drama was tuned
+      looks_like: The log shows iteration on timing, scale, or physics in expressive language, and the finale has a visible build-up.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Design on paper first - three columns: KEY(s), FIREWORK NAME, what it looks like. Hand the whole table to the AI in one message.'
+  - level: 2
+    hint: 'Describe a firework in two phases - "rise: a dot climbs with a small trail. burst: 60 sparks fly outward, slow down, then fall and fade". Phase descriptions beat adjectives.'
+  - level: 3
+    hint: If keypresses feel laggy or only one firework shows at a time, tell the AI - "multiple fireworks must be able to exist at once; each keypress adds a new one without removing others". That one sentence fixes the most common bug.
+reflection_prompts:
+  - How did breaking a firework into phases change the AI's output?
+  - What did performing the finale teach you that building didn't?
+unlocks: [beat-visualizer, name-starfield, particle-screensaver]
+stretch_challenge: Add sound - a soft launch whistle and a pop on burst - and re-perform your finale with audio.
+safety_notes: Rapid flashing can affect photosensitive viewers - keep the background dark and avoid full-screen white flashes if you share it.

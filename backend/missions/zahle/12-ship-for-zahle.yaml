@@ -1,0 +1,87 @@
+id: ship-for-zahle
+version: 1
+title: "Capstone: Ship Something Real for Zahle"
+track: community
+difficulty_tier: 4
+min_age_band: band_15_17
+est_minutes: 360
+languages: [en]
+summary: The capstone. Find a real person or organization in Zahle with a real problem, build them a working tool, hand it over, and document everything.
+goal: A working tool delivered to a real user in your community, with a handover they can survive without you, and a complete portfolio entry proving the whole journey.
+brief: |
+  Everything has been training for this. Time to ship for real.
+
+  Find a real "client" in Zahle: an NGO, your school, a scout group, the parish, a
+  shop, the municipality youth office, a teacher drowning in admin. Talk to them.
+  Find ONE problem you can genuinely solve with what you now know - an assistant,
+  an automation, a content tool, a guide, a study aid for a class.
+
+  Rules of the ship:
+  - Scope small. One problem, solved properly, beats three half-solved.
+  - They define done. Mid-build check-in required - their corrections ARE the build.
+  - Handover is part of the product. A one-page guide (in the language THEY prefer)
+    covering use, updates, and what to do when it breaks. If only you can run it,
+    you built a dependency, not a tool.
+  - Document the journey: the problem in their words, your plan, the messy middle,
+    the delivery, their reaction.
+
+  This becomes the anchor of your portfolio - the proof that you don't just learn
+  about AI. You build things people use.
+build_surfaces:
+  - surface: claude_project
+    why: For assistant-type tools the client can run themselves.
+  - surface: make
+    why: For automation-type solutions.
+  - surface: google_forms_sheets
+    why: For signup/coordination/data-collection solutions.
+  - surface: any_chat_ui
+    why: The tool fits the problem - any surface you've mastered is valid.
+skills:
+  teaches: [proof-of-work, user-feedback, shipping-basics]
+  requires: [tool-assembly, self-evaluation, explain-your-build]
+mission_prerequisites: [explain-it-rebuild-it]
+evidence_required:
+  - type: file_upload
+    description: Problem brief - who the client is, the problem in their words, agreed scope.
+  - type: screenshot
+    description: The working tool, in use or ready for use.
+  - type: file_upload
+    description: The handover guide you gave the client.
+  - type: file_upload
+    description: Delivery evidence - feedback note, photo of the handover, or message from the client (with their permission).
+  - type: reflection
+    description: The full story - what changed between your first idea and what you shipped, and why.
+evaluation:
+  deterministic_checks:
+    - id: all_artifacts_present
+      description: Problem brief, tool evidence, handover guide, and delivery evidence all attached.
+    - id: handover_guide_substantial
+      description: Handover guide is at least 1500 characters or one full page.
+  rubric:
+    - criterion: Real problem, real user
+      looks_like: A named client with a genuine problem in their own words; delivery evidence confirms they received and tried it.
+      weight: 0.3
+    - criterion: Fit and finish of the solution
+      looks_like: The tool actually addresses the stated problem at appropriate scope; visible evidence it survived contact with the real user's corrections.
+      weight: 0.3
+    - criterion: Independence after handover
+      looks_like: The guide realistically enables the client to use, maintain, and minimally troubleshoot without the learner.
+      weight: 0.25
+    - criterion: Journey documentation
+      looks_like: The story shows the messy middle honestly - scope changes, failures, feedback - not a sanitized success narrative.
+      weight: 0.15
+hint_ladder:
+  - level: 1
+    hint: No client ideas? List every organization you or your family touched this month - school, church or mosque, clubs, shops, doctor. Each one runs on some manual process that hurts.
+  - level: 2
+    hint: Client asking for too much? Say - "I'll solve THIS part properly first, and if it works we talk about the rest." Scoping is a builder skill, and they will respect it.
+  - level: 3
+    hint: Write the handover guide by watching the client try the tool while you stay SILENT. Every place they hesitate is a section of the guide.
+  - level: 4
+    hint: If the project collapses (client vanishes, scope explodes) - document why, pick a smaller client, ship anyway. Shipping through a failed first attempt is the strongest portfolio story there is.
+reflection_prompts:
+  - What did your client teach you about their world that changed the build?
+  - Six months from now, is your tool still running? What would make the answer yes?
+unlocks: []
+stretch_challenge: Get a second client referred by the first. A referral means the work was real.
+safety_notes: Client data belongs to the client - collect minimum, hand over everything, keep no copies of personal data. Anything public-facing needs their explicit sign-off. If the client serves vulnerable people, an adult from their organization reviews before launch.

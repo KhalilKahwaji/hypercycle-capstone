@@ -1,0 +1,74 @@
+id: link-in-bio
+version: 1
+title: Build Your Own Link-in-Bio Page (Your Personal Linktree)
+track: portfolio
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Stop renting your link page - build your own link-in-bio with custom style, link order you chose deliberately, and zero subscription.
+goal: A published link-in-bio page with your real links, ordered and styled by deliberate decisions, live at a URL you can put in any bio.
+brief: |
+  Millions of people pay or settle for a generic Linktree. You're going to BUILD
+  yours in under an hour, and it will look better.
+
+  Gather your real links first: socials you actually use, your personal website
+  from the last mission (see how this stacks?), a playlist you're proud of, a
+  project. Five to eight links. Then make the one design decision that matters:
+  ORDER. What do you want people to click FIRST? That's product thinking in
+  miniature - the top spot is the most valuable pixel on the page.
+
+  Then build: profile photo or emoji avatar, a one-liner about you, and your
+  links as big, tappable buttons - this page lives on PHONES, so buttons must
+  be thumb-sized with breathing room. Style it your way: glassy dark mode,
+  pastel gradients, brutalist black-on-white. Test on your actual phone.
+
+  Publish it, put the URL in one real bio, done.
+build_surfaces:
+  - surface: replit
+    why: Free hosting - this page needs a real URL to live in your bios.
+  - surface: google_ai_studio
+    why: Generate and iterate the page before publishing.
+  - surface: claude_project
+    why: Good at mobile-first layouts and style directions.
+skills:
+  teaches: [ui-basics, shipping-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: live_url
+    description: Your published link-in-bio page.
+  - type: screenshot
+    description: The page on a phone screen (or narrow browser window).
+  - type: reflection
+    description: Two sentences - what's in the top spot and why?
+evaluation:
+  deterministic_checks:
+    - id: url_reachable
+      description: The submitted URL loads a page.
+    - id: phone_screenshot_present
+      description: Screenshot shows the page at mobile width.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 60 characters.
+  rubric:
+    - criterion: Mobile-first and usable
+      looks_like: Buttons are large, well-spaced, and readable on a phone - tested at mobile width, not just desktop.
+      weight: 0.35
+    - criterion: Deliberate link order
+      looks_like: The reflection explains the top-spot choice with a real reason - the learner thought about what visitors should do first.
+      weight: 0.35
+    - criterion: Styled, not templated
+      looks_like: The page has a chosen aesthetic that matches the learner's vibe, distinct from default Linktree look.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'List your links in a text note first with one-word labels. Then rank them by one question: "what do I most want a stranger to see?" Top three get the top three spots.'
+  - level: 2
+    hint: Ask for "a mobile-first link-in-bio page - centered column, avatar at top, my one-liner, then full-width rounded buttons with these exact labels and URLs". Paste your ranked list.
+  - level: 3
+    hint: To test mobile without publishing, drag your browser window narrow. If buttons crowd or text shrinks too much, say "buttons need more vertical space between them and minimum 16px text on small screens".
+reflection_prompts:
+  - How is designing for a phone different from designing for a laptop?
+  - If you could see click statistics, what would you check first?
+unlocks: [qr-business-card, personal-website, countdown-page]
+stretch_challenge: Add a subtle hover/tap animation to the buttons and one "featured" link with a special style that draws the eye.
+safety_notes: Only link accounts you're comfortable being public. This page is designed to be found - that's its job - so check every link is something you'd show a teacher AND a stranger.

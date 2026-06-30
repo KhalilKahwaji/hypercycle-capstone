@@ -1,0 +1,81 @@
+id: new-music-notifier
+version: 1
+title: Build a "New Song Friday" Notifier for Your Favorite Artist
+track: automation
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a watcher that checks for your favorite artist's new releases and pings you - solving the check-remember-compare problem all watchers share.
+goal: A working release watcher for a real artist you follow, with a state mechanism that distinguishes new from already-seen, tested by simulating a release.
+brief: |
+  Somewhere out there, your favorite artist is sitting on a release date,
+  and you'll find out days late from someone's story. Unacceptable. Today
+  you build the robot that watches so you don't have to.
+
+  This mission introduces the WATCHER pattern - the third great automation
+  shape after event-triggers and schedules: check a source repeatedly,
+  COMPARE against what you saw last time, act only on the difference.
+  That compare step is everything. A watcher without memory announces the
+  same album every morning forever; the engineering is in remembering.
+
+  The build: a scheduled automation (daily, or Fridays - release day)
+  checks your artist's latest release via an RSS feed, a releases page, or
+  a music platform module in Make. It compares the newest item against the
+  last-seen item stored in your state sheet. Different? Ping you with the
+  news AND update the state. Same? Silence - good watchers are silent
+  almost always.
+
+  Testing has a wrinkle: you can't make your artist drop an album on
+  demand. So SIMULATE: put an older release in your state sheet and run -
+  the watcher should "discover" the newest one and ping. Then run again -
+  silence, because state updated. Both behaviors verified means it works.
+
+  Done when it's armed, silent, and waiting - and you've already half
+  forgotten it exists. That's what good infrastructure feels like.
+build_surfaces:
+  - surface: make
+    why: Schedule, fetch, compare, notify, update state - the full watcher in one scenario.
+  - surface: n8n
+    why: Open-source, with flexible RSS and HTTP modules for unusual sources.
+skills:
+  teaches: [automation-trigger-action, api-concept]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The scenario, the state sheet, and the simulated-release ping arriving.
+  - type: prompt_log
+    description: Your source choice and why, the compare logic explained, and both test results (discovery ping plus silence on rerun).
+  - type: reflection
+    description: Two sentences - why does the watcher need memory, and what else in your life deserves a watcher?
+evaluation:
+  deterministic_checks:
+    - id: simulation_evidence
+      description: Screenshots show the discovery ping AND the silent rerun after state update.
+    - id: state_mechanism_present
+      description: A working last-seen store exists and updates after discovery.
+    - id: source_reasoning_present
+      description: Log explains the chosen release source and its reliability.
+  rubric:
+    - criterion: The compare logic is correct
+      looks_like: New-versus-seen comparison works both ways - pings on genuine difference, stays silent on no change - verified by the two-run simulation.
+      weight: 0.4
+    - criterion: State updates reliably
+      looks_like: The last-seen record updates after each discovery so the same release never announces twice.
+      weight: 0.3
+    - criterion: Built on a real source
+      looks_like: A genuine artist the learner follows, a defensible source choice, and the watcher left armed and running.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Source hunting: many platforms expose RSS feeds for artist releases, and Make has music platform modules - search your artist''s name + RSS, or check what modules exist for your streaming service. Pick the source that updates fastest.'
+  - level: 2
+    hint: 'The compare in Make: fetch the latest item, read your state sheet''s last-seen cell, add a filter that passes only when they differ. After the notification module, the final module writes the new value back to the state cell. Fetch-compare-act-remember.'
+  - level: 3
+    hint: 'If it pings every run: state isn''t updating (check the write-back module runs and targets the right cell) or you''re comparing mismatched things (release NAME against release URL never matches - compare like with like, exactly).'
+reflection_prompts:
+  - How is a watcher different from a schedule that always acts?
+  - What did simulating the future teach you about testing things that rarely happen?
+unlocks: [rss-news-digest, daily-quote-poster, save-link-bot]
+stretch_challenge: Watch three artists from one state sheet - one row per artist, the automation looping through all of them. Multi-target watching is one iterator away from what you've built.
+safety_notes: Respect the source - check once daily, not every minute; hammering a site is how watchers get blocked. Use official feeds where they exist.

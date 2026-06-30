@@ -1,0 +1,76 @@
+id: me-quiz
+version: 1
+title: Build a "How Well Do You Know Me?" Quiz
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build an interactive quiz about yourself with scoring and funny result tiers - then make at least two friends take it.
+goal: A working quiz page about you (6-8 questions, scored, with result tiers) that at least two real friends have completed.
+brief: |
+  How well do your friends ACTUALLY know you? Time to collect data.
+
+  Design 6-8 multiple-choice questions about yourself - the fun kind. Not "what's
+  my birthday" but "it's 1am and I'm still awake - what am I doing?" with four
+  options where the wrong answers are also funny. Good wrong answers are half
+  the comedy.
+
+  Then design the result tiers: 0-2 correct ("Do we even know each other?"),
+  3-5 ("Solid acquaintance energy"), 6-8 ("You've been paying attention and
+  it's slightly alarming"). Have the AI build it all into one HTML page that
+  tracks the score and reveals the tier with drama.
+
+  Structuring questions, options, scoring, and outcomes - that's data design,
+  the same thinking behind every real app. It just happens to be about you.
+
+  Send it to at least two friends. Their scores are your evidence. Done when
+  someone disputes an answer about you - that means they cared.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate the quiz page from your structured question list.
+  - surface: claude_project
+    why: Previews the page in chat; good at punching up your wrong answers.
+  - surface: replit
+    why: Host it at a real URL your friends can open on their phones.
+skills:
+  teaches: [data-structuring, ui-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your structured quiz content - all questions, options, correct answers, and result tiers - as you designed them before generating the page.
+  - type: screenshot
+    description: The quiz running, plus at least one friend's result screen or their reported score.
+  - type: reflection
+    description: Two sentences - what did your friends' scores reveal, and which question worked best?
+evaluation:
+  deterministic_checks:
+    - id: quiz_content_present
+      description: Prompt log exists, min 400 characters, contains at least six questions with options and result tiers.
+    - id: screenshot_present
+      description: At least one screenshot artifact attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Structured before generated
+      looks_like: The prompt log shows the learner designed questions, options, answers, and tiers as organized content first - the AI built the page FROM their structure.
+      weight: 0.4
+    - criterion: Quiz works and scores correctly
+      looks_like: Evidence shows the quiz progressing, counting score, and showing the right tier at the end.
+      weight: 0.3
+    - criterion: Real humans took it
+      looks_like: At least two friends completed it, with their results or reactions captured.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Write your questions in a simple repeating format first - Question / option A B C D / correct letter. A clean structure makes the AI's job (and yours) ten times easier.
+  - level: 2
+    hint: Make wrong options NEARLY true - things you might plausibly do. Obvious wrong answers make the quiz boring; plausible ones make friends argue, which is the fun.
+  - level: 3
+    hint: Ask for "one self-contained HTML file - one question at a time, a Next button, score tracked in a variable, and these exact result tiers at the end" - and paste your full structure.
+reflection_prompts:
+  - How did organizing your content first change what the AI produced?
+  - If you rebuilt the quiz about a subject instead of yourself, what changes?
+unlocks: [roast-me-kindly, first-study-helper]
+stretch_challenge: Add a leaderboard - the page remembers each player's name and score (in the page session) and shows rankings after each run.
+safety_notes: Keep answers shareable - nothing you wouldn't want screenshot. Friends' scores are theirs; ask before posting results publicly.

@@ -1,0 +1,72 @@
+id: excuse-generator
+version: 1
+title: The "Why I Was Late" Excuse Generator (Comedy Edition)
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a generator of gloriously absurd late excuses with adjustable believability - from "almost plausible" to "a hawk took my shoe".
+goal: A working excuse generator with a believability dial you designed, plus a hall-of-fame list of its five funniest outputs.
+brief: |
+  This is a comedy writing machine disguised as a life skill. (It is NOT for
+  actually lying to anyone - the excuses must be too magnificent to use.)
+
+  Build a generator with two controls: SITUATION (late to school, gym skipped,
+  homework missing, didn't text back) and BELIEVABILITY, from level 1 "almost
+  plausible" to level 5 "cosmic catastrophe". The believability dial is the real
+  engineering: you must DEFINE the levels. What separates a level 2 from a
+  level 4? Write it down. "Level 1: ordinary events, slightly exaggerated.
+  Level 5: must involve at least one animal, weather event, or government."
+
+  That's prompt design with success criteria - the same skill that tunes serious
+  AI products, learned on hawk-related shoe theft.
+
+  Generate across situations and levels, collect the five funniest into a hall
+  of fame. Done when level 5 makes someone laugh out loud.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your level definitions; regenerate fast.
+  - surface: any_chat_ui
+    why: Works as a pinned prompt in any AI chat.
+skills:
+  teaches: [prompt-success-criteria, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your level definitions (all five) and the generator instructions.
+  - type: file_upload
+    description: The hall of fame - your five funniest excuses, labeled with situation and level.
+  - type: reflection
+    description: One sentence - what makes a level 5 excuse funny instead of just random?
+evaluation:
+  deterministic_checks:
+    - id: levels_defined
+      description: Prompt log exists, min 250 characters, contains five distinct believability level definitions.
+    - id: hall_of_fame_present
+      description: A file with five labeled excuses attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Levels are well defined
+      looks_like: Each believability level has written criteria, and generated excuses visibly match their level - a level 1 and level 5 are unmistakably different.
+      weight: 0.45
+    - criterion: Comedy quality
+      looks_like: Hall-of-fame excuses have structure (setup, escalation, commitment to the bit), not just randomness. The learner curated from many outputs.
+      weight: 0.3
+    - criterion: Range across situations
+      looks_like: Excuses cover at least three different situations, showing the generator generalizes.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Define level 1 and level 5 first - the extremes are easy. Then describe 2-4 as steps between them.
+  - level: 2
+    hint: Give one example excuse per level and tell the AI "calibrate to these". Examples anchor the scale better than descriptions alone.
+  - level: 3
+    hint: If outputs are random instead of funny, add a comedy rule - "every excuse must start believably and escalate ONE step too far" - the structure of every great excuse ever told.
+reflection_prompts:
+  - How did defining levels change the quality of the output?
+  - Where else would a "dial" like this be useful in an AI tool?
+unlocks: [food-debate-bot, nickname-generator]
+stretch_challenge: Add an "apology mode" - the generator produces a sincere, excuse-free apology for the same situation. Compare which is harder to write.
+safety_notes: This is comedy, not deception - don't use generated excuses on real teachers, parents, or employers. The funniest excuse is one everyone knows is a bit.

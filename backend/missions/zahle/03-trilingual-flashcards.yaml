@@ -1,0 +1,69 @@
+id: trilingual-flashcards
+version: 1
+title: The Trilingual Flashcard Machine
+track: language
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 75
+languages: [en]
+summary: Build a tool that turns any vocabulary list into Arabic-French-English practice cards, structured so you can reuse them anywhere.
+goal: An AI workflow that converts raw vocabulary into a clean, structured trilingual flashcard table you actually study from.
+brief: |
+  In Zahle you live between three languages. Let's make that a superpower.
+
+  Mission: build a flashcard machine. You feed it words or sentences in any of your
+  languages, it returns a structured practice set - Arabic, French, English, plus an
+  example sentence using each word in real life.
+
+  The key skill here is STRUCTURE. "Translate these words" gives you a blob of text.
+  You want a table or list with exact columns, every time, so you can paste it into
+  a sheet, a quiz app, or print it. Tell the AI the exact format: columns, order,
+  what to do with words that don't translate cleanly (keep them, flag them).
+
+  Feed it real vocabulary from your actual French or English class. Then USE the cards
+  to study for ten minutes. A tool you don't use is a screenshot, not a tool.
+build_surfaces:
+  - surface: any_chat_ui
+    why: A well-designed prompt is the whole machine for v1.
+  - surface: google_forms_sheets
+    why: Paste structured output into Sheets to build a living deck.
+  - surface: claude_project
+    why: Save the instructions so the machine is one click away.
+skills:
+  teaches: [context-grounding, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: The instructions for your flashcard machine, including the exact output format you demanded.
+  - type: file_upload
+    description: A generated deck of at least 15 entries from your real coursework (sheet, doc, or screenshots).
+  - type: reflection
+    description: One place the AI translated something badly or weirdly - and how you caught it.
+evaluation:
+  deterministic_checks:
+    - id: deck_present
+      description: Deck artifact exists with at least 15 rows/entries.
+    - id: format_specified
+      description: Prompt log explicitly defines columns/fields for the output.
+  rubric:
+    - criterion: Output format is machine-reusable
+      looks_like: Every entry follows the same columns in the same order; the deck could be pasted into a spreadsheet without cleanup.
+      weight: 0.4
+    - criterion: Grounded in real coursework
+      looks_like: Vocabulary clearly comes from the learner's actual class material, not a generic word list the AI invented.
+      weight: 0.3
+    - criterion: Critical eye on translations
+      looks_like: The reflection shows the learner checked outputs against their own trilingual knowledge and caught at least one real issue.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Describe your output like a table header - "Return a table with columns - Arabic, French, English, Example sentence (FR), Example sentence (EN)."
+  - level: 2
+    hint: Getting messy output? Add - "Output ONLY the table, no introduction, no notes after." Models love adding chatter; ban it.
+  - level: 3
+    hint: For tricky Lebanese-Arabic words, add a rule - "If a word is dialect-specific, give the Modern Standard Arabic version AND the Lebanese version, marked (leb)."
+reflection_prompts:
+  - You speak these languages - the AI only predicts them. What did you catch that someone who only spoke one language would have missed?
+unlocks: [zahle-business-faq]
+stretch_challenge: Make a second mode - the machine quizzes you from the deck, one card at a time, and keeps score.
+safety_notes: Vocabulary and sentences only - no personal details about classmates or family in your decks.

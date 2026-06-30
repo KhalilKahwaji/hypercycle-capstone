@@ -1,0 +1,76 @@
+id: attachment-saver
+version: 1
+title: Auto-Save Email Attachments to a Cloud Folder
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build the automation that ends "where's that file?" forever - attachments file themselves into organized cloud folders the moment they arrive.
+goal: A working attachment-saving automation with an organization scheme you designed, tested with real attachments, including the naming convention that makes files findable.
+brief: |
+  Somewhere in your email right now is an attachment you'll need in three
+  weeks and won't find. The worksheet from class. The schedule. The form.
+  Today you build the system that files them automatically, forever.
+
+  The automation: when an email arrives with an attachment (matching your
+  filter), the file saves itself to a cloud folder (Google Drive). The
+  twist that elevates this from plumbing to design is the ORGANIZATION
+  SCHEME - because a folder named "attachments" with 400 unsorted files is
+  just a second inbox. Decide: one folder or sorted subfolders (by sender?
+  by file type - PDFs here, images there?), and crucially the NAMING
+  CONVENTION. "document(3).pdf" is amnesia; "2026-06-12_math_worksheet.pdf"
+  is memory. Most automation tools let you rename on save using the email's
+  data - date, sender, subject. Use it.
+
+  Build in Make: email-with-attachment trigger, your filter, Drive save
+  action with your naming pattern. Test with real attachments of different
+  types, then verify the FAILURE case too: what happens with two
+  attachments in one email? An email with none? Knowing your automation's
+  edges is the difference between using it and trusting it.
+build_surfaces:
+  - surface: make
+    why: Email trigger plus Drive action with renaming - the whole build in one scenario.
+  - surface: n8n
+    why: Same pattern, open-source.
+skills:
+  teaches: [automation-trigger-action, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The scenario, plus the Drive folder showing auto-saved, auto-named files.
+  - type: prompt_log
+    description: Your organization scheme and naming convention with reasoning, plus the edge-case test results.
+  - type: reflection
+    description: Two sentences - what did the multi-attachment test reveal, and what would month-three you thank you for?
+evaluation:
+  deterministic_checks:
+    - id: working_save_evidence
+      description: Screenshots show real attachments saved to Drive by the automation with the naming pattern applied.
+    - id: scheme_present
+      description: Log contains a deliberate folder scheme and naming convention with reasoning.
+    - id: edge_cases_tested
+      description: Multi-attachment and no-attachment cases were tested with results documented.
+  rubric:
+    - criterion: It works on real mail
+      looks_like: Genuine attachments flowed from inbox to organized Drive location without manual steps, verified more than once.
+      weight: 0.35
+    - criterion: Organization is designed for retrieval
+      looks_like: The naming convention encodes date and source so files are findable months later - and the learner can defend each scheme choice.
+      weight: 0.35
+    - criterion: Edges are known
+      looks_like: Multi-attachment and edge behavior tested and documented - the learner knows exactly what their automation does and doesn't handle.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Scope the filter to start: only emails from school, or only PDFs. An attachment saver that grabs every meme image from every newsletter is a hoarder, not a filer.'
+  - level: 2
+    hint: 'In the Drive module''s filename field, combine variables: the email date + sender + original filename. Make shows available variables when you click the field - drag them in like building blocks.'
+  - level: 3
+    hint: 'For multiple attachments in one email, Make processes them through an "iterator" - if only the first file saves, add the iterator module between trigger and save. This is the most common gotcha; finding it means you''re really debugging.'
+reflection_prompts:
+  - What makes a naming convention good - and who is it really for?
+  - Which other incoming-stuff streams in your life deserve auto-filing?
+unlocks: [email-to-chat-automation, expense-logger, save-link-bot]
+stretch_challenge: 'Add a notification leg - after saving, the automation messages you "filed: [filename]" in chat. Saving plus confirmation equals an automation you can finally stop checking on.'
+safety_notes: This grants tools access to email and Drive - your own accounts only, minimum permissions, revoke when done experimenting. Watch storage if you filter loosely; auto-savers fill clouds quietly.

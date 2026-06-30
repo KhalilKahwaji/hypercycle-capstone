@@ -1,0 +1,76 @@
+id: chapter-summary-tool
+version: 1
+title: Build a Chapter-to-Study-Sheet Summarizer
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a summarizer that turns any chapter into a one-page study sheet in YOUR format - then audit it for what it silently dropped.
+goal: A summarizer producing one-page study sheets in a format you designed, tested on a real chapter, with an audit of what the summary missed.
+brief: |
+  Every summary is a series of decisions about what to DELETE. Most students
+  let the AI make those decisions invisibly. Today you take control of them -
+  and learn to audit what the machine quietly drops.
+
+  First, design YOUR study sheet format. What does the ideal one-pager
+  contain for how you study? A typical strong format: core concepts (max 5,
+  one line each), key terms with definitions, one worked example or case,
+  "likely exam questions" (3), and a "connections" line tying this chapter
+  to the previous one. Make it yours - the format IS the tool.
+
+  Build the summarizer with your format locked in, then run a real chapter
+  through it. Now THE STEP THAT MAKES THIS A BUDDY MISSION: the audit.
+  Compare the sheet against the chapter with fresh eyes. What did it drop
+  that your teacher emphasized? What nuance got flattened? ("The treaty
+  PARTLY failed" becoming "the treaty failed" is how summaries lose marks.)
+  Find at least one meaningful omission or distortion - it's almost
+  certainly there - and fix the format or instructions to prevent it.
+
+  A summarizer you've audited is a tool. One you haven't is a rumor.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Handles long chapter pastes; your format lives in system instructions.
+  - surface: claude_project
+    why: Strong at following structured output formats over long inputs.
+skills:
+  teaches: [prompt-success-criteria, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your format design and the summarizer instructions.
+  - type: file_upload
+    description: The study sheet from a real chapter.
+  - type: reflection
+    description: Your audit findings - what the summary dropped or distorted, and the fix you made.
+evaluation:
+  deterministic_checks:
+    - id: format_present
+      description: Prompt log exists, min 250 characters, contains a deliberate study-sheet format.
+    - id: sheet_present
+      description: A completed one-page study sheet is attached.
+    - id: audit_present
+      description: Reflection exists, min 150 characters, documents at least one omission or distortion found.
+  rubric:
+    - criterion: The format serves studying
+      looks_like: The sheet structure reflects how this learner actually revises - deliberate sections with caps and priorities, not a generic "summarize this".
+      weight: 0.3
+    - criterion: The audit found something real
+      looks_like: A genuine omission or flattened nuance identified by comparing sheet to source - with the specific passage named.
+      weight: 0.4
+    - criterion: The tool improved
+      looks_like: The format or instructions were patched to prevent the found failure class, not just the single instance.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Steal your format from your best handwritten revision notes ever - what sections did you naturally make? That instinct, formalized, is your spec.'
+  - level: 2
+    hint: 'For the audit, check three things in order: anything your teacher said "this will be on the exam" about; any sentence with "however/except/partly" in the original; and the chapter''s numbers. Those are where summaries silently lie.'
+  - level: 3
+    hint: 'Patch class, not instance: if it dropped a "however", add the rule "preserve all qualifiers - partly, except, only when - exactly; never simplify a qualified claim into an absolute one". One rule, whole failure class closed.'
+reflection_prompts:
+  - What kind of information does summarization systematically endanger?
+  - When is reading the full chapter still non-negotiable?
+unlocks: [reading-time-planner, essay-outline-helper, self-grading-study-test]
+stretch_challenge: Run the same chapter through your tool at three lengths - one page, half page, five bullets - and track which facts survive all three. Those survivors are probably the exam.
+safety_notes: Summaries support reading, not replace it - the audit step exists precisely because the tool WILL drop things. Use your own course materials.

@@ -1,0 +1,69 @@
+id: make-it-reliable
+version: 1
+title: Make Your Helper Smarter and More Reliable
+track: study
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Your helper works. Now make it consistent - same quality answer every time, even on hard questions.
+goal: An upgraded helper with success criteria and worked examples in its instructions, plus a before/after comparison proving it improved.
+brief: |
+  Nice progress. Your helper answers questions - but is it reliable? Ask it the same
+  kind of question three times and you'll probably get three different qualities of answer.
+
+  Today's mission: make it consistent. Two professional techniques:
+
+  1. Success criteria. Tell the helper exactly what a good answer looks like:
+     "Answers must have max 5 steps, one everyday example, and end with a check question."
+     If you can't describe a good answer, the AI can't produce one on purpose.
+
+  2. Worked examples. Show it one perfect exchange - a sample question plus the answer
+     exactly the way you want it. AI models copy patterns brilliantly. Give it a pattern.
+
+  Then run the test: pick 3 questions, save the old helper's answers, run the same 3 on
+  the upgraded helper, compare side by side. That comparison is your evidence.
+build_surfaces:
+  - surface: claude_project
+    why: Edit your existing helper's instructions directly.
+  - surface: chatgpt_gpt
+    why: Same if your v1 lives there.
+skills:
+  teaches: [prompt-examples, prompt-iteration, self-evaluation]
+  requires: [prompt-basics, prompt-success-criteria]
+mission_prerequisites: [first-study-helper]
+evidence_required:
+  - type: prompt_log
+    description: New instructions, with your success criteria and at least one worked example visible.
+  - type: file_upload
+    description: Before/after comparison - same 3 questions, old vs new answers (doc or screenshots).
+  - type: reflection
+    description: Which single change made the biggest difference, and how do you know?
+evaluation:
+  deterministic_checks:
+    - id: instructions_contain_example
+      description: Prompt log contains a recognizable worked example block.
+    - id: comparison_present
+      description: Comparison artifact covers at least 3 question pairs.
+  rubric:
+    - criterion: Success criteria are checkable
+      looks_like: Criteria are concrete enough that a stranger could mark an answer pass/fail against them (length, structure, must-include elements) - not vague wishes like "be clear".
+      weight: 0.35
+    - criterion: Worked example earns its place
+      looks_like: The example demonstrates the exact format and tone wanted, and the new answers visibly follow its pattern.
+      weight: 0.3
+    - criterion: Honest comparison
+      looks_like: The before/after uses identical questions and the learner correctly identifies where the new version is better AND any place it is not.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: Can't think of criteria? Look at the WORST answer your helper gave. What exactly is wrong with it? The opposite of that is a criterion.
+  - level: 2
+    hint: For the worked example, take a real answer it gave that was almost-good, fix it by hand until it's exactly right, and paste that into the instructions as "here is a perfect answer".
+  - level: 3
+    hint: Structure the instructions in three labeled sections - WHO YOU ARE, RULES FOR ANSWERS, EXAMPLE. Models follow labeled structure better than one long paragraph.
+reflection_prompts:
+  - Which mattered more for your helper - the criteria or the example? Why do you think that is?
+unlocks: [zahle-business-faq, spot-the-hallucination]
+stretch_challenge: Write a "grader prompt" - a second AI that scores your helper's answers against your criteria - and run it on 3 answers.
+safety_notes: Same rules as before - your own material only.

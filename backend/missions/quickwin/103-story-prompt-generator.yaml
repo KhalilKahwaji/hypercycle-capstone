@@ -1,0 +1,85 @@
+id: story-prompt-generator
+version: 1
+title: Build a Story-Prompt Generator for Creative Writing
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Engineer a generator that produces prompts with built-in tension - then prove it works by writing from one yourself.
+goal: A story-prompt generator built on your theory of what makes prompts generative, producing structured prompts with mandatory tension - validated by you actually writing from one.
+brief: |
+  "Write about a dragon" is a dead prompt. "Your character must return
+  something they stole from someone who trusts them completely" writes
+  half the story for you - in nine words. The difference is engineerable,
+  and today you engineer it.
+
+  Build your THEORY first by studying the gap: dead prompts name a
+  TOPIC; live prompts install a TENSION - a want colliding with an
+  obstacle, a secret with a deadline, a relationship with a cost. Live
+  prompts also leave the right things blank (who, where, when - yours)
+  while nailing the right things down (the dilemma). Write your own
+  rules for what every prompt must contain - a typical strong set:
+  someone wants something, something makes it hard, a clock or a cost,
+  and one concrete sensory detail to anchor it ("the smell of burnt
+  sugar" does more than "a kitchen").
+
+  Then the generator: it takes a genre and mood ("quiet horror",
+  "funny-sad family story") and produces prompts in YOUR structure -
+  with a no-clichés list you maintain (no prophecies, no chosen ones,
+  no "it was all a dream" - your list, your taste).
+
+  Validation is non-negotiable and it's the fun part: pick one generated
+  prompt and WRITE from it - 200 words minimum, by hand or keyboard,
+  yours alone. The test isn't whether the writing is good; it's whether
+  the prompt PULLED. Did the words come? Then it generates. Done when
+  one of your prompts drags 200 words out of you almost against your
+  will.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your prompt theory; generation is instant.
+  - surface: claude_project
+    why: Good at tension-bearing structures and honoring no-clichés lists.
+  - surface: any_chat_ui
+    why: A pinned generator works anywhere.
+skills:
+  teaches: [prompt-examples, prompt-success-criteria]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your prompt theory (the rules), the no-clichés list, and a batch of generated prompts.
+  - type: file_upload
+    description: Your 200+ words written from one generated prompt.
+  - type: reflection
+    description: Two sentences - did the prompt pull, and which rule in your theory did the most work?
+evaluation:
+  deterministic_checks:
+    - id: theory_present
+      description: Prompt log contains explicit prompt-quality rules and a no-clichés list.
+    - id: prompts_generated
+      description: A batch of structured prompts following the rules exists.
+    - id: writing_present
+      description: 200+ words of the learner's own writing from a generated prompt attached.
+  rubric:
+    - criterion: The theory holds water
+      looks_like: Rules that distinguish topic from tension, mandate the dilemma elements, and reserve the right blanks - a real model of generativity.
+      weight: 0.35
+    - criterion: Generated prompts obey and vary
+      looks_like: The batch follows the structure while spanning genuinely different situations - structure without sameness.
+      weight: 0.3
+    - criterion: The pull-test was honest
+      looks_like: Real writing happened from a real generated prompt, and the reflection assesses the pull truthfully - including if it didn't pull, with a theory of why.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Calibrate your theory on found examples: find three writing prompts online that made you want to write and three that bored you. What''s structurally different? Your rules are hiding in that comparison.'
+  - level: 2
+    hint: 'The tension formula to start from: [someone] must [verb] [something] but [obstacle], and [cost or clock]. Generate ten, then loosen the formula where it creaks - formulas are scaffolding, not cages.'
+  - level: 3
+    hint: 'If prompts feel samey, vary the BLANK pattern: some prompts fix the character and blank the setting, others reverse it, others blank the genre itself ("a heist, but the location makes it absurd"). Rotating what''s given is the variety engine.'
+reflection_prompts:
+  - Why does tension generate while topic suffocates?
+  - What did writing from your own machine's prompt feel like?
+unlocks: [adventure-story-game, mood-to-lyrics, week-in-comic]
+stretch_challenge: Run a prompt night - generate five prompts, three friends each pick one and write for ten minutes, read aloud. Your machine just hosted a writing circle.
+safety_notes: Keep generated prompts appropriate for whoever uses the generator. The writing it pulls from you is yours - the AI made the invitation, you made the art.

@@ -1,0 +1,76 @@
+id: family-business-page
+version: 1
+title: Build a One-Page Website for a Family Member's Business
+track: business
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a real one-page site for a real business owned by someone you know - your first build with an actual client.
+goal: A one-page business site built from a real conversation with the owner, approved by them, answering a customer's three basic questions.
+brief: |
+  This mission has something none of your builds had before: a CLIENT.
+
+  Pick someone in your family or neighborhood with a small business - a shop,
+  a salon, tailoring, food from home, repair work. Your job: a clean one-page
+  site that answers the three things every customer asks. What do you offer?
+  When/where are you? How do I reach you?
+
+  Step one is an INTERVIEW, and it's the heart of the mission. Ask the owner:
+  what do customers always ask? What are you most proud of? What should the
+  page say first? Write their answers down - that's your content, in their
+  words. Real client work starts with listening, not building.
+
+  Then build: business name, what-we-do in one proud sentence, services or
+  top products, hours and location, contact (WhatsApp number only with the
+  owner's explicit OK). Keep it warm and simple - this represents someone's
+  livelihood. Show the owner, change what they ask (yes, even if you liked
+  your version - that's client work too), and get their approval.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview the page from your interview notes.
+  - surface: claude_project
+    why: Good at warm, simple business copy in the owner's voice.
+  - surface: replit
+    why: Publish it - a real business deserves a real URL.
+skills:
+  teaches: [user-feedback, shipping-basics]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: The finished page (or live URL if the owner wanted it published).
+  - type: prompt_log
+    description: Your interview notes and at least one change made because the owner asked for it.
+  - type: reflection
+    description: Two sentences - what did the owner ask to change, and how did it feel to change it?
+evaluation:
+  deterministic_checks:
+    - id: page_evidence_present
+      description: Screenshot or URL artifact attached.
+    - id: interview_notes_present
+      description: Prompt log exists, min 300 characters, contains interview answers preceding the build.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Built from listening
+      looks_like: Page content traces to the interview - the owner's pride point is featured, customers' real questions are answered, the voice sounds like the business.
+      weight: 0.4
+    - criterion: Client feedback was honored
+      looks_like: At least one owner-requested change was made and documented, even where the learner preferred their original.
+      weight: 0.3
+    - criterion: Customer-ready quality
+      looks_like: A stranger could find what's offered, when, where, and how to reach the business in under 30 seconds, on a phone.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Three interview questions that never fail: "What do customers always ask you?", "What are you most proud of?", "What''s the one thing the page must say?"'
+  - level: 2
+    hint: Write the what-we-do line in the owner's words, then polish WITH them - "Hajj Abu Elias fixes anything with a motor, and has since 1985" beats any corporate slogan.
+  - level: 3
+    hint: If the owner is shy about the page, build first and show on your phone - concrete beats abstract. Most owners light up when they see their name styled properly, then the feedback flows.
+reflection_prompts:
+  - What surprised you about what the owner wanted versus what you assumed?
+  - What would you do differently with your second client?
+unlocks: [zahle-business-faq, shop-content-studio, imaginary-product-landing]
+stretch_challenge: Add a "find us" section with an embedded map and a WhatsApp click-to-chat button - the two features small-business customers use most.
+safety_notes: Publish only with the owner's explicit permission, and only contact details they approve. Their business info is theirs - they're trusting you with it.

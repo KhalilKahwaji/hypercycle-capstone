@@ -1,0 +1,76 @@
+id: debate-settler-poll
+version: 1
+title: Settle a Friendly Debate With a Real Poll
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Take a debate your group never resolves, design a fair poll, collect ten real votes, and announce the verdict with proper drama.
+goal: A fairly-worded poll on a real disputed question, ten or more votes collected, and a results announcement delivered back to the group.
+brief: |
+  Every group has an eternal debate. Is the sandwich place better than the
+  bakery? Is studying with music actually studying? Crunchy or smooth?
+  Today the debate DIES - by democracy.
+
+  The skill hiding inside this silly mission is FAIR MEASUREMENT. Both sides
+  must agree the poll is neutral before voting starts, which means: neutral
+  wording (not "the objectively superior bakery"), balanced options presented
+  in random or alphabetical order, and one decision you must make up front -
+  who counts as a voter? Friends only? Family allowed? Can the bakery owner's
+  cousin vote? Define the electorate BEFORE results exist, because after,
+  every rule change looks like cheating. (This is real research-methods
+  thinking, smuggled in via sandwiches.)
+
+  Collect at least ten votes. Then announce the verdict with the drama it
+  deserves - a results card with the numbers, the winner, and a gracious
+  one-liner for the losing side. Done when both sides accept the result -
+  or immediately demand a rematch with better rules, which is also science.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Fast anonymous voting with live result counts.
+  - surface: google_ai_studio
+    why: Neutrality-check your wording and generate the results card.
+  - surface: canva
+    why: Make the verdict announcement look official.
+skills:
+  teaches: [user-feedback, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The poll, the results with ten or more votes, and your verdict announcement.
+  - type: prompt_log
+    description: Your wording drafts including the neutrality check, and your electorate rule.
+  - type: reflection
+    description: Two sentences - did the losing side accept it, and what rule would you change for the rematch?
+evaluation:
+  deterministic_checks:
+    - id: votes_present
+      description: Screenshot shows ten or more votes collected.
+    - id: neutrality_check_present
+      description: Prompt log exists, min 200 characters, shows wording was checked for bias and an electorate rule was set before voting.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The poll was fair
+      looks_like: Wording is neutral (both sides would sign off), options balanced, and the voter rule was defined before results came in.
+      weight: 0.4
+    - criterion: Real turnout
+      looks_like: Ten or more genuine votes from the defined electorate.
+      weight: 0.3
+    - criterion: The verdict was delivered
+      looks_like: A results announcement with real numbers went back to the group, with a reaction captured.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Pick a debate with actual partisans - if nobody cares about the answer, nobody votes. The best polls settle arguments people have had at least twice.
+  - level: 2
+    hint: 'Neutrality test: show the question to one person from each side BEFORE launching. If either says "that''s worded against us", fix it until both shrug.'
+  - level: 3
+    hint: To reach ten votes fast, make voting effortless - one question, anonymous, 10 seconds - and send it with the pitch "settle this once and for all". Stakes drive turnout.
+reflection_prompts:
+  - Why did the electorate rule need to exist before the results?
+  - What would change if 100 strangers voted instead of 10 friends?
+unlocks: [first-survey, food-debate-bot, which-one-are-you-quiz]
+stretch_challenge: Add a second poll question asking HOW STRONGLY voters feel (1-5) - then check whether the winning side also cares more, or just outnumbers.
+safety_notes: Settle debates about things, not people - no polls ranking or judging real individuals. Keep the loser's one-liner gracious; democracy includes dignity.

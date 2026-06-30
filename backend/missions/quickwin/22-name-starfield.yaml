@@ -1,0 +1,72 @@
+id: name-starfield
+version: 1
+title: An Animated Starfield With Your Name Among the Stars
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a drifting 3D-feeling starfield with your name floating in it - and learn layering, depth, and subtlety along the way.
+goal: A starfield page with convincing depth (near stars fast, far stars slow) and your name integrated into the scene with style.
+brief: |
+  Every movie studio has a space logo. Today you get yours.
+
+  Build a starfield that DRIFTS - and here's the design secret you're really
+  learning: DEPTH comes from layers. Far stars: tiny, dim, slow. Near stars:
+  bigger, brighter, faster. Three layers moving at different speeds and your
+  flat screen becomes deep space. Ask for exactly that.
+
+  Then place your name in the scene. The amateur move is slapping text on top;
+  the pro move is making it BELONG - maybe it's spelled out IN stars that
+  drift slightly, maybe it glows like a constellation label, maybe stars pass
+  in front of it. Try at least two treatments and keep the better one.
+
+  Tune until it's calm, deep, and slightly majestic. This is also a taste
+  exercise: the difference between "space screensaver from 2005" and "studio
+  logo" is restraint. Fewer, slower, dimmer usually wins.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview in one place; quick layer-speed experiments.
+  - surface: claude_project
+    why: Previews in chat; handles "make it feel more cinematic" notes well.
+skills:
+  teaches: [ui-basics, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The final starfield with your name (or a short recording showing the drift).
+  - type: prompt_log
+    description: Your layer design, both name treatments you tried, and which you kept with the reason.
+  - type: reflection
+    description: One sentence - what did you remove or reduce to make it look better?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: At least one screenshot or recording attached.
+    - id: prompt_log_present
+      description: Prompt log exists, min 200 characters, shows two name treatments compared.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Depth illusion works
+      looks_like: Evidence shows at least two visibly different star layers (size/speed/brightness), creating a sense of depth rather than uniform dots.
+      weight: 0.35
+    - criterion: Name belongs to the scene
+      looks_like: The name is integrated (constellation, glow, parallax) rather than static text pasted over the animation - and the learner compared two options before choosing.
+      weight: 0.35
+    - criterion: Restraint as taste
+      looks_like: The reflection or log shows something deliberately reduced (count, speed, brightness, colors) to improve the result.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Ask for exactly three layers - "background: 200 tiny dim slow stars. middle: 80 medium stars. foreground: 20 bright faster stars." Layer language gets you depth in one shot.'
+  - level: 2
+    hint: For the name, try treatment A - "my name in soft glowing text that pulses very slowly" - and treatment B - "my name spelled out by its own constellation of stars connected by faint lines". Screenshot both before choosing.
+  - level: 3
+    hint: If it looks busy or cheap, apply the restraint pass - "halve the number of stars, slow everything by 50%, reduce all brightness 30%". Compare before/after - majestic almost always means less.
+reflection_prompts:
+  - Why does varying speed create depth on a flat screen?
+  - Which version of your name looked better, and can you say why?
+unlocks: [click-color-art, weird-clock, keyboard-fireworks]
+stretch_challenge: Add a shooting star that streaks across every 10-15 seconds - rare enough to feel special when you catch one.
+safety_notes: Nothing sensitive here - if you publish it, your first name or a nickname is plenty; no need for your full name.

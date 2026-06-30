@@ -1,0 +1,73 @@
+id: club-feedback-form
+version: 1
+title: Build a Feedback Form for a Club, Class, or Team
+track: community
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a feedback form for a real group you're part of - designed so people answer honestly, and summarized so leaders actually act on it.
+goal: A live feedback form for a real group, five or more real responses, and a one-page summary of findings delivered to whoever runs the group.
+brief: |
+  Every club has opinions nobody says out loud. A good feedback form is how
+  quiet opinions become improvements - and today you build one for a group
+  you're actually in.
+
+  Pick your group: scouts, football team, study group, class, choir. Then
+  design for HONESTY, the hard part. People soften feedback when they think
+  they'll be identified, so: anonymous by default, mix scales (1-5) with one
+  or two open questions, and always include the golden pair - "what should we
+  KEEP doing?" and "what should we CHANGE?" Keep is as important as change;
+  it protects what works.
+
+  Collect at least five responses. Then the step that separates builders from
+  form-makers: paste the anonymous responses to the AI and work up a SUMMARY -
+  top three themes, one surprise, one suggested action. Deliver it to the
+  coach, teacher, or club leader. Feedback that reaches a decision-maker is
+  the only feedback that counts.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Anonymous collection plus automatic response spreadsheet.
+  - surface: google_ai_studio
+    why: Question design and the summary analysis.
+skills:
+  teaches: [user-feedback, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The form live, and the response view showing five or more answers.
+  - type: file_upload
+    description: Your one-page summary - themes, surprise, suggested action.
+  - type: reflection
+    description: Two sentences - what did the group leader say when you delivered it?
+evaluation:
+  deterministic_checks:
+    - id: responses_present
+      description: Screenshot shows at least five responses collected.
+    - id: summary_present
+      description: Summary file attached with themes and a suggested action.
+    - id: reflection_present
+      description: Reflection exists, min 80 characters, describes actual delivery.
+  rubric:
+    - criterion: Designed for honesty
+      looks_like: The form is anonymous, mixes scales with open questions, and includes both keep and change questions.
+      weight: 0.3
+    - criterion: Summary finds real signal
+      looks_like: Themes are grounded in actual responses (quotable), the surprise is genuinely non-obvious, and the action is specific enough to do next week.
+      weight: 0.4
+    - criterion: It reached a decision-maker
+      looks_like: The summary was delivered to whoever runs the group, with their reaction captured.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Keep it to 6 questions max - two scales (overall, organization), two opens (keep, change), one "anything else?". Long forms get abandoned; short forms get truth.
+  - level: 2
+    hint: To boost honesty, say in the form intro - "completely anonymous, results shared as a summary only". And mean it - no "just write your name if you want" loopholes.
+  - level: 3
+    hint: 'For the summary: "Here are anonymous feedback responses. Group them into themes with counts, quote one example per theme, flag the most surprising response, and suggest the single highest-impact action." Then YOU pick the final action - you know the group.'
+reflection_prompts:
+  - What did anonymity change about what people wrote?
+  - Why does "what should we keep" matter as much as "what should we change"?
+unlocks: [first-survey, report-a-problem-form, volunteer-form]
+stretch_challenge: Run the same form again in a month and build a comparison - did the changed thing improve? That loop is how real organizations learn.
+safety_notes: Anonymous means anonymous - never try to identify respondents from their answers. If a response raises a serious concern (safety, bullying), bring it to a trusted adult rather than handling it yourself.

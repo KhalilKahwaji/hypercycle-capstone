@@ -1,0 +1,78 @@
+id: hometown-trivia-quiz
+version: 1
+title: Build a Trivia Quiz About Your Hometown
+track: heritage
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Research and build a trivia quiz about your town that teaches even lifelong locals something - with every fact verified by you.
+goal: A working trivia quiz of 8-10 verified questions about your town, mixing easy pride and genuine surprises, tested on two locals.
+brief: |
+  How well do you actually know the place you're from? Today you find out -
+  then turn what you learn into a quiz that stumps the whole neighborhood.
+
+  Research first, and here's the twist that makes this an AI lesson: ask the
+  AI about your town's history and facts, then VERIFY EVERYTHING. AI models
+  confidently invent local history - wrong founding dates, mixed-up landmarks,
+  imaginary famous residents. Cross-check against real sources: your
+  municipality's page, Wikipedia's references, and the most underrated source
+  in existence - asking an older relative. Every fact in your quiz must have
+  a source you can name. That habit is the mission inside the mission.
+
+  Design the difficulty curve: start with easy pride ("what's our town famous
+  for?"), build to genuine stumpers ("what was the main square called before
+  it was renamed?"). Wrong answers should be plausible - that's what makes
+  trivia fun.
+
+  Build it as a page or form, then test on two real locals. Done when someone
+  who's lived there forever says "wait, REALLY?" - you taught a local their
+  own town.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Research drafting and quiz building - with verification as your job.
+  - surface: google_forms_sheets
+    why: Quiz mode grades automatically and collects scores.
+  - surface: claude_project
+    why: Good at generating plausible wrong answers for each question.
+skills:
+  teaches: [ai-limits, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your fact list with the source for each fact - including at least one AI claim you caught being wrong or unverifiable.
+  - type: screenshot
+    description: The quiz live, plus two locals' scores or reactions.
+  - type: reflection
+    description: Two sentences - what did the AI get wrong about your town, and how did you catch it?
+evaluation:
+  deterministic_checks:
+    - id: sourced_facts_present
+      description: Prompt log exists, min 400 characters, lists 8+ facts each with a named source.
+    - id: quiz_evidence_present
+      description: Screenshot shows the working quiz and at least one taker's result.
+    - id: reflection_present
+      description: Reflection exists, min 80 characters, names a caught error or unverifiable claim.
+  rubric:
+    - criterion: Every fact is verified
+      looks_like: Each question's fact has a checkable source, and at least one AI hallucination or doubtful claim was caught and excluded.
+      weight: 0.4
+    - criterion: Difficulty is designed
+      looks_like: Questions ramp from easy to stumper, and wrong options are plausible rather than obvious throwaways.
+      weight: 0.3
+    - criterion: Locals were genuinely tested
+      looks_like: Two real locals took it, scores were recorded, and at least one question surprised them.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Mine these categories: oldest building, what the town was called before, the famous food''s real origin, population now vs 50 years ago, the story behind a street name.'
+  - level: 2
+    hint: 'Verification shortcut: ask the AI "what''s your source and how confident are you?" for each fact - then independently check the two it''s least confident about AND two it''s most confident about. Confidence is not accuracy.'
+  - level: 3
+    hint: An older relative is a primary source - read them your quiz facts and watch their face. "No no no, that's not how it was" is research gold; write down their version and check which is right.
+reflection_prompts:
+  - Why do you think the AI invents plausible-sounding local facts instead of saying "I don't know"?
+  - Which source turned out most reliable - the AI, the internet, or your relative?
+unlocks: [heritage-guide, landmark-tourism-guide, spot-the-hallucination]
+stretch_challenge: Make it bilingual and share it in a local community group - collect scores from ten strangers who love the town as much as you.
+safety_notes: Stick to public history and culture - no questions about living private individuals or family matters. Credit your sources on the quiz's final screen.

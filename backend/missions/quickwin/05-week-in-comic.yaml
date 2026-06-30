@@ -1,0 +1,73 @@
+id: week-in-comic
+version: 1
+title: Turn Your Week Into an AI Comic Strip
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Script a 4-6 panel comic about your actual week, generate the art with AI, and assemble it into one shareable strip.
+goal: A finished comic strip (4-6 panels, one image or page) telling one true, funny story from your week.
+brief: |
+  Something funny happened to you this week. It always does. Today it becomes a comic.
+
+  Step one is WRITING, not art: pick one small true story - the bus you missed,
+  the exam plot twist, the dish that almost worked. Work with the AI to break it
+  into 4-6 panels: setup, build, twist, punchline. This is prompt decomposition -
+  taking one big thing and splitting it into exact pieces.
+
+  Step two: generate each panel. Describe every panel precisely - who's in it,
+  what's happening, the style ("simple flat cartoon, consistent characters").
+  Keeping a character looking the same across panels is genuinely tricky - reuse
+  the exact same character description every time.
+
+  Step three: assemble panels into one strip in Canva, captions included.
+  Done when someone can read it start to finish and the punchline lands.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Script the panels and generate images in one place.
+  - surface: canva
+    why: Drag panels into a comic-strip layout and add speech bubbles fast.
+  - surface: chatgpt_gpt
+    why: Alternative with built-in image generation if you already use it.
+skills:
+  teaches: [prompt-decomposition, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: The finished comic strip as one image or PDF.
+  - type: prompt_log
+    description: Your panel-by-panel script and at least one image prompt showing how you described style and characters.
+  - type: reflection
+    description: Two sentences - what was hardest about keeping panels consistent, and what trick helped?
+evaluation:
+  deterministic_checks:
+    - id: comic_present
+      description: A file artifact (image or PDF) is attached.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 300 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Story structure works
+      looks_like: The strip has a clear setup and punchline readable by a stranger with no explanation needed.
+      weight: 0.35
+    - criterion: Decomposition is visible
+      looks_like: The prompt log shows the story deliberately broken into per-panel descriptions before image generation started.
+      weight: 0.35
+    - criterion: Visual consistency effort
+      looks_like: Characters and style are recognizably similar across panels, or the reflection honestly explains the attempts to get there.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Can't pick a story? Finish this sentence - "You won't believe what happened when I..." The first thing that comes to mind is your comic.
+  - level: 2
+    hint: Write one line per panel first - P1 setup, P2 things go fine, P3 the twist, P4 the reaction. Get the script funny BEFORE generating any images.
+  - level: 3
+    hint: For consistency, write one character description ("a tall boy with curly black hair, red hoodie, flat cartoon style, white background") and paste it word-for-word into every panel prompt.
+reflection_prompts:
+  - Did the AI's art change your story, or did your story stay in charge?
+  - What would panel 7 be if the story continued?
+unlocks: [movie-trailer-me, local-meme-generator]
+stretch_challenge: Make a second strip from the same week - but told from the other person's (or the bus driver's) point of view.
+safety_notes: Keep real people other than you out of recognizable detail unless they're happy to star in it. Generated images should not imitate a specific living artist's style by name.

@@ -1,0 +1,72 @@
+id: emoji-translator
+version: 1
+title: Build an Emoji Translator - Words In, Pure Emoji Out
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a translator that converts any sentence into pure emoji - and the real test, whether your friends can decode it back.
+goal: A working emoji translator with translation rules you defined, validated by a decode test where friends guess your translated sentences.
+brief: |
+  Emoji is a language. Today you build its official translator - and then
+  scientifically test whether anyone can read it.
+
+  Build a tool with one job: sentence in, ONLY emoji out. No letters, no
+  numbers-as-letters, no cheating. You'll quickly hit the fun problem: "I
+  missed the bus" is easy, but "my sister borrowed my charger without asking"
+  requires emoji POETRY. Write translation rules to handle it - how to show
+  past tense? Negation? People? Feelings about facts, versus the facts?
+
+  Then run the decode test, the heart of this mission: translate five sentences
+  about your day, send ONLY the emoji to two friends, and have them guess each
+  sentence. Score the results. A 5/5 means your translator speaks human; a 1/5
+  means beautiful nonsense. Tune one rule and retest your worst sentence.
+
+  Done when your decode score improves between round one and round two.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your translation rules; instant retries while tuning.
+  - surface: any_chat_ui
+    why: Works as a pinned instruction prompt anywhere.
+skills:
+  teaches: [prompt-success-criteria, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your translation rules and the five test sentences with their emoji translations.
+  - type: screenshot
+    description: Friends' decode attempts with your scoring (right/wrong per sentence, both rounds).
+  - type: reflection
+    description: Two sentences - which sentence type was hardest to translate, and what rule fixed it?
+evaluation:
+  deterministic_checks:
+    - id: rules_present
+      description: Prompt log exists, min 250 characters, contains explicit translation rules and five test pairs.
+    - id: decode_test_present
+      description: Screenshot artifact shows real decode attempts and scores.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Rules handle hard cases
+      looks_like: The rules address at least two genuinely tricky problems (tense, negation, abstract feelings, names) rather than only word-to-emoji swaps.
+      weight: 0.35
+    - criterion: The decode test was real
+      looks_like: Real friends guessed real sentences, scores were honestly recorded for both rounds, including failures.
+      weight: 0.35
+    - criterion: Measured improvement
+      looks_like: A rule change between rounds, with the second-round score showing improvement (or an honest analysis of why it didn't).
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Start with the easy rule - one emoji per key idea, in sentence order. Translate one sentence, look at it, and write your next rule based on what's confusing.
+  - level: 2
+    hint: For hard concepts, define conventions - "past = ⏪ before the verb emoji", "not/never = 🚫 before the thing denied". Tell your friends NOTHING about the conventions - that's what the test measures.
+  - level: 3
+    hint: If decode scores are terrible, your translations are too compressed. Add a rule - "max one abstract emoji per sentence; prefer concrete objects and faces". Concrete decodes; abstract decorates.
+reflection_prompts:
+  - What did the decode test teach you that just looking at the output didn't?
+  - Where else could you use a "translate, then test with real humans" loop?
+unlocks: [trilingual-flashcards, nickname-generator]
+stretch_challenge: Build reverse mode - friends send emoji, your translator guesses the sentence - and find out which direction is harder and why.
+safety_notes: Use your own everyday sentences for the test - nothing private about other people, since your friends will be reading and guessing them.

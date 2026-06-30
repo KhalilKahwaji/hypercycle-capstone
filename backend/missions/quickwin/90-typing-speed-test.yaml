@@ -1,0 +1,82 @@
+id: typing-speed-test
+version: 1
+title: Build a Typing Speed Test With a Friend Leaderboard
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a typing test that measures real WPM and accuracy - understand the formula yourself - then ignite a friend-group speed war with a leaderboard.
+goal: A working typing test with correct WPM and accuracy math you can explain, a leaderboard, and scores from at least three real competitors.
+brief: |
+  Typing speed is the rare skill that's measurable in sixty seconds, and
+  measurement plus friends equals instant competition. Today you build the
+  arena.
+
+  The mechanics: show a passage, start timing on the first keystroke,
+  compare typed text against the target live (correct characters one
+  color, errors another - that live feedback is what makes it feel pro),
+  and at the end compute the two numbers that matter. Here's the rule of
+  this mission: UNDERSTAND THE MATH you're shipping. WPM has a standard
+  definition - (correct characters / 5) / minutes - five characters
+  counting as one "word" by convention. Accuracy is correct characters
+  over total typed. Ask the AI to explain the formula until you can defend
+  it, because a measurement tool you can't explain is a rumor with a
+  number (your validator instincts should be twitching by now).
+
+  Choose your passages with personality - inside jokes, lines from your
+  group chat's history, your school's most-said sentences. Typing "the
+  quick brown fox" is homework; typing "Walid is late again and blaming
+  the bus" is content.
+
+  Add the leaderboard - name plus score, sorted - then release it to your
+  friends and watch the speed war ignite. Done when someone demands a
+  rematch because their little sister beat them.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and iterate the test; timing and comparison logic in one file.
+  - surface: claude_project
+    why: Good at explaining the measurement math until you own it.
+  - surface: replit
+    why: Host it - leaderboards need everyone on the same arena.
+skills:
+  teaches: [data-structuring, debugging-loop]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: prompt_log
+    description: The build conversation including the WPM formula explained in YOUR words.
+  - type: screenshot
+    description: A completed test showing WPM and accuracy, and the leaderboard with three or more real scores.
+  - type: reflection
+    description: Two sentences - who's top of the leaderboard, and does the WPM number match what online tests give them?
+evaluation:
+  deterministic_checks:
+    - id: formula_understanding_present
+      description: Prompt log contains the learner's own explanation of the WPM calculation.
+    - id: leaderboard_evidence
+      description: Screenshot shows three or more real competitors' scores ranked.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The measurement is correct and owned
+      looks_like: WPM and accuracy compute per standard definitions, sanity-checked against a known test, and the learner can explain the divide-by-five convention.
+      weight: 0.4
+    - criterion: The experience feels right
+      looks_like: Live correct/error coloring, timing starting on first keystroke, personal passages - the details that make it a product, not an exercise.
+      weight: 0.3
+    - criterion: The competition is real
+      looks_like: Three or more genuine players on the leaderboard and evidence of actual rivalry (rematches, trash talk, a contested score).
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Build order: passage display and input box → live character comparison with coloring → timer and end detection → the two formulas → leaderboard last. Five small steps, each tested.'
+  - level: 2
+    hint: 'Sanity-check the math: type at a deliberate steady pace, compute WPM by hand from the formula, compare to what your test shows. Then take an established online test at the same effort - the numbers should be within a few WPM. If not, hunt the discrepancy.'
+  - level: 3
+    hint: 'Classic bugs: timer starting on page load instead of first keystroke (inflates everyone''s time), and counting corrected errors as still-wrong (decide: is accuracy final-state or every-keystroke? Both are defensible - pick one and state it on the page).'
+reflection_prompts:
+  - Why does a standard definition matter for a measurement?
+  - What design choice most affected how fun it feels versus how accurate it is?
+unlocks: [reaction-time-tester, rps-trash-talk, me-quiz]
+stretch_challenge: Add a daily passage mode - same text for everyone each day, scores compared on equal ground. You've just invented the format every viral daily game uses.
+safety_notes: Leaderboard names should be nicknames if the page is public. Keep passages kind - group chat quotes need the quoted person's blessing before becoming a typing test.

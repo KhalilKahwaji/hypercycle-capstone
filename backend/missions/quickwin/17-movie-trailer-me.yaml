@@ -1,0 +1,75 @@
+id: movie-trailer-me
+version: 1
+title: Your Life as a Movie Trailer - Script Generator
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Turn an ordinary week of your life into an epic movie trailer script - genre of your choice, deep-voice narration included.
+goal: A polished movie trailer script (45-60 seconds when read aloud) about your real life, in a deliberately chosen genre, that you performed at least once.
+brief: |
+  "In a world... where the alarm rings at 6:45... one student... hits snooze
+  ONE. LAST. TIME." Your life is already cinematic. Today we add the narrator.
+
+  Feed the AI the mundane truth of your week - the bus, the quiz, the empty
+  fridge, the group project where you did everything. Then pick a GENRE and
+  commit: epic action, horror ("the WiFi... was never coming back"), nature
+  documentary about you in your habitat, courtroom drama versus your alarm clock.
+
+  The skill is structure: real trailers have beats - the calm opening, the
+  trouble, the escalation montage, the one-liner, the title card. Get the AI
+  to write YOUR week into those beats. Then tune the voice: trailer lines are
+  short. Punchy. They. Pause. Dramatically.
+
+  Mandatory final step: read it aloud in your best trailer voice. That's the
+  quality test - lines that feel flat out loud go back for revision. Done when
+  the title card line makes you grin.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Fast script iteration; try the same week in two genres cheaply.
+  - surface: claude_project
+    why: Strong at dramatic structure and punching up one-liners.
+  - surface: any_chat_ui
+    why: Any AI chat can write a trailer.
+skills:
+  teaches: [prompt-decomposition, prompt-success-criteria]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: The final trailer script, formatted with its beats labeled.
+  - type: prompt_log
+    description: Your week's raw facts, your genre choice, and at least one revision request after reading aloud.
+  - type: reflection
+    description: One sentence - which real-life detail became the best dramatic moment?
+evaluation:
+  deterministic_checks:
+    - id: script_present
+      description: Script file attached, between 80 and 250 words.
+    - id: prompt_log_present
+      description: Prompt log exists and is at least 200 characters.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 40 characters.
+  rubric:
+    - criterion: Trailer structure present
+      looks_like: The script has recognizable beats - setup, escalation, one-liner, title card - not just a paragraph describing a week.
+      weight: 0.35
+    - criterion: Real life, elevated
+      looks_like: Specific true details from the learner's week carry the drama - the comedy comes from treating small things as epic.
+      weight: 0.35
+    - criterion: Read-aloud revision happened
+      looks_like: The log shows at least one change made because a line didn't work out loud ("shorter", "punchier", "better title card").
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: List your week's five most boring true events first. The more boring the list, the funnier the trailer - drama plus mundanity is the whole joke.
+  - level: 2
+    hint: Give the AI the beat structure explicitly - "calm opening, the problem appears, escalation montage of three moments, one killer line, title card". Ask it to label each beat.
+  - level: 3
+    hint: If lines fall flat out loud, ask for "shorter sentences, more pauses, every line under 10 words" - then read again. Trailer voice needs room to breathe.
+reflection_prompts:
+  - What did the genre choice change about the same set of facts?
+  - Which line did you rewrite after hearing yourself say it?
+unlocks: [week-in-comic, mood-to-lyrics]
+stretch_challenge: Record yourself performing it over free background music and share the audio with one friend - or generate a movie-poster image to match the trailer.
+safety_notes: Star in your own trailer - family and friends appear only as background characters unless they've okayed a bigger role. Keep real names of others out of shared versions.

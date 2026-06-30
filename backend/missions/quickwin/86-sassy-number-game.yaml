@@ -1,0 +1,78 @@
+id: sassy-number-game
+version: 1
+title: Build a Number Guessing Game With Sass
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build the classic guess-the-number game, then make it unforgettable with a personality that reacts to HOW you're playing.
+goal: A working number guessing game whose responses change based on play patterns - with a reaction table you designed before building.
+brief: |
+  Guess-the-number is the oldest game in programming. Yours will be the
+  only one with ATTITUDE - and the attitude is the engineering.
+
+  The base game is quick: the page picks a secret number 1-100, you guess,
+  it says higher or lower, guesses are counted. Ask for it, confirm it
+  works, ten minutes.
+
+  Now the real build: the REACTION TABLE. Map play patterns to personality.
+  Guess 50 first? "Bold. Textbook. Boring." Same number twice? "We BOTH
+  know you tried that." Ignoring the hints ("higher!" followed by a lower
+  guess)? The game notices: "I said HIGHER. This is going in your file."
+  Win in four guesses? Grudging respect. Fifteen? "I've seen glaciers
+  decide faster." Design at least six pattern-to-reaction pairs BEFORE
+  generating - detecting a pattern (like hint-ignoring) and responding to
+  it is real game-state logic wearing a clown costume.
+
+  Then tune the sass by playtest: too mean stops being fun, too soft isn't
+  sass. Find your line. Done when a friend plays it, laughs, and
+  immediately plays again - the only metric games answer to.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview the game; reaction tweaks are instant.
+  - surface: claude_project
+    why: Strong at both the game logic and the comedy writing.
+  - surface: replit
+    why: Host it so friends play at a real URL.
+skills:
+  teaches: [ui-basics, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your reaction table designed before building, and the build conversation.
+  - type: screenshot
+    description: The game mid-sass - a pattern-triggered reaction visible.
+  - type: reflection
+    description: Two sentences - which reaction landed best with your playtester, and where was the too-mean line?
+evaluation:
+  deterministic_checks:
+    - id: reaction_table_present
+      description: Prompt log exists, min 250 characters, contains six or more pattern-to-reaction pairs designed pre-build.
+    - id: game_evidence
+      description: Screenshot shows the working game with a contextual reaction.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Reactions are pattern-driven
+      looks_like: Responses demonstrably depend on play behavior (repeats, hint-ignoring, speed) - state detection, not random insults.
+      weight: 0.4
+    - criterion: The sass is calibrated
+      looks_like: Playtesting found the funny-not-hurtful line, with at least one adjustment - the learner tuned tone as a design parameter.
+      weight: 0.3
+    - criterion: It's actually fun
+      looks_like: A real playtester played more than once, and the game works flawlessly underneath the comedy.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Design the table as two columns: PATTERN (first guess is 50, repeated guess, ignored hint, win under 5, win over 12) and REACTION (the line). Write the lines in your own voice - your sass, not the AI''s default.'
+  - level: 2
+    hint: 'Ask for the base game first, plain. Then: "now track these patterns [your table] and show the matching reaction instead of the plain higher/lower message". Two-stage builds debug cleaner.'
+  - level: 3
+    hint: 'The hint-ignore detector is the tricky one - it needs to remember the last hint and compare the new guess against it. If it misfires, describe exactly: "it said higher, I guessed higher, and it still accused me of ignoring it" - that symptom points straight at the comparison bug.'
+reflection_prompts:
+  - What does the game have to remember to be sassy accurately?
+  - Why does personality make the same mechanics more replayable?
+unlocks: [rps-trash-talk, reaction-time-tester, twenty-questions-game]
+stretch_challenge: Add difficulty-linked personality - in hard mode (1-1000) the sass turns into a sports commentator narrating your descent into madness.
+safety_notes: Sass targets the gameplay, never the player's intelligence - "that guess was chaos" is fun, "you're stupid" is not. Playtest the line with the actual friends who'll play it.

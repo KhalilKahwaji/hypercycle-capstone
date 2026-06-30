@@ -1,0 +1,76 @@
+id: self-grading-study-test
+version: 1
+title: Build a Study Self-Test That Grades Itself
+track: study
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Turn your real course notes into a self-grading test with instant feedback - then take it cold and let the score tell you the truth.
+goal: A self-grading test built from your actual coursework, with explanations for every answer, taken honestly with the score analyzed for weak spots.
+brief: |
+  The most honest study tool ever invented is a test that grades itself - no
+  mercy, no "I basically knew that". Today you build one from YOUR actual
+  notes, for an exam you actually have.
+
+  Feed your real notes to the AI and generate 10-12 questions - but don't
+  accept them blindly. CHECK each question against your notes: is the marked
+  answer actually right? Is the question actually answerable from what you
+  studied? (AI-generated quizzes confidently include errors - catching them
+  is itself studying, and arguably the best studying.) Fix or reject the bad
+  ones, then have every question carry an EXPLANATION shown after answering -
+  what the right answer is and WHY. The why is where learning happens.
+
+  Build it in Google Forms quiz mode or as a page with scoring. Then the
+  honest part: take it COLD, no notes, and let the score say what it says.
+  Wrong answers aren't failures - they're a map. Your final step is reading
+  that map: which topics did you miss? That list is your study plan for
+  tomorrow.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Quiz mode grades automatically and shows explanations per answer.
+  - surface: google_ai_studio
+    why: Question generation from your notes, plus the self-grading page option.
+  - surface: claude_project
+    why: Good at generating explanation-rich questions from pasted notes.
+skills:
+  teaches: [context-grounding, self-evaluation]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: The notes you fed in, the generated questions, and at least one question you fixed or rejected with the reason.
+  - type: screenshot
+    description: Your honest cold-take score.
+  - type: reflection
+    description: Your weak-spot map - which topics you missed and what you'll study next, plus one sentence on a question the AI got wrong.
+evaluation:
+  deterministic_checks:
+    - id: verification_present
+      description: Prompt log exists, min 300 characters, shows at least one question corrected or rejected.
+    - id: score_present
+      description: Screenshot shows a completed test with a score.
+    - id: weak_spot_map_present
+      description: Reflection exists, min 150 characters, lists missed topics and a study action.
+  rubric:
+    - criterion: Questions were verified, not just generated
+      looks_like: The learner checked questions against their notes, caught at least one error or weak question, and every kept question has a correct answer and explanation.
+      weight: 0.4
+    - criterion: The test was taken honestly
+      looks_like: A real cold attempt with the actual score reported, including wrong answers - no retakes-until-perfect submitted as first attempts.
+      weight: 0.3
+    - criterion: The score became a plan
+      looks_like: Missed questions are grouped into topics and translated into specific next study actions - the map was read, not just glanced at.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Generation prompt that works: "From these notes only, write 12 multiple-choice questions covering every major topic. Mark the correct answer and write a one-sentence explanation. Make wrong options plausible mistakes a student would actually make."'
+  - level: 2
+    hint: To verify efficiently, check the five questions you're least sure about against your notes - those are where both you AND the AI are most likely wrong, which makes them the highest-value checks.
+  - level: 3
+    hint: In Google Forms, toggle "Make this a quiz" in settings, set answer keys and feedback per question. For a page version, ask for "score shown at the end with a list of which questions I missed, grouped by topic".
+reflection_prompts:
+  - Which taught you more - taking the test, or checking the AI's questions?
+  - What did your weak-spot map say that your gut hadn't admitted?
+unlocks: [first-study-helper, flashcard-generator, make-it-reliable]
+stretch_challenge: Rebuild the test with only your missed topics, retake in two days, and compare scores - you've just invented spaced repetition from first principles.
+safety_notes: Use your own notes and take your own test - this is a study tool, not a homework-answers machine. The score only helps if it's honestly yours.

@@ -1,0 +1,71 @@
+id: zahle-business-faq
+version: 1
+title: An AI Assistant for a Real Zahle Business
+track: business
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 120
+languages: [en]
+summary: Pick a real local business - a shop, cafe, pharmacy, winery - and build it an assistant that answers customer questions correctly.
+goal: A working FAQ assistant grounded ONLY in real information about one local business, tested against tricky customer questions.
+brief: |
+  Time to build for someone other than yourself.
+
+  Pick a real business in Zahle you know - your family's shop, the cafe on the corner,
+  a pharmacy, a winery. Collect its real information: opening hours, location, what it
+  sells, prices if public, delivery, contact info. (Ask permission if it's not public!)
+
+  Build an assistant that answers customer questions using ONLY that information.
+  The hard part is the ONLY. If a customer asks something not in your information,
+  the assistant must say "I don't know, please call" - NOT invent an answer.
+  An assistant that invents opening hours is worse than no assistant.
+
+  Test it like a difficult customer: ask things you didn't include, ask in Arabic and
+  French, try to trick it into discounts it can't give. Every failure you find and fix
+  is the real work of this mission.
+build_surfaces:
+  - surface: claude_project
+    why: Drop the business info file into the project and instruct from it.
+  - surface: chatgpt_gpt
+    why: Same pattern with a GPT and an uploaded file.
+skills:
+  teaches: [tool-assembly, context-grounding, responsible-use]
+  requires: [prompt-success-criteria]
+evidence_required:
+  - type: file_upload
+    description: The business information document you grounded the assistant in.
+  - type: prompt_log
+    description: The assistant's instructions, including its rule for unknown questions.
+  - type: transcript
+    description: A test conversation showing at least one correctly refused unknown question and one trick question handled safely.
+  - type: reflection
+    description: What did the assistant get wrong in testing, and what did you change?
+evaluation:
+  deterministic_checks:
+    - id: grounding_doc_present
+      description: Business info artifact exists and is at least 300 characters.
+    - id: transcript_present
+      description: Transcript artifact contains at least 6 exchanges.
+  rubric:
+    - criterion: Grounding discipline
+      looks_like: The transcript shows the assistant refusing or deferring on questions outside the document instead of inventing answers.
+      weight: 0.4
+    - criterion: Real-world usefulness
+      looks_like: The information set covers what actual customers ask (hours, location, offerings, contact), and answers are in a tone fit for customers.
+      weight: 0.3
+    - criterion: Adversarial testing effort
+      looks_like: The learner deliberately tried to break it - off-topic questions, multiple languages, trick requests - and documented at least one failure they fixed.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Write the business info as a clean structured document first - headings for HOURS, LOCATION, PRODUCTS, CONTACT. Clean input makes a reliable assistant.
+  - level: 2
+    hint: Add this rule to the instructions - "Answer ONLY from the business document. If the answer is not in it, say you don't know and give the phone number. Never guess."
+  - level: 3
+    hint: Still inventing answers? Test with - "Do you have parking?" If parking isn't in your doc and it answers anyway, strengthen the rule with an example of a correct refusal.
+reflection_prompts:
+  - Why is a wrong answer from a business assistant worse than no answer?
+  - What would the owner need to be able to update themselves, without you?
+unlocks: [heritage-guide, volunteer-signup-automation, shop-content-studio]
+stretch_challenge: Show it to the actual owner and collect one piece of feedback. Their first question will surprise you.
+safety_notes: Get permission before using non-public business info. Never include personal data about staff or customers. If you publish anything, the owner approves first.

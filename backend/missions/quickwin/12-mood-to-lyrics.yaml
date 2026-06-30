@@ -1,0 +1,72 @@
+id: mood-to-lyrics
+version: 1
+title: Translate Your Mood Into Original Song Lyrics
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a tool that turns "tired but hopeful" into four original lyric lines in a musical style you define - never copying real songs.
+goal: A mood-to-lyrics tool with at least three style presets you designed, plus a mini songbook of your favorite generated verses.
+brief: |
+  Your mood right now could be a song. Today you build the machine that writes it.
+
+  The tool takes two inputs - a mood ("exam-week exhaustion", "Friday energy",
+  "missing someone") - and a STYLE PRESET you designed. A preset isn't an artist's
+  name. It's a recipe: tempo feeling, imagery world, line length, attitude.
+  "Slow, rainy-window imagery, short lines, quietly hopeful" is a preset.
+  Build at least three that feel different.
+
+  One hard rule: ORIGINAL ONLY. No real song lines, no imitating a named artist.
+  You're designing styles, which is harder and cooler.
+
+  Run at least four moods through your presets. When a verse hits, save it. Tune
+  presets when they sound samey - sharper imagery rules fix most blandness.
+  Collect your four best verses into a mini songbook. Done when one verse feels
+  like it understood you.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your presets; fast regeneration while tuning.
+  - surface: claude_project
+    why: Strong creative writing partner for tuning imagery and rhythm rules.
+skills:
+  teaches: [prompt-iteration, responsible-use]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your three style presets and the tool instructions.
+  - type: file_upload
+    description: Your mini songbook - the four best verses with their mood + preset labels.
+  - type: reflection
+    description: Two sentences - how did you describe a musical style without naming any artist?
+evaluation:
+  deterministic_checks:
+    - id: presets_present
+      description: Prompt log exists, min 300 characters, contains three distinct named presets.
+    - id: songbook_present
+      description: A file with at least four labeled verses attached.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Presets are real designs
+      looks_like: Each preset defines imagery, rhythm or line length, and attitude in the learner's own words - three presets produce noticeably different verses from the same mood.
+      weight: 0.4
+    - criterion: Verses are original and specific
+      looks_like: Lyrics contain fresh, concrete images tied to the mood - no recognizable lines from real songs, no named-artist imitation.
+      weight: 0.35
+    - criterion: Curation and tuning visible
+      looks_like: The songbook is a best-of, and the log shows at least one preset adjustment after hearing weak output.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Describe a style by its WORLD, not its artist - what's the weather, what time of day, city or nature, whispering or shouting? Five answers = one preset.
+  - level: 2
+    hint: Add one craft rule per preset - "no rhyming", "every line under six words", "must mention one physical object". Constraints make lyrics sound intentional.
+  - level: 3
+    hint: If verses feel generic, feed a more specific mood. "Sad" produces wallpaper; "the bus home after failing the exam I studied hardest for" produces a song. Detail in, soul out.
+reflection_prompts:
+  - Which preset surprised you by working best?
+  - What does designing a style teach you that copying one wouldn't?
+unlocks: [movie-trailer-me, week-in-comic]
+stretch_challenge: Take your best verse and ask the AI to write a matching second verse and chorus structure - then read the full song out loud and edit one line yourself.
+safety_notes: Original lyrics only - never reproduce copyrighted song lines or imitate a named artist's style. If a verse comes out too close to a real song, regenerate it.

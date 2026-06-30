@@ -1,0 +1,74 @@
+id: first-survey
+version: 1
+title: Build a Survey and Get Three Real Answers Today
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Design a short survey about something you actually wonder about, share it, and collect three real responses before the day ends.
+goal: A live survey with well-designed questions, three or more real responses collected today, and one finding you can state from the data.
+brief: |
+  Today you stop wondering and start measuring.
+
+  Pick a question you genuinely want answered: what time do my friends actually
+  sleep? Which snack should the club buy? Does anyone else think the bus
+  schedule is fiction? Real curiosity makes real surveys.
+
+  Then learn the craft of ASKING. Work with the AI to design 5-7 questions and
+  discover the traps: leading questions ("don't you agree the canteen is
+  bad?"), double-barrels ("do you like the food and the prices?"), and vague
+  options ("sometimes" means twelve different things). Ask the AI to attack
+  your draft - "find every biased or confusing question" - then fix them.
+  Question design is a real skill researchers get paid for.
+
+  Build it in Google Forms, send it to real people, and collect at least
+  three responses TODAY - deadlines create data. Then read your results and
+  write ONE finding: "3 of 4 friends sleep after midnight on school nights."
+  Congratulations - that's research.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Free, instant sharing, responses collect themselves into a sheet.
+  - surface: google_ai_studio
+    why: Your question-design partner and bias attacker.
+skills:
+  teaches: [user-feedback, prompt-success-criteria]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: Your survey live, plus the responses view showing three or more answers.
+  - type: prompt_log
+    description: Your draft questions, the AI's critique, and what you fixed.
+  - type: reflection
+    description: Your one finding, stated from the data, plus one sentence on what you'd ask differently next time.
+evaluation:
+  deterministic_checks:
+    - id: responses_present
+      description: Screenshot shows at least three collected responses.
+    - id: critique_present
+      description: Prompt log exists, min 250 characters, shows a bias/clarity critique and at least one fixed question.
+    - id: finding_present
+      description: Reflection exists, min 80 characters, states a specific finding with numbers.
+  rubric:
+    - criterion: Questions are clean
+      looks_like: Final questions are neutral, single-purpose, with answer options that don't overlap or gape - and at least one trap was caught and fixed in the log.
+      weight: 0.4
+    - criterion: Real data came back
+      looks_like: Three or more genuine responses from real people, collected the same day.
+      weight: 0.3
+    - criterion: The finding is honest
+      looks_like: The stated finding matches the data, with correct counts, and doesn't overclaim ("3 of 4 friends" not "everyone").
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Can't pick a topic? Survey the decision someone near you keeps debating - what to watch, where to eat, when to meet. Your data will actually get used.
+  - level: 2
+    hint: 'Run this exact prompt on your draft: "You are a survey methodologist. Find every leading question, double-barreled question, and ambiguous option in this survey. Suggest fixes." Then apply the good ones.'
+  - level: 3
+    hint: Three responses today is about asking directly - send the link with "60 seconds, helps me with a project, deadline tonight". Personal ask plus deadline beats posting and praying.
+reflection_prompts:
+  - Which of your original questions was secretly biased, and how?
+  - What would you need to claim your finding is true beyond your friend group?
+unlocks: [which-one-are-you-quiz, debate-settler-poll, club-feedback-form]
+stretch_challenge: Ask the AI to summarize your response data and suggest one follow-up question your next survey should ask.
+safety_notes: Don't collect names unless needed - anonymous surveys get honest answers. Never collect sensitive personal info (health, family matters) for a practice survey.

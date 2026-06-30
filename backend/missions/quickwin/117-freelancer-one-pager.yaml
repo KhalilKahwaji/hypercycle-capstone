@@ -1,0 +1,86 @@
+id: freelancer-one-pager
+version: 1
+title: Build a Freelancer One-Pager - Who You Are, What You Can Build
+track: portfolio
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Package your mission skills as services someone could actually hire - outcome-named offers, proof attached, and the page that makes the ask easy.
+goal: A published freelancer one-pager with 2-3 outcome-named service offers backed by portfolio proof, a working contact path, and one real share to a potential first referrer.
+brief: |
+  Quiet fact: you can now build things that small businesses pay real
+  money for. One-page sites. Sign-up systems. Menu translations. Content
+  help. The gap between "student with skills" and "person who gets
+  hired" is mostly PACKAGING - and packaging is a build like any other.
+
+  The core move is naming services as OUTCOMES, not activities. Nobody
+  hires "prompt engineering"; people hire "a one-page website for your
+  shop, live in a week" or "your menu in two languages, checked by a
+  native speaker" or "sign-up forms that confirm automatically so you
+  stop chasing lists". Look at your completed missions and extract 2-3
+  offers - each one something you have LITERALLY ALREADY DONE (that's
+  what makes this honest: you're not promising potential, you're
+  offering repetition).
+
+  Each offer gets: the outcome name, who it's for, what's included
+  (scope - decide now what's NOT included too; scope creep eats
+  freelancers alive), proof (link the mission artifact: the shop site,
+  the menu, the pipeline), and the price question answered however
+  fits your reality ("first three projects free for testimonials" is
+  a legitimate and time-honored strategy).
+
+  Then the page: warm, brief, you in one line, the offers, the proof,
+  and ONE contact method that you actually check. Publish it - and the
+  final step that makes it real: SHARE it with one person who knows
+  people. A parent's colleague, the shop owner you built for, your
+  club leader. First clients come from warm introductions, and warm
+  introductions need a link to forward. You just built the link.
+build_surfaces:
+  - surface: replit
+    why: Published page with a forwardable URL - the whole point.
+  - surface: google_ai_studio
+    why: Build and iterate the page and offer copy.
+  - surface: canva
+    why: A matching one-page PDF version for printing or attaching.
+skills:
+  teaches: [proof-of-work, shipping-basics]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: live_url
+    description: The published one-pager.
+  - type: prompt_log
+    description: Your offer extraction - missions mapped to services, scope decisions including the not-included lines.
+  - type: reflection
+    description: Two sentences - who did you share it with, and which offer do you most hope gets a yes?
+evaluation:
+  deterministic_checks:
+    - id: url_reachable
+      description: The one-pager URL loads.
+    - id: offers_with_proof_present
+      description: Two or more outcome-named offers each link to real mission artifacts.
+    - id: share_present
+      description: One real share to a potential referrer documented.
+  rubric:
+    - criterion: Offers are outcomes with scope
+      looks_like: Services named by client outcome, scoped with included AND not-included, each traceable to work actually completed.
+      weight: 0.4
+    - criterion: Proof carries the page
+      looks_like: Real artifacts linked per offer - the page argues from evidence, not enthusiasm.
+      weight: 0.3
+    - criterion: It entered the world
+      looks_like: Published, contact path working, and genuinely shared with someone positioned to refer - the scary step taken.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Offer extraction question per mission: "would a shop owner, club leader, or busy parent pay to have this done FOR them?" Your shop site, menu helper, sign-up pipeline, and content tools all answer yes. Pick the ones you''d happily do again.'
+  - level: 2
+    hint: 'Scope the not-included line first - it''s easier: "one page, not a multi-page site; two revision rounds included; content from you, polish from me". Clear edges make clients comfortable and protect your weekends.'
+  - level: 3
+    hint: 'The share message, written for you: "I''ve started doing [offer] - here''s my page with examples. If you know anyone who needs this, I''d love an introduction." Send it to ONE person today; the page going unshared is the only real failure mode of this mission.'
+reflection_prompts:
+  - What changed when you renamed skills as outcomes?
+  - What would you need to feel ready to charge - and is that feeling or evidence talking?
+unlocks: [local-shop-site, qr-business-card, ai-assisted-cv]
+stretch_challenge: Define your client process as five steps (inquiry → quick call → build → revisions → delivery) and add it to the page - a visible process makes a young freelancer look like a professional one, because it's exactly what professionalism is.
+safety_notes: Real freelancing means real commitments - take only work you can deliver, involve a parent or mentor in anything involving payment, and remember the free-for-testimonials route builds the same portfolio with lower stakes. Your name is the brand; deliver accordingly.

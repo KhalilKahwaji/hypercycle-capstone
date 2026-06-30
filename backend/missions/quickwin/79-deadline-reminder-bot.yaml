@@ -1,0 +1,81 @@
+id: deadline-reminder-bot
+version: 1
+title: Build a Reminder Bot That Pings You Before Deadlines
+track: automation
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a deadline system that checks your list daily and pings you at escalating intervals - with reminder timing designed around how you actually procrastinate.
+goal: A working deadline reminder automation reading from your real deadline sheet, with an escalation policy you designed, verified by a live test ping.
+brief: |
+  A reminder at the wrong time is noise. The night before a big project?
+  Insult. Three weeks early? Instantly forgotten. Today you build a
+  reminder system tuned to the only schedule that matters: how YOU
+  actually procrastinate.
+
+  The architecture: your deadlines live in a Google Sheet (name, date,
+  size: big/medium/small). Every morning, an automation reads the sheet,
+  calculates days remaining for each item, and decides - per your policy -
+  whether today deserves a ping.
+
+  The ESCALATION POLICY is the design heart, and it's self-knowledge as
+  engineering: big deadlines might warn at 14 days ("start thinking"),
+  7 ("start doing"), 3 ("be honest with yourself"), and 1 ("it's now").
+  Small ones maybe just 2 days and morning-of. And the TONE can escalate
+  too - calm at two weeks, direct at three days, your motivational coach's
+  voice on the final day. Encode the policy in the automation's filter
+  and message logic.
+
+  Test with a real near-future deadline and verify the ping arrives with
+  the right urgency level. Then load your actual term's deadlines. Done
+  when the system catches something you'd forgotten was coming - give it
+  a week, it will.
+build_surfaces:
+  - surface: make
+    why: Scheduled trigger reads the sheet daily; filters implement your policy.
+  - surface: google_forms_sheets
+    why: The deadline sheet itself, plus an Apps Script alternative for the whole build.
+  - surface: n8n
+    why: Open-source option for the same architecture.
+skills:
+  teaches: [automation-trigger-action, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The deadline sheet, the automation scenario, and a real received reminder ping.
+  - type: prompt_log
+    description: Your escalation policy with its procrastination-aware reasoning, and the live test results.
+  - type: reflection
+    description: Two sentences - how does your policy match how you actually behave, and what would break if you'd designed for an idealized you?
+evaluation:
+  deterministic_checks:
+    - id: live_ping_evidence
+      description: Screenshot shows a real reminder delivered by the automation.
+    - id: policy_present
+      description: Log contains an explicit escalation policy differentiating deadline sizes.
+    - id: real_deadlines_loaded
+      description: The sheet contains the learner's genuine upcoming deadlines.
+  rubric:
+    - criterion: The system works end to end
+      looks_like: Sheet read daily on schedule, days-remaining computed correctly, ping delivered when policy says so - verified live.
+      weight: 0.35
+    - criterion: The policy encodes self-knowledge
+      looks_like: Escalation intervals and tones differ by deadline size with reasoning grounded in the learner's real procrastination patterns.
+      weight: 0.35
+    - criterion: Loaded with real life
+      looks_like: Actual term deadlines in the sheet - the system is live infrastructure, not a demo.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Sheet columns: deadline name, due date, size. In Make: daily schedule trigger, Google Sheets "search rows" module, then a filter comparing due date minus today against your policy''s intervals.'
+  - level: 2
+    hint: 'Date math in Make uses formatDate and dateDifference functions - or sidestep it: add a sheet column "days_left" with a formula =DUE_DATE-TODAY(), and let the filter just read that number. Letting the sheet compute is legitimate engineering.'
+  - level: 3
+    hint: 'Test without waiting: add a fake deadline 3 days out, use "Run once", and confirm the 3-day message arrives with the 3-day tone. Then try one at 10 days and confirm SILENCE - policy means knowing when not to ping.'
+reflection_prompts:
+  - Which reminder interval actually changes your behavior - and which do you ignore?
+  - Why does deadline size deserve different treatment?
+unlocks: [homework-planner-bot, birthday-reminder-automation, daily-weather-message]
+stretch_challenge: Add a weekly Sunday digest - one message listing everything due in the next 14 days, sorted by urgency. The daily pings handle panic; the digest handles planning.
+safety_notes: Your deadlines, your sheet, your pings - keep the sheet private. And remember the system reminds; it doesn't do. A perfectly engineered reminder for work you never start is just beautifully scheduled guilt.

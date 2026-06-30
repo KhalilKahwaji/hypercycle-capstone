@@ -1,0 +1,74 @@
+id: notes-powered-assistant
+version: 1
+title: An Assistant Powered by Your Own Notes
+track: study
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 150
+languages: [en]
+summary: Level up your study helper - it now answers from YOUR class notes, cites where it found things, and admits when your notes don't cover it.
+goal: A retrieval-grounded assistant over your real class notes that answers with references to the notes and refuses to go beyond them.
+brief: |
+  Your first helper answered from the model's general knowledge. Strong upgrade today:
+  an assistant that answers from YOUR notes - what your teacher actually said, the way
+  your class actually covers it.
+
+  This is the idea behind RAG - Retrieval Augmented Generation - the pattern powering
+  most serious AI products. You'll build the honest beginner version:
+
+  1. Collect real notes from one subject - at least 10 pages worth (photos of paper
+     notes typed up count - the typing is part of the work).
+  2. Structure them: clear headings per topic. Retrieval is only as good as structure.
+  3. Build the assistant with three laws: answer FROM the notes, cite WHICH section
+     the answer came from, and say "not in your notes" when it isn't.
+  4. Stress-test: questions covered well, covered partially, and not covered at all.
+     The "not covered" behavior is where most builds fail. Yours won't.
+
+  Then explain in your reflection - in your own words - why this beats pasting all
+  your notes into every single question.
+build_surfaces:
+  - surface: claude_project
+    why: Project knowledge does the retrieval for you at this scale - right teaching tool.
+  - surface: chatgpt_gpt
+    why: Same pattern with uploaded knowledge files.
+skills:
+  teaches: [rag-concept, debugging-loop]
+  requires: [context-grounding, data-structuring]
+mission_prerequisites: [first-study-helper]
+evidence_required:
+  - type: file_upload
+    description: Your structured notes document (or a representative sample if large).
+  - type: prompt_log
+    description: The assistant's instructions with the three laws visible.
+  - type: transcript
+    description: Test conversation - one well-covered, one partially-covered, one not-covered question, with citations visible.
+  - type: reflection
+    description: In your own words - what does retrieval solve? Why not paste everything every time?
+evaluation:
+  deterministic_checks:
+    - id: notes_present
+      description: Notes artifact exists and exceeds 3000 characters.
+    - id: transcript_three_cases
+      description: Transcript contains the three test cases.
+  rubric:
+    - criterion: Grounding and citation behavior
+      looks_like: Answers reference actual sections of the notes; the not-covered question gets an honest refusal, not improvisation.
+      weight: 0.4
+    - criterion: Conceptual understanding of retrieval
+      looks_like: The reflection explains the why - context limits, cost, precision - in the learner's own words, not pasted definitions.
+      weight: 0.35
+    - criterion: Note structure quality
+      looks_like: Notes have consistent headings and topical organization that visibly improve the assistant's answers.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Citation law not working? Demand format - "Every answer ends with - Source - [section heading]. If no section applies, answer EXACTLY - This is not in your notes."
+  - level: 2
+    hint: Answers mixing notes with outside knowledge? Add - "If the notes conflict with what you otherwise believe, the notes win, and flag the conflict." Then test on something your teacher simplified.
+  - level: 3
+    hint: For the reflection, run the experiment - paste ALL notes into one question and watch the response time and quality. Now you've FELT the problem retrieval solves.
+reflection_prompts:
+  - Your notes are now a database. What else do you own - recipes, match stats, song lyrics you wrote - that could power an assistant?
+unlocks: [explain-it-rebuild-it, ship-for-zahle]
+stretch_challenge: Add a second subject's notes and make the assistant detect which subject a question belongs to before answering.
+safety_notes: Your own notes only - a classmate's notes need their OK. No teacher's name attached to mistakes in your write-up.

@@ -1,0 +1,81 @@
+id: family-tech-support-bot
+version: 1
+title: Build a Grandma-Friendly Tech Support Bot
+track: community
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a tech-help bot designed for the least technical person you love - where patience, vocabulary, and tiny steps are the engineering.
+goal: A tech support bot designed around one real family member's needs, tested by them (or realistically role-played), solving one of their actual recurring problems.
+brief: |
+  You are your family's tech support. The job is forever. Today you build
+  your deputy.
+
+  Design for ONE real person - your grandmother, your uncle, the parent who
+  calls you when "the WhatsApp disappeared". Designing for everyone produces
+  help for no one; designing for Teta produces something usable by half the
+  planet. Interview them or recall your last three rescue calls: what
+  actually goes wrong? (It's usually the same three things.)
+
+  Now the design constraints, which are the real lesson - accessibility is
+  engineering: steps must be ONE action each, named by what you SEE ("press
+  the green circle with the white phone"), never assuming knowledge ("open
+  settings" assumes they know where settings lives - your bot doesn't get
+  to assume). After every step, the bot asks "what do you see now?" before
+  continuing - because the number one failure of tech help is barreling
+  ahead while the person is lost three steps back. Vocabulary rule: no
+  jargon word ever, or each one introduced by what it looks like.
+
+  Load their three recurring problems as known scenarios. Then the real
+  test: hand them your phone with the bot open (or role-play as them
+  ruthlessly), and watch one problem get solved. Where they stall, that's
+  your next instruction patch.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the persona design; shareable for family testing.
+  - surface: claude_project
+    why: Strong at sustained patience and vocabulary discipline.
+  - surface: any_chat_ui
+    why: Whatever chat app the family member already has is the right surface.
+skills:
+  teaches: [user-feedback, context-grounding]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your design - the person's profile, their three recurring problems, and the patience/vocabulary rules.
+  - type: transcript
+    description: One real problem solved through the bot - by the family member or a ruthless role-play.
+  - type: reflection
+    description: Two sentences - where did they stall, and what did you patch?
+evaluation:
+  deterministic_checks:
+    - id: design_present
+      description: Prompt log exists, min 300 characters, contains a person profile and explicit step/vocabulary rules.
+    - id: solve_transcript_present
+      description: Transcript shows a complete problem-to-solution walkthrough with check-ins.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Designed for a real person
+      looks_like: The profile reflects a real family member's actual recurring problems and capabilities - specifics no generic bot would have.
+      weight: 0.35
+    - criterion: Accessibility rules hold
+      looks_like: The transcript shows one-action steps, see-it naming, what-do-you-see check-ins, and zero unexplained jargon throughout.
+      weight: 0.4
+    - criterion: Tested and patched
+      looks_like: A real or ruthlessly-played test produced at least one stall, and the stall became an instruction patch.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Mine your call history: the last three times they called you for help - what were they? Those exact three become the bot''s known scenarios, with YOUR proven fix encoded for each.'
+  - level: 2
+    hint: 'The check-in rule verbatim: "After each step, ask what the person sees now. Do not give the next step until they describe something matching what you expect. If it doesn''t match, troubleshoot gently before continuing."'
+  - level: 3
+    hint: 'Role-play ruthlessly to test: answer the bot the way they actually would - "I pressed something and now it''s gone", "the screen is black", "which button, habibi?". If the bot handles those three, it''s ready for the real Teta.'
+reflection_prompts:
+  - What did designing for one specific person teach you that "make it simple" never would?
+  - Which of your own explanations to family will change after this?
+unlocks: [explain-like-five-bot, family-business-page, personality-chatbot]
+stretch_challenge: Make it bilingual - the bot answers in whichever language the question arrives in, switching mid-conversation if they do (because they will).
+safety_notes: The bot must never walk anyone through entering passwords, payment details, or codes received by SMS - and must say "ask your family directly" for anything involving money or accounts. Scammers exploit exactly this kind of trust; build the refusal in.

@@ -1,0 +1,83 @@
+id: rps-trash-talk
+version: 1
+title: Rock-Paper-Scissors Against an AI With Trash Talk
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build rock-paper-scissors with a trash-talking opponent - then make the AI track your habits and call them out, which is both funnier and unsettling.
+goal: A working RPS game with score tracking, situational trash talk, and a pattern-detection feature that notices and exploits how you actually play.
+brief: |
+  Rock-paper-scissors is a solved game between strangers and a psychology
+  experiment between friends. Your AI opponent is about to become the
+  friend who knows you too well.
+
+  Layer one, the game: hands to pick, AI picks (randomly for now), winner
+  decided, score tracked. Quick build, confirm it works.
+
+  Layer two, the MOUTH: trash talk keyed to the situation - not random
+  lines but contextual ones. Winning streak? It gets cocky. You break the
+  streak? Wounded drama. Tie three times? "Are you copying me?" Write the
+  trash-talk table yourself in your own voice; situational comedy is just
+  state detection with jokes on top (you know this trick from the sassy
+  number game - here it deepens).
+
+  Layer three, the BRAIN - the genuinely interesting part: humans are
+  TERRIBLE at being random. We avoid repeating, we cycle, we throw rock
+  when frustrated. Make the game COUNT your throws, and when a bias
+  appears, two things happen: the AI leans its picks against your habit
+  (rock 50% of the time? it shades toward paper), and the trash talk
+  announces it - "You've thrown rock four times. I'm not even guessing
+  anymore." Beating a pattern-reader requires actually being random, which
+  is weirdly hard - and now your game teaches that to everyone who plays.
+
+  Done when a friend gets pattern-called and audibly gasps.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and iterate the game with its counters in one file.
+  - surface: claude_project
+    why: Good at both the counting logic and the comedy table.
+  - surface: replit
+    why: Host it for maximum friend-roasting reach.
+skills:
+  teaches: [data-structuring, debugging-loop]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your trash-talk table and the pattern-detection logic as you specified it.
+  - type: screenshot
+    description: The game mid-match with score and a pattern callout visible.
+  - type: reflection
+    description: Two sentences - what bias did the game catch in your own play, and could you beat your own machine?
+evaluation:
+  deterministic_checks:
+    - id: design_present
+      description: Prompt log exists, min 250 characters, contains the situational table and detection spec.
+    - id: game_evidence
+      description: Screenshot shows working game with score and contextual trash talk.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Trash talk is situational
+      looks_like: Lines fire on the right triggers - streaks, ties, comebacks - per the learner's table, not randomly.
+      weight: 0.3
+    - criterion: Pattern detection works
+      looks_like: The game counts throws, detects a real bias, exploits it in pick selection, and announces it - verified by deliberately playing biased.
+      weight: 0.4
+    - criterion: Playtested for delight
+      looks_like: A real second player experienced the pattern callout, and the learner tuned anything that fell flat.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Build in strict layers: plain RPS working → add the situational lines → add counting and bias detection. Each layer tested before the next - three small builds, not one big gamble.'
+  - level: 2
+    hint: 'Test detection by being deliberately biased: throw rock seven times straight. The counter should show it, the AI''s picks should shift toward paper, and the callout should fire. If you can''t trigger it on purpose, it won''t trigger by accident.'
+  - level: 3
+    hint: 'Keep the exploitation honest-feeling: shade probabilities (60/40 against your bias), don''t hard-counter every throw - an unbeatable opponent stops being fun in four rounds. Fun beats optimal: a real game design tradeoff, decided by you.'
+reflection_prompts:
+  - Why are humans bad at random - and where else does that matter?
+  - What was the right amount of exploitation before fun died?
+unlocks: [sassy-number-game, reaction-time-tester, word-association-game]
+stretch_challenge: Show live stats on screen - your throw percentages updating each round - and watch players try to fight their own visible bias in real time.
+safety_notes: Trash talk roasts the throws, never the thrower. The pattern data lives only in the page session - which is also a nice thing to be able to tell your friends truthfully.

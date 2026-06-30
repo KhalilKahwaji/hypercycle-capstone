@@ -1,0 +1,80 @@
+id: photo-memory-game
+version: 1
+title: Build a Memory Matching Game With Your Own Photos
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build the classic flip-and-match memory game using your own photos - and solve the surprisingly deep state problems hiding inside it.
+goal: A working memory matching game with your own photo set, correct flip/match/lock logic in all edge cases, move counting, and a win state - playtested by family.
+brief: |
+  You've played memory matching since you were small: cards face down,
+  flip two, match or flip back. Today you discover the game you mastered
+  at six contains real state-machine engineering - and you'll build it
+  with YOUR photos, which makes it a gift as much as a game.
+
+  Curate 8 photos (16 cards) with a theme: family faces, your pet's many
+  moods, neighborhood spots, your own drawings. The photos make it yours;
+  grandma playing a memory game made of HER grandchildren is a different
+  product than one made of stock fruit.
+
+  Then the build - and respect the hidden complexity: every card has
+  states (face-down, face-up, locked-when-matched), and the GAME has
+  states (zero cards up, one up, two up and judging). The edge cases are
+  where it gets real: what if someone clicks a third card while two are
+  showing? Clicks the same card twice? Spam-clicks during the flip-back
+  delay? Each needs an answer, and "I didn't think about it" answers it
+  badly. Specify the behavior, build, then TEST exactly those cases.
+
+  Add move counting and a win screen that celebrates ("Found them all in
+  24 moves!"). Done when someone in your family plays it twice - and asks
+  why their photo got matched last.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and iterate the game; image grid plus logic in one file.
+  - surface: claude_project
+    why: Strong at edge-case reasoning when you ask the right what-ifs.
+  - surface: replit
+    why: Host it for family on any device.
+skills:
+  teaches: [debugging-loop, data-structuring]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your edge-case specification (the what-ifs and their answers) and the build conversation.
+  - type: screenshot
+    description: The game mid-play with your photos, and the win screen.
+  - type: reflection
+    description: Two sentences - which edge case broke first in testing, and who in your family played?
+evaluation:
+  deterministic_checks:
+    - id: edge_spec_present
+      description: Prompt log exists, min 250 characters, answers at least three edge-case what-ifs before or during the build.
+    - id: game_evidence
+      description: Screenshots show working gameplay with personal photos and the win state.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: State logic is correct
+      looks_like: Flip, match, lock, and flip-back all behave correctly - including third-click, same-card, and spam-click cases, verified by deliberate testing.
+      weight: 0.4
+    - criterion: Personal and polished
+      looks_like: A coherent personal photo theme, smooth flip experience, move counter, and a celebratory win state.
+      weight: 0.3
+    - criterion: Real playtesting happened
+      looks_like: A family member or friend actually played, edge cases were hunted deliberately, and at least one found bug was fixed.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Square photos work best for cards - crop before building. For the spec, answer three questions in writing: third click while two are up? same card clicked twice? clicks during the flip-back animation? Your answers go in the build request.'
+  - level: 2
+    hint: 'The standard answers, if you want them: third click is ignored until judging finishes; same-card second click is ignored; input locks during the flip-back delay. Tell the AI explicitly - defaults are where bugs breed.'
+  - level: 3
+    hint: 'Test like a destroyer: spam-click everything during every animation. If cards get stuck face-up or match wrongly, report the exact sequence - "I clicked card 3, then card 3 again, and it matched with itself" - sequence reports are gold for fixing state bugs.'
+reflection_prompts:
+  - How many states did this "simple" game turn out to have?
+  - What did watching a non-gamer family member play teach you about your interface?
+unlocks: [reaction-time-tester, pet-tribute-visual, browser-maze-game]
+stretch_challenge: Add a two-player mode - alternating turns, matched pairs scored per player - and discover how much state one more player adds.
+safety_notes: Family photos make it personal - get a smile-and-nod from anyone whose face is on a card, and keep the game link within the family rather than public.

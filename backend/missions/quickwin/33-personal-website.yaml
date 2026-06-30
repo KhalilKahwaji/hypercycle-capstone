@@ -1,0 +1,75 @@
+id: personal-website
+version: 1
+title: Build Your First One-Page Personal Website
+track: portfolio
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build and publish a one-page website that introduces you to the world - your first real piece of internet that's yours.
+goal: A published one-page personal website at a live URL, with content you wrote and a design direction you chose.
+brief: |
+  By the end of this hour, there will be a place on the internet that is YOURS.
+  Type the address, your page appears. That never stops feeling good.
+
+  Write the content FIRST, before any code: who you are in two sentences, three
+  things you're into, one thing you're learning right now (this AI track counts),
+  and how to reach you (a social handle is plenty - no personal details).
+  Honest and short beats impressive and long.
+
+  Then pick a design direction in words - "clean and minimal, lots of space",
+  "dark with one neon accent", "warm like a paper notebook" - and have the AI
+  build the page from your content and direction. Iterate like you've learned:
+  spacing, colors, one detail that makes it yours.
+
+  Then the step that makes this mission real: PUBLISH. Use Replit (or any free
+  host) and get a real URL. Send it to one person you like. Done when someone
+  else has visited your corner of the internet.
+build_surfaces:
+  - surface: replit
+    why: Free hosting with a real URL in minutes - the publish step is the point.
+  - surface: google_ai_studio
+    why: Generate and refine the page before hosting it.
+  - surface: claude_project
+    why: Strong at both page copy and clean single-file design.
+skills:
+  teaches: [shipping-basics, ui-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: live_url
+    description: Your published website address.
+  - type: prompt_log
+    description: Your written content, your design direction, and at least two refinement requests.
+  - type: reflection
+    description: Two sentences - who did you send it to, and what did they say?
+evaluation:
+  deterministic_checks:
+    - id: url_reachable
+      description: The submitted URL loads a page.
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, contains content written before generation.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Content came first
+      looks_like: The log shows the learner wrote their actual content before generating - the AI shaped THEIR words, not placeholder text left in.
+      weight: 0.35
+    - criterion: It shipped for real
+      looks_like: The URL is live, the page is complete (no lorem ipsum, no broken sections), and a real person visited it.
+      weight: 0.35
+    - criterion: Design direction is owned
+      looks_like: The page has a coherent look matching the learner's stated direction, with at least one personal touch they asked for.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Stuck on the about text? Answer three questions in one sentence each - what do you spend your time on, what are you learning, what do you want more of? That's your bio.
+  - level: 2
+    hint: 'Ask for "a single HTML file, one-page personal site with these sections: intro, three interests as cards, what I''m learning, contact" - and paste your real content in the same message.'
+  - level: 3
+    hint: To publish on Replit - create a free account, make an HTML/CSS/JS repl, paste your file into index.html, hit Run, and share the URL it gives you. If the page is blank, check the file is named exactly index.html.
+reflection_prompts:
+  - What felt different about publishing versus just building?
+  - What will you add to this page after your next mission?
+unlocks: [link-in-bio, top-five-showcase, hobby-fan-page]
+stretch_challenge: Add a "now" section you'll update weekly - what you're building, reading, or practicing this week. Future missions go here.
+safety_notes: No surname needed, no phone number, no school name, no home area details. A first name and a social handle are enough for the whole internet.

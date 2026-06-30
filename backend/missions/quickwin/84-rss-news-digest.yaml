@@ -1,0 +1,82 @@
+id: rss-news-digest
+version: 1
+title: Build an RSS-to-Summary Daily News Digest
+track: automation
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a personal news digest - an automation fetches your chosen site's feed, AI summarizes it to your spec, and one tidy message arrives daily.
+goal: A working daily digest combining an RSS fetch with an AI summarization step you specified, delivered on schedule for two days, with the summary quality audited once against the source.
+brief: |
+  This is the mission where your two superpowers meet: automation (things
+  happen on schedule) and AI (text gets understood). Combined, they make
+  the most genuinely useful personal tool in this whole track: news that
+  comes to you, pre-digested, on your terms.
+
+  Pick ONE source you actually care about - local news, a football site, a
+  tech blog, a games site. Find its RSS feed (most sites have one - try
+  /feed or /rss after the domain). RSS is the old, open, beautiful plumbing
+  of the web: a machine-readable list of the site's latest items, free for
+  anyone to fetch.
+
+  The pipeline: daily schedule → fetch the feed's newest items → pass the
+  headlines and snippets through an AI module with YOUR summarization spec
+  → deliver one message. The spec is the design work: "Top 3 items only.
+  One sentence each, why-it-matters not what-happened. Skip transfer
+  rumors. If nothing important happened, SAY that - never inflate." An
+  honest digest needs permission to be boring.
+
+  Then the audit, once: read the actual source page the same day and
+  compare. Did your digest pick the right items? Distort anything? AI
+  summarizers drop qualifiers and flatten nuance - catch it doing so and
+  tighten the spec.
+
+  Two days of delivery later, you have what media companies charge for:
+  an editor who works for you alone.
+build_surfaces:
+  - surface: make
+    why: RSS module plus AI module plus messaging - the full pipeline on free tier.
+  - surface: n8n
+    why: Open-source, with first-class RSS and AI nodes.
+skills:
+  teaches: [automation-trigger-action, tool-assembly]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The scenario, and the delivered digests from two consecutive days.
+  - type: prompt_log
+    description: Your summarization spec, and the audit - digest versus actual source, with what you found.
+  - type: reflection
+    description: Two sentences - what did the audit catch, and how did the spec change?
+evaluation:
+  deterministic_checks:
+    - id: two_digests_evidence
+      description: Screenshots show digests delivered on two consecutive scheduled days.
+    - id: spec_present
+      description: Log contains an explicit summarization spec with selection and tone rules.
+    - id: audit_present
+      description: One digest compared against its source with findings documented.
+  rubric:
+    - criterion: The hybrid pipeline works
+      looks_like: Fetch, summarize, deliver - all three stages ran unattended on schedule, twice.
+      weight: 0.35
+    - criterion: The spec shows editorial judgment
+      looks_like: Selection criteria, tone, length, exclusions, and the permission-to-be-boring rule - a real editorial policy, visibly obeyed in the output.
+      weight: 0.3
+    - criterion: The audit was honest
+      looks_like: A genuine comparison against the source, with at least one observation about what summarization changed, dropped, or got right - and a spec adjustment if needed.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Feed hunting: try the site''s address + /feed, /rss, or /rss.xml - or search "[site name] RSS". Paste the feed URL into a browser first; if you see structured text full of titles, it''s alive and fetchable.'
+  - level: 2
+    hint: 'In the AI module, your spec is the system prompt and the feed items are the input. Be concrete: "From these items, select the 3 most significant. One sentence each explaining why it matters. No clickbait language. If none are significant, output exactly: quiet day."'
+  - level: 3
+    hint: 'If the digest includes stale items, limit the RSS module to today''s items (max items setting plus a date filter). If summaries hallucinate details not in the snippets, add to the spec: "Use ONLY information present in the provided items - never add background knowledge."'
+reflection_prompts:
+  - What did you learn about summarization by auditing it?
+  - Who chooses what you read normally - and what changed when it was you?
+unlocks: [daily-weather-message, new-music-notifier, save-link-bot]
+stretch_challenge: Add a second source feed and have the AI merge both into one digest with source labels - congratulations, you've built a tiny newspaper with an editorial policy.
+safety_notes: Use public RSS feeds as intended - once-daily fetching, no paywall circumvention. Remember your digest inherits the source's biases AND adds the summarizer's - the audit habit is permanent, not a one-time step.

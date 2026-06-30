@@ -1,0 +1,77 @@
+id: weird-clock
+version: 1
+title: Build a Clock That Tells Time in a Weird, Beautiful Way
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Design a clock that shows real time without normal hands or digits - colors, shapes, words, or something nobody's tried.
+goal: A working clock page that accurately reflects the real current time through a representation system you invented, plus a "how to read it" key.
+brief: |
+  A clock has one job: show the time. NOBODY said it has to use numbers.
+
+  Invent a new way to display real time. Some directions to spark you - the sky
+  clock (background color follows the actual hour, deep navy at midnight,
+  golden at sunset, with minutes as drifting stars); the honest clock (writes
+  "almost half past three" and changes its wording style as the day goes on -
+  formal at 9am, exhausted by 1am); the garden clock (hours as flowers that
+  bloom and close, minutes as bees); the proximity clock (one dot orbits
+  closer to another as the hour completes). Or invent your own.
+
+  Two requirements make this real engineering: it must show ACTUAL time (the
+  AI reads the device clock - you design what each piece of time data turns
+  into) and someone must be able to LEARN to read it, so write a short key.
+
+  The deep skill is mapping data to design: hours, minutes, seconds in -
+  color, position, words out. You'll use that mapping skill in every dashboard
+  and data visual you ever build. Done when a friend reads the correct time
+  from your clock using only your key.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; time-mapping logic regenerates quickly while you refine.
+  - surface: claude_project
+    why: Previews in chat; good at brainstorming representation ideas with you.
+  - surface: replit
+    why: Host it and leave it running on a screen as an actual clock.
+skills:
+  teaches: [data-structuring, self-evaluation]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: Your clock at two different times (two screenshots), so the change is visible.
+  - type: prompt_log
+    description: Your mapping design (what represents hours, minutes, seconds) and your "how to read it" key.
+  - type: reflection
+    description: Two sentences - did your friend read it correctly, and what did their attempt teach you?
+evaluation:
+  deterministic_checks:
+    - id: screenshots_present
+      description: At least two screenshots attached showing different times.
+    - id: mapping_present
+      description: Prompt log exists, min 250 characters, includes an explicit time-to-visual mapping and a reading key.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: Original representation
+      looks_like: The clock uses no conventional hands or digits, and the idea shows genuine invention - not a standard clock reskinned.
+      weight: 0.35
+    - criterion: Accurate and readable
+      looks_like: The clock tracks real device time, and the key allows a newcomer to decode it - verified by an actual friend's attempt.
+      weight: 0.35
+    - criterion: Clean data-to-design mapping
+      looks_like: The mapping is systematic (every hour/minute state has a defined look) rather than decorative randomness.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Pick ONE time unit to be the star. Map hours to something big and slow (background, position), minutes to something medium, seconds to something small and lively. Don't give all three equal weight.
+  - level: 2
+    hint: Tell the AI the mapping as a table - "0h = deep navy, 6h = pale gold, 12h = bright blue, 18h = orange, smooth blending between". Anchor points plus blending beats describing all 24 hours.
+  - level: 3
+    hint: If the clock looks right but shows wrong time, ask - "log the current hour, minute, second as small debug text in the corner so I can verify the mapping". Seeing the raw data next to the visual finds the bug instantly.
+reflection_prompts:
+  - What did you learn about why normal clocks look the way they do?
+  - Where is the line between beautiful and unreadable in your design?
+unlocks: [mood-lamp, name-starfield, season-rain]
+stretch_challenge: Add a "mystery mode" that hides the key - then test how long it takes a new person to figure out how to read it unaided.
+safety_notes: Nothing sensitive here - this one makes a great always-on display for your room.

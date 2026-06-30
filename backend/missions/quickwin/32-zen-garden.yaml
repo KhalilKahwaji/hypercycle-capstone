@@ -1,0 +1,77 @@
+id: zen-garden
+version: 1
+title: Build a Zen Garden You Can Rake With Your Mouse
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a digital sand garden where your cursor rakes flowing parallel grooves around stones you place - calm as a product goal.
+goal: A zen garden page with convincing rake trails, placeable stones, and an overall feeling of calm you tuned deliberately.
+brief: |
+  Today's build goal is unusual: not fun, not flashy - CALM. Calm is a real
+  product quality, and it's harder to build than excitement.
+
+  The garden: a sand-colored canvas where dragging the cursor rakes parallel
+  grooves - not a single line, but three to five fine lines side by side that
+  follow your stroke like a real rake. That multi-line trail is the signature
+  detail; ask for it explicitly. Grooves stay where you draw them - raking
+  over old grooves replaces them, like real sand.
+
+  Add STONES: click to place a smooth dark stone. For bonus craft, ask that
+  rake lines curve gently around stones instead of crossing them - the detail
+  that makes visitors say "ohhh".
+
+  Then tune for serenity, judging everything by one question: does this make
+  the garden feel calmer? Muted colors. Soft shadows under stones. No flashing,
+  nothing fast. Maybe rake lines that fade in over a heartbeat. Done when you
+  catch yourself raking slow spirals for no reason. That's not procrastination -
+  that's your acceptance test passing.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview; rake-feel iterations are quick.
+  - surface: claude_project
+    why: Previews in chat; responds well to atmosphere-focused feedback.
+  - surface: replit
+    why: Host it - a calm corner of the internet that's yours.
+skills:
+  teaches: [prompt-iteration, self-evaluation]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: screenshot
+    description: Your garden after deliberate raking, with stones placed - a composition, not a scribble test.
+  - type: prompt_log
+    description: Your build conversation, including the multi-line rake request and at least two calm-tuning passes.
+  - type: reflection
+    description: Two sentences - what specific choices made it feel calm, and what did you remove?
+evaluation:
+  deterministic_checks:
+    - id: screenshot_present
+      description: Screenshot attached showing rake grooves and at least one stone.
+    - id: prompt_log_present
+      description: Prompt log exists, min 250 characters, with two or more atmosphere-tuning iterations.
+    - id: reflection_present
+      description: Reflection artifact exists and is at least 80 characters.
+  rubric:
+    - criterion: The rake feels real
+      looks_like: Trails are multiple parallel fine lines following the stroke direction, persisting like sand - not a single marker line.
+      weight: 0.35
+    - criterion: Calm was engineered
+      looks_like: The log and result show deliberate choices FOR calm (muted palette, soft edges, slow fades) and things removed or rejected for being too loud.
+      weight: 0.35
+    - criterion: Composed final garden
+      looks_like: The submitted screenshot is an intentional arrangement - flowing groove patterns around thoughtfully placed stones.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Start with - "a sand-colored canvas where dragging the mouse draws a rake trail of 5 thin parallel lines perpendicular to the stroke direction, in a slightly darker sand tone".
+  - level: 2
+    hint: If trails look like marker scribbles, refine - "lines should be subtle - low contrast, slightly transparent, with a faint highlight on one side of each groove like light hitting raked sand".
+  - level: 3
+    hint: For stones, ask - "click places an irregular dark gray rounded stone with a soft shadow" - and for the master detail - "rake lines bend smoothly around stones within a small radius instead of drawing over them".
+reflection_prompts:
+  - How do you design for a feeling instead of a function?
+  - What's one app you use that could learn something from your garden?
+unlocks: [light-painter, season-rain, mood-lamp]
+stretch_challenge: Add ambient sound - a soft rake whisper while dragging - and a "new day" button that smooths all the sand back flat.
+safety_notes: Nothing sensitive here - and yes, it's allowed to just go rake your garden for ten minutes.

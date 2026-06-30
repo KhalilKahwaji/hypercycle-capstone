@@ -1,0 +1,88 @@
+id: github-first-readme
+version: 1
+title: Create a GitHub Account and Publish Your First Project README
+track: portfolio
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Join the place where the world's builders keep their work - publish a real project with a README that documents it properly, and plant your flag.
+goal: A GitHub account with your first public repository - a real mission project with its files and a complete README documenting what it is, how to run it, and how it was built.
+brief: |
+  Every serious builder on earth has a GitHub - it's where code lives,
+  where collaboration happens, and where "show me your work" gets
+  answered with a link. Today you join, and you arrive the right way:
+  not with an empty account, but with a real project, properly
+  documented.
+
+  The setup: create the account (username advice: something you'll be
+  proud of at twenty - your nickname-generator's chaotic suggestions
+  are hereby vetoed). Then pick your best self-contained mission
+  project - the maze game, the pixel editor, the palette tool, the
+  zen garden - something with a file you can upload.
+
+  The real craft of this mission is the README - the document that
+  answers every visitor's questions in order: WHAT is this (one
+  sentence + a screenshot - READMEs without screenshots are doors
+  without windows), WHY does it exist (your problem-build-proof muscle,
+  one paragraph), HOW do I run it ("download and open index.html" is a
+  complete instruction set - test it by following your own steps
+  exactly), HOW was it built (your honest AI-assisted process - the
+  builder community respects transparent methods and you should be on
+  the right side of that), and WHAT'S NEXT (the stretch ideas you
+  haven't built yet - every great README admits the project breathes).
+
+  Learn the two-word vocabulary as you go: REPOSITORY (a project's
+  home) and COMMIT (a saved change with a message - your first commit
+  message is "initial commit" by sacred tradition). Upload the files,
+  publish the README, set the repo public. Done when the link works
+  from another device - your work, on the world's shelf, documented
+  like you mean it.
+build_surfaces:
+  - surface: github
+    why: The mission IS GitHub - account, repo, README, publish.
+  - surface: claude_project
+    why: README drafting help and explanations of any term that confuses.
+  - surface: google_ai_studio
+    why: Same support role if preferred.
+skills:
+  teaches: [proof-of-work, explain-your-build]
+  requires: [prompt-basics]
+evidence_required:
+  - type: repo_url
+    description: Your public repository with project files and README.
+  - type: prompt_log
+    description: Your README drafting process, including the test of your own run-instructions.
+  - type: reflection
+    description: Two sentences - what did following your own instructions reveal, and what does having a GitHub change?
+evaluation:
+  deterministic_checks:
+    - id: repo_reachable
+      description: The repository URL loads publicly with project files present.
+    - id: readme_complete
+      description: README contains what, why, how-to-run, how-built, and what's-next sections with a screenshot.
+    - id: instructions_tested
+      description: Log documents the learner following their own run instructions exactly.
+  rubric:
+    - criterion: The README serves a stranger
+      looks_like: A visitor with no context could understand the project and run it from the README alone - the instruction test was real.
+      weight: 0.4
+    - criterion: The build story is honest
+      looks_like: The how-built section describes the AI-assisted process transparently, including iteration - methods owned, not hidden.
+      weight: 0.3
+    - criterion: A real arrival
+      looks_like: Sensible username, real project files, proper commit, public visibility verified from elsewhere - a flag planted properly.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'The no-terminal path exists and is honorable: on GitHub, "New repository" → name it → "uploading an existing file" → drag your project files in → commit. The README can be written right in the browser editor (filename exactly: README.md).'
+  - level: 2
+    hint: 'README headings come free with markdown: # for the title, ## for sections, and drag your screenshot into the editor to embed it. Ask the AI for "a README skeleton with these five sections" and fill it with YOUR content.'
+  - level: 3
+    hint: 'The instruction test, performed honestly: open your repo in a private browser window (you-as-stranger), follow the run steps EXACTLY as written, no improvising. The step you auto-corrected without noticing? A stranger can''t. Fix the README, not the memory.'
+reflection_prompts:
+  - Why does documentation count as building?
+  - What project goes up second - and what will its README admit?
+unlocks: [portfolio-page, explain-it-rebuild-it, freelancer-one-pager]
+stretch_challenge: 'Make a second commit - improve one thing in the project, commit with a message describing the change, and look at your history: two commits is the beginning of the most honest diary a builder keeps.'
+safety_notes: Public repo means public everything - no personal data in files, no API keys or tokens ever (the classic first-week mistake of all programmers; you've been warned early). Username and profile reveal what you choose; let the work be the loudest thing.

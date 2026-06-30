@@ -1,0 +1,82 @@
+id: volunteer-form
+version: 1
+title: Create a Volunteer Sign-Up Form for a Community Event
+track: community
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a volunteer sign-up form for a real event that collects exactly what organizers need to actually assign people - and hand them a tool, not a list.
+goal: A live volunteer form designed around a real event's organizing needs, with role and availability structure, real sign-ups collected, and an organizer-ready summary view.
+brief: |
+  Every community event - the school fair, the cleanup day, the church or
+  mosque fundraiser - runs on volunteers, and almost every one collects
+  them through chaos: paper lists, group-chat "I'll come inshallah", and
+  a panicked organizer the night before. Today you replace chaos with a
+  form - and learn that a good form is designed backwards from a
+  DECISION.
+
+  The decision the organizer must make: WHO does WHAT, WHEN. So work
+  backwards: the form must collect name, contact, which ROLES they can do
+  (setup crew, registration desk, food table, cleanup, photography - get
+  the real roles from a real organizer if you can), and their
+  AVAILABILITY in the event's actual time blocks. Everything else is
+  optional decoration; these four fields ARE the assignment decision.
+  Add one free-text field - "anything we should know?" - the answers
+  will surprise you.
+
+  Make the form warm, not bureaucratic: a sentence about why the event
+  matters at the top costs nothing and raises sign-ups.
+
+  Then the deliverable upgrade most people skip: the responses sheet,
+  organized FOR the organizer - a pivot or summary showing people per
+  role per time block at a glance, gaps visible. Collect at least three
+  real sign-ups (or run a realistic pilot with friends if the event is
+  later). Done when an organizer looks at your summary and says "oh,
+  THIS is useful" - because you handed them a decision, not a list.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Form plus the organizer-summary sheet - the whole tool in one place.
+  - surface: google_ai_studio
+    why: Question design and the summary formulas.
+skills:
+  teaches: [user-feedback, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The form, the responses, and the organizer summary view showing roles versus time blocks.
+  - type: prompt_log
+    description: Your backwards design - the organizer decision, the fields derived from it, and the real roles you confirmed.
+  - type: reflection
+    description: Two sentences - what did the organizer (or pilot testers) say about the summary, and what did the free-text field catch?
+evaluation:
+  deterministic_checks:
+    - id: form_and_signups_present
+      description: Screenshots show the live form and three or more sign-ups.
+    - id: summary_view_present
+      description: An organizer summary showing role-by-timeblock coverage exists.
+    - id: backwards_design_present
+      description: Log shows fields derived from the assignment decision.
+  rubric:
+    - criterion: Designed backwards from the decision
+      looks_like: Every field traces to who-does-what-when; roles and time blocks are the event's real ones, confirmed with an organizer where possible.
+      weight: 0.35
+    - criterion: The summary serves the organizer
+      looks_like: Coverage and gaps visible at a glance - the organizer can assign from it without re-processing the raw list.
+      weight: 0.35
+    - criterion: Real sign-ups, warm form
+      looks_like: Genuine responses collected, the form's tone invites rather than processes, and feedback was gathered.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Find the real roles by asking whoever ran it last year: "what jobs did you need people for, and when did you run short?" The shortage list is gold - design the form to make shortages visible early.'
+  - level: 2
+    hint: 'Roles and availability as checkboxes (multi-select), not dropdowns - volunteers can do MORE than one thing, and letting them say so is how gaps get covered.'
+  - level: 3
+    hint: 'For the summary: ask the AI for a formula counting sign-ups per role per time block from your responses sheet (COUNTIFS is the workhorse), arranged as a grid - roles down, time blocks across, thin numbers meaning trouble. Conditional-format the zeroes red.'
+reflection_prompts:
+  - Why does designing backwards from a decision beat listing nice-to-know questions?
+  - What would break at scale - 50 volunteers, 10 roles?
+unlocks: [volunteer-signup-automation, signup-confirmation-pipeline, carpool-form]
+stretch_challenge: 'Connect it to your confirmation-pipeline skills - each volunteer gets an automatic thank-you with their role and time block once assigned. Sign-up to assignment to confirmation: the full volunteer pipeline.'
+safety_notes: Volunteer data is personal data - organizers only, deleted after the event. For events involving minors, contact info should route through parents or the organizing institution as appropriate.

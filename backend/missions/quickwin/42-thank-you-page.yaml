@@ -1,0 +1,76 @@
+id: thank-you-page
+version: 1
+title: Build a Thank-You Page for a Teacher or Mentor
+track: community
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 45
+languages: [en]
+summary: Build a personal thank-you page for someone who taught you something real - specific gratitude, designed with care, actually delivered.
+goal: A finished thank-you page for a real teacher or mentor, built on specific memories, designed to fit them, and delivered to them.
+brief: |
+  Someone taught you something that stuck. A teacher, a coach, an aunt, the
+  neighbor who showed you how to fix things. Today you build them a monument.
+  A small one. A webpage. But still.
+
+  The writing rule that makes this work: SPECIFIC GRATITUDE ONLY. "Thank you
+  for everything" is wrapping paper with nothing inside. "Thank you for not
+  letting me quit in March when I genuinely intended to" is a gift. Collect
+  3-5 specific moments, lessons, or phrases of theirs before you build. If
+  they have a catchphrase, it absolutely goes in.
+
+  Design it to fit THEM, not you - formal and elegant for the strict teacher
+  you secretly loved, warm and hand-drawn-feeling for the coach. The design
+  is part of the message.
+
+  Then the step that takes actual courage: SEND IT. This mission's deliverable
+  isn't a page, it's a delivered page. Gratitude that stays in drafts doesn't
+  count. Done when they've seen it.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Build and preview the page; iterate on tone easily.
+  - surface: claude_project
+    why: Excellent at helping polish writing while keeping it in your voice.
+  - surface: canva
+    why: Alternative for a beautiful printable version - some mentors prefer paper.
+skills:
+  teaches: [prompt-examples, shipping-basics]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The finished page.
+  - type: prompt_log
+    description: Your list of specific moments collected before building, and one example of making the writing more specific.
+  - type: reflection
+    description: Two sentences - how did you deliver it, and what happened?
+evaluation:
+  deterministic_checks:
+    - id: page_screenshot_present
+      description: Screenshot artifact attached.
+    - id: moments_list_present
+      description: Prompt log exists, min 200 characters, contains specific moments preceding the build.
+    - id: delivery_reflection_present
+      description: Reflection exists, min 80 characters, describes actual delivery.
+  rubric:
+    - criterion: Gratitude is specific
+      looks_like: The page names real moments, lessons, and phrases - things only this learner could thank only this person for.
+      weight: 0.4
+    - criterion: Designed for the recipient
+      looks_like: Visual choices were made for the recipient's personality, and the learner can explain the fit.
+      weight: 0.25
+    - criterion: It was delivered
+      looks_like: The page actually reached the person - evidence of sending or showing, with their response if any.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Memory triggers: What did they say that you still quote? When were they right and you were wrong? What can you do today that you couldn''t before them? Write fast, pick the best 3-5.'
+  - level: 2
+    hint: For every general line, ask yourself "when, specifically?" - then write the when instead. The moment IS the message.
+  - level: 3
+    hint: Nervous about sending? The move is one line - "I made something for you" plus the link. If digital feels wrong for them, print the Canva version and hand it over. Paper works on every generation.
+reflection_prompts:
+  - Why is specific gratitude harder to write than general gratitude?
+  - What did their reaction teach you about making things for one person?
+unlocks: [family-recipe-page, event-invite-page, compliment-generator]
+stretch_challenge: Collect one thank-you line each from other students or teammates and add a "we all say thanks" section - a group monument.
+safety_notes: Keep it appropriate and public-readable - write as if their colleagues might see it (they might). Don't include private details about them or you.

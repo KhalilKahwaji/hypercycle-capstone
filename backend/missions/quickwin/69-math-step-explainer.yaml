@@ -1,0 +1,79 @@
+id: math-step-explainer
+version: 1
+title: Build a Math Word-Problem Explainer That Shows Steps
+track: study
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a math helper that walks through word problems step by step - pausing at each step for YOU to do the work - and verify it against problems you can already solve.
+goal: A step-by-step math explainer with a pause-and-check teaching protocol, calibration-tested on problems with known answers, then used on a problem that genuinely stumped you.
+brief: |
+  Word problems are where math meets reading and both panic. A good explainer
+  doesn't solve FOR you - it makes the invisible thinking visible: what is
+  the problem actually asking? What do we know? What's the bridge between?
+
+  Build the protocol: when given a word problem, the bot must first restate
+  what's being asked in plain words, then list the known quantities, then -
+  and this is your signature rule - work ONE step at a time, explaining the
+  why of each step, and STOPPING after each to ask you to do the actual
+  calculation or predict the next move. You do the math; it does the
+  navigation. A bot that barrels through all steps is a solutions manual;
+  yours is a coach.
+
+  Then the critical engineering step: CALIBRATION. Before trusting it on
+  hard problems, test it on three problems you can already solve perfectly.
+  Does it get them right? AI is famously capable of confident arithmetic
+  errors - if it fumbles your known problems, add the rule "verify each
+  calculation by recomputing it differently" and retest. Only a calibrated
+  instrument gets used on real unknowns.
+
+  Finally, the payoff: bring it the problem type that actually defeats you,
+  work through it with the protocol, then prove ownership - solve a similar
+  one fully alone. That last solo solve is the mission.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold the protocol; free for daily homework sessions.
+  - surface: claude_project
+    why: Strong stepwise reasoning and reliable at waiting for your turn.
+skills:
+  teaches: [prompt-decomposition, ai-limits]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your teaching protocol and the calibration test results on three known problems.
+  - type: transcript
+    description: The full session on your genuinely hard problem - showing the pause-and-check rhythm.
+  - type: reflection
+    description: Two sentences - did you solve the similar problem alone afterward, and what step do you now see that you used to miss?
+evaluation:
+  deterministic_checks:
+    - id: protocol_present
+      description: Prompt log exists, min 300 characters, contains the pause-after-each-step rule.
+    - id: calibration_present
+      description: Log shows three known-answer problems tested before real use.
+    - id: hard_problem_transcript
+      description: Transcript shows a complete stepwise session with learner participation at each step.
+  rubric:
+    - criterion: The protocol coaches, not solves
+      looks_like: The transcript shows restatement, knowns listed, one step at a time, and the learner doing calculations at each pause - the bot navigated, the learner computed.
+      weight: 0.4
+    - criterion: Calibration was real
+      looks_like: Three known problems tested first, results checked, and any arithmetic wobble met with a verification rule before proceeding.
+      weight: 0.3
+    - criterion: Ownership demonstrated
+      looks_like: The learner reports solving a similar problem fully alone - the transfer test that proves coaching worked.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'The protocol''s key line: "After each step, stop. Ask me to either compute the result or predict the next step. Do not continue until I answer. If I''m wrong, don''t correct me immediately - ask a question that helps me see it."'
+  - level: 2
+    hint: Use problems from your actual textbook with answers in the back as calibration - known ground truth is exactly what the back-of-book answers are for.
+  - level: 3
+    hint: 'If the bot makes an arithmetic slip during calibration, add: "After every calculation, verify it by an independent method (e.g., reverse operation) before showing me." AI arithmetic improves dramatically when forced to check itself.'
+reflection_prompts:
+  - Which part of word problems was your actual weakness - the reading, the setup, or the calculation?
+  - Why does predicting the next step teach more than watching it?
+unlocks: [study-buddy-bot, explain-like-five-bot, diagram-explainer]
+stretch_challenge: Reverse the roles - YOU explain a solved problem step by step to the bot, and instruct it to play a confused student who asks "but why?" at every step. Teaching it is the deepest test of you.
+safety_notes: This coaches your thinking on your work - solutions it walks you through are for learning, not for submitting as homework you didn't do. Always verify final answers independently; calibration reduces errors but doesn't eliminate them.

@@ -1,0 +1,71 @@
+id: local-meme-generator
+version: 1
+title: Build a Meme Generator for Your School or Town
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Make a meme caption generator that only does hyper-local humor - jokes about your school or town that outsiders won't even get.
+goal: A working meme caption generator loaded with your local inside knowledge, plus three finished memes made with it.
+brief: |
+  The best memes are local. The cafeteria's "mystery Tuesday". The roundabout
+  everyone fears. The shop owner who knows everyone's family history. Outsiders
+  won't get them - that's the point.
+
+  First, brain-dump 8-10 pieces of local inside knowledge into the AI. Places,
+  rituals, legends, universal experiences everyone in your school or town shares.
+
+  Then build the generator: a page (or a tuned chat) where you pick a situation
+  ("exams coming", "first day back", "summer heat") and it produces meme captions
+  drawn ONLY from your local material. This is context grounding - the AI is funny
+  here because YOU loaded it with knowledge it never had.
+
+  Finally, use it: pick the three best captions and turn them into actual memes
+  in Canva. Done when one of them would make a classmate laugh out loud.
+build_surfaces:
+  - surface: google_ai_studio
+    why: System instructions hold your local knowledge so every caption stays grounded in it.
+  - surface: canva
+    why: Fast meme assembly with text-on-image templates.
+  - surface: claude_project
+    why: Project instructions keep local context loaded across the session.
+skills:
+  teaches: [context-grounding, prompt-examples]
+  requires: [prompt-basics]
+evidence_required:
+  - type: file_upload
+    description: Your three finished memes (images).
+  - type: prompt_log
+    description: The local-knowledge brain dump you fed the AI, plus the generator instructions.
+  - type: reflection
+    description: Two sentences - what made the local captions funnier than generic ones?
+evaluation:
+  deterministic_checks:
+    - id: memes_present
+      description: At least three image files attached.
+    - id: prompt_log_present
+      description: Prompt log exists, minimum 300 characters, contains a visible list of local facts.
+  rubric:
+    - criterion: Genuinely local
+      looks_like: The memes reference specific named places, rituals, or shared experiences. An outsider would need a translation.
+      weight: 0.4
+    - criterion: Grounding did the work
+      looks_like: The prompt log shows captions drawing directly from the learner's brain dump, not generic internet meme formats with a town name pasted in.
+      weight: 0.35
+    - criterion: They're actually funny
+      looks_like: At least one meme would plausibly get shared in a class group chat. The learner curated rather than accepting the first three outputs.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Stuck on local material? Ask yourself - what do all of us complain about? What's the one place everyone has a story about? Complaints are comedy ore.
+  - level: 2
+    hint: Tell the AI - "Use ONLY the facts I gave you. Every caption must reference at least one. Don't invent places." Then ask for 10 captions per situation and pick the gold.
+  - level: 3
+    hint: If captions feel generic, your facts are too general. "The cafeteria" is generic. "The cafeteria pasta that's somehow both dry and wet" is material. Go one level more specific and regenerate.
+reflection_prompts:
+  - Why does the AI need YOUR knowledge to be funny here?
+  - Which caption surprised you by being better than what you'd have written?
+unlocks: [week-in-comic, shop-content-studio]
+stretch_challenge: Add a bilingual mode - the same meme captions in Arabic or French, keeping the humor (not just translating words).
+safety_notes: Punch at situations, never at people. No memes about named teachers, classmates, or shop owners without their consent - legends and places are fair game.

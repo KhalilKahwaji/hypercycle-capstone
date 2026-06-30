@@ -1,0 +1,70 @@
+id: volunteer-signup-automation
+version: 1
+title: Automate a Volunteer Signup
+track: community
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 120
+languages: [en]
+summary: Build your first real automation - a signup form that organizes volunteers into a sheet and confirms automatically, no human copying names.
+goal: A working trigger-to-action automation - form submission flows into an organized sheet and triggers a confirmation, tested end to end.
+brief: |
+  Every youth group, parish, scout troop and NGO in Zahle runs on someone manually
+  copying names from WhatsApp into a list. Today you kill that job.
+
+  Build this pipeline: someone fills a signup form -> their answers land in a sheet,
+  organized -> they get an automatic confirmation.
+
+  That is a TRIGGER (form submitted) and ACTIONS (add row, send confirmation).
+  Trigger-action is the atom of all automation. Master this one and you can automate
+  half the boring work in any organization.
+
+  Use a real or realistic scenario - a cleanup day, a food drive, event helpers.
+  Then test it end to end: submit as three fake volunteers and verify each one lands
+  in the sheet AND gets confirmed. An automation you didn't test end-to-end is a hope,
+  not a system.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Forms-to-Sheets is built in - the gentlest path to a real automation.
+  - surface: make
+    why: Visual scenario builder when you want the confirmation step and more.
+  - surface: n8n
+    why: Open-source alternative - more setup, more power, no vendor limits.
+skills:
+  teaches: [automation-trigger-action]
+  requires: [tool-assembly]
+evidence_required:
+  - type: live_url
+    description: Link to the working form.
+  - type: screenshot
+    description: The sheet with your 3 test submissions, and the automation/flow configuration.
+  - type: reflection
+    description: Describe your trigger and each action in your own words. What broke first, and how did you find out?
+evaluation:
+  deterministic_checks:
+    - id: form_url_reachable
+      description: Form URL responds.
+    - id: pipeline_screenshots
+      description: Screenshots show both the populated sheet and the flow/automation configuration.
+  rubric:
+    - criterion: End-to-end verification
+      looks_like: Three test submissions traced through the whole pipeline - form, sheet row, confirmation - with evidence of each stage.
+      weight: 0.4
+    - criterion: Trigger-action understanding
+      looks_like: The reflection correctly names the trigger and actions and shows the learner understands WHY data flows, not just that it does.
+      weight: 0.35
+    - criterion: Fit for a real organizer
+      looks_like: Form fields and sheet columns match what an actual event organizer would need - no missing essentials, no creepy extras.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: Start with just form -> sheet and verify that works before adding the confirmation step. One pipe at a time.
+  - level: 2
+    hint: In Google Forms, responses link to a Sheet from the Responses tab. For confirmation, the form's own confirmation message counts for v1 - an emailed one is the upgrade.
+  - level: 3
+    hint: Automation not firing? Check the boring things first - is the scenario turned ON, did you re-test AFTER connecting, are you looking at the right sheet tab? 90% of automation bugs are these.
+reflection_prompts:
+  - How many minutes per event does this save a real organizer? Multiply by every event this year.
+unlocks: [own-your-ai, ship-for-zahle]
+stretch_challenge: Add a second action - when someone picks "driver" on the form, they land on a separate drivers list automatically.
+safety_notes: Test with fake names only. If a real organization adopts it, the signup data belongs to them and the volunteers - collect the minimum, share access carefully.

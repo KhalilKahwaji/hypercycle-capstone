@@ -1,0 +1,82 @@
+id: save-link-bot
+version: 1
+title: Build a "Save Link for Later" Bot That Files Things Neatly
+track: automation
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a bot you message a URL and it files the link - fetched title, AI-assigned category, date - into a tidy library. Capture in two seconds, organized forever.
+goal: A working link-saving pipeline - message in, enriched and categorized row out - with categories you designed and an AI categorization step you audited for accuracy.
+brief: |
+  Your current "save for later" system is seventeen open tabs and a chat
+  with yourself. Today it gets replaced by a librarian who never sleeps.
+
+  The dream workflow: you see something good, you message the link to your
+  bot channel, done - two seconds. Behind the scenes, the automation picks
+  up the message, fetches the page's TITLE (a bare URL is a mystery in a
+  month - "youtube.com/watch?v=x7..." versus "How Sand Becomes Chips" is
+  the whole difference), has an AI module assign a CATEGORY from the fixed
+  set you designed (watch-later, read-later, school, project-ideas, music,
+  funny - yours to choose, but fixed: an AI allowed to invent categories
+  will cheerfully give you forty), stamps the date, and writes the tidy
+  row to your library sheet.
+
+  Build it in Make: a chat-message trigger watching your saves channel, an
+  HTTP/page-title step, the AI categorization with your fixed list and a
+  fallback rule ("if unsure, use 'misc' - never invent a category"), and
+  the sheet write.
+
+  Then the audit: save 8-10 real links of deliberately mixed types and
+  check the AI's categorization honestly. Wrong assignments? Tighten the
+  category descriptions and retest. You're tuning a classifier - the same
+  quality loop that runs production AI systems, on your watch-later pile.
+
+  Done when saving is reflex and the library has earned a bookmark of its
+  own.
+build_surfaces:
+  - surface: make
+    why: Chat trigger, HTTP fetch, AI module, sheet write - the full pipeline.
+  - surface: n8n
+    why: Open-source with flexible HTTP and AI nodes.
+skills:
+  teaches: [automation-trigger-action, tool-assembly]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The scenario, and the library sheet with 8+ real links filed - titles, categories, dates.
+  - type: prompt_log
+    description: Your category design with descriptions, the AI module's instructions, and the audit results with any tuning.
+  - type: reflection
+    description: Two sentences - how accurate was the categorizer before and after tuning, and what made categories work or fail?
+evaluation:
+  deterministic_checks:
+    - id: library_evidence
+      description: Sheet shows 8+ automation-filed links with fetched titles, categories, and dates.
+    - id: category_design_present
+      description: Log contains a fixed category set with descriptions and a fallback rule.
+    - id: audit_present
+      description: Categorization accuracy was checked against the learner's own judgment, with results.
+  rubric:
+    - criterion: The pipeline enriches
+      looks_like: Bare URLs in, titled-categorized-dated rows out - all enrichment automatic, verified across the test links.
+      weight: 0.35
+    - criterion: The classifier is designed and tuned
+      looks_like: Fixed categories with clear descriptions, a no-inventing fallback, an honest accuracy audit, and at least one tuning pass with re-test.
+      weight: 0.4
+    - criterion: Capture is frictionless
+      looks_like: The save action is genuinely two seconds from any device, and the learner reports actually using it.
+      weight: 0.25
+hint_ladder:
+  - level: 1
+    hint: 'Create a private channel or chat just for saves - the trigger watches only there, so normal conversation never gets filed. A dedicated inbox is the cleanest trigger filter there is.'
+  - level: 2
+    hint: 'For the title, an HTTP GET on the URL plus a text-parser step extracting <title> works; some Make modules do it in one. If a site blocks fetching, store the bare URL anyway - a pipeline should degrade gracefully, not die.'
+  - level: 3
+    hint: 'Categorizer instructions that work: list each category WITH a one-line description and two examples, then "Assign exactly one. If confidence is low, output misc. Never create new categories." If the audit shows confusion between two categories, their descriptions overlap - sharpen the boundary.'
+reflection_prompts:
+  - Why does a fixed category set beat letting the AI decide freely?
+  - What did tuning the classifier teach you about how AI products get good?
+unlocks: [attachment-saver, rss-news-digest, new-music-notifier]
+stretch_challenge: Add a weekly Friday digest - the automation messages you the week's saved links grouped by category, and anything older than a month unread gets gently surfaced. A library that talks back.
+safety_notes: Save your own links to your own sheet. The fetch step visits URLs automatically - only message links from sources you trust, since the bot will dutifully fetch whatever you feed it.

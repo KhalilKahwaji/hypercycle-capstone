@@ -1,0 +1,81 @@
+id: carpool-form
+version: 1
+title: Make a Carpool Coordination Form for School or Events
+track: community
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build the two-sided form that turns "who's driving?" chaos into matched rides - offers meet requests in a matching sheet you designed.
+goal: A working carpool system for a real recurring need - a two-sided form, a matching view that pairs offers with requests, and at least one real match made.
+brief: |
+  Before every match, rehearsal, and school event, the same group-chat
+  chaos: "anyone passing by the bridge?" "my mom can take 3" "wait who
+  needs a ride??" - twenty messages, zero coordination. Today you build
+  the system that matches in seconds what the chat fumbles for days.
+
+  This is your first genuinely TWO-SIDED form: drivers OFFER (seats
+  available, departure area, time leaving) and riders REQUEST (pickup
+  area, how many people). One form with a branching first question -
+  "offering or needing?" - routing to the right follow-ups (form
+  branching is a small skill with outsized power; this is where you
+  learn it).
+
+  The AREAS question is the design crux: free-text locations don't match
+  ("near the pharmacy" vs "Haouch area" - same place, no match), so
+  define 4-6 ZONES that make sense for your town and make both sides
+  pick from the SAME list. Shared vocabulary is what makes matching
+  possible - a lesson that applies to every data system ever built.
+
+  Then the MATCHING VIEW: a sheet arrangement showing offers and
+  requests side by side per zone and time - seats available against
+  seats needed, surpluses and gaps visible. Pilot it on a real upcoming
+  event with your actual group, and make at least one real match - a
+  rider in a car they wouldn't have found in the chat. That ride is
+  your deliverable.
+build_surfaces:
+  - surface: google_forms_sheets
+    why: Branching form plus the matching sheet - the full system.
+  - surface: google_ai_studio
+    why: The matching-view formulas and any layout help.
+skills:
+  teaches: [data-structuring, tool-assembly]
+  requires: [prompt-basics]
+evidence_required:
+  - type: screenshot
+    description: The branching form (both paths), and the matching view with real offers and requests.
+  - type: prompt_log
+    description: Your zone design with reasoning, and the branching structure.
+  - type: reflection
+    description: Two sentences - did a real match happen, and what did the zone list get right or wrong?
+evaluation:
+  deterministic_checks:
+    - id: two_sided_form_evidence
+      description: Screenshots show the branching question routing to offer and request paths.
+    - id: matching_view_present
+      description: A sheet view pairs offers and requests by zone with seat math.
+    - id: real_pilot_present
+      description: Real submissions from an actual event pilot, with at least one match documented.
+  rubric:
+    - criterion: The two-sided design works
+      looks_like: Branching routes cleanly, both sides answer in the shared zone vocabulary, and the data arrives matchable.
+      weight: 0.35
+    - criterion: The matching view decides
+      looks_like: Seats-offered against seats-needed per zone and time, gaps visible at a glance - a coordinator can match from it in under a minute.
+      weight: 0.3
+    - criterion: A real ride happened
+      looks_like: The pilot ran on a genuine event, at least one match was made through the system, and zone-list lessons were captured.
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: 'Zone design shortcut: open the map of your town and circle where group members actually live - the natural clusters ARE your zones. Five zones covering 90% of people beats nine zones covering everyone.'
+  - level: 2
+    hint: 'In Google Forms, branching lives in "Go to section based on answer" - question one routes drivers to the offer section, riders to the request section. Test both paths yourself before sharing; a broken branch silently loses half your data.'
+  - level: 3
+    hint: 'Matching view that works: two filtered areas per zone (offers left, requests right) with a seats-balance formula between them - green when offers cover requests, red when riders are stranded. Ask the AI for the SUMIFS pair; you''ve built this muscle already.'
+reflection_prompts:
+  - Why did matching require a shared vocabulary?
+  - What does the system still need a human for - and should it?
+unlocks: [volunteer-form, signup-confirmation-pipeline, event-invite-page]
+stretch_challenge: Add the notification leg - when a coordinator marks a match in the sheet, both sides get an automatic message with the details. Match-to-notify is the full loop every ride app runs on.
+safety_notes: Carpools involve real addresses and real minors in real cars - zones not exact addresses on the form, contact details shared only between matched parties via the coordinator, and the whole system run under a parent's or organizer's oversight. The chat chaos was annoying but human-supervised; keep the humans supervising.

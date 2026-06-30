@@ -1,0 +1,77 @@
+id: own-your-ai
+version: 1
+title: Own Your AI
+track: core
+difficulty_tier: 3
+min_age_band: band_15_17
+est_minutes: 120
+languages: [en]
+summary: Stop renting all your AI. Run a model on your own machine or your own key, compare it to the big ones, and learn what ownership costs and buys.
+goal: A working personal AI setup - local model via Ollama or your own API key - tested against a hosted model on your real use cases, with a written cost/privacy comparison.
+brief: |
+  Until now, AI has been something you visit. Today it becomes something you have.
+
+  Two paths - pick what your hardware and situation allow:
+
+  LOCAL PATH - install Ollama, pull a small open model (a 3B-7B model runs on most
+  laptops), and run it. No internet needed after download. Your prompts never leave
+  your machine. Feel how it's slower and rougher - and completely yours.
+
+  KEY PATH - get an API key (free tiers exist), connect it to a simple playground or
+  script, and run the same model the chat apps use - except now YOU control the
+  settings, see the usage, and could plug it into anything you build.
+
+  Either way, the core of the mission is the comparison: run 5 of your real tasks -
+  flashcards, study questions, business FAQ tests - on your owned setup AND a hosted
+  chat. Document speed, quality, cost, and privacy honestly. Where does the small
+  local model fall apart? Where is it absolutely enough?
+
+  This isn't just a tech skill. Whoever controls the AI controls what it can be used
+  for. Now that's partly you.
+build_surfaces:
+  - surface: ollama_local
+    why: The ownership experience - model weights on your own disk.
+  - surface: google_ai_studio
+    why: Easiest free API key path with a usable playground.
+  - surface: any_chat_ui
+    why: As the hosted comparison baseline.
+skills:
+  teaches: [byok-setup]
+  requires: [ai-limits]
+evidence_required:
+  - type: screenshot
+    description: Your owned setup running - terminal with Ollama, or playground with your key (BLUR/CROP THE KEY).
+  - type: file_upload
+    description: Comparison - 5 real tasks, owned vs hosted - speed, quality, cost, privacy.
+  - type: reflection
+    description: When would you choose the smaller owned model over the better hosted one? Name a real situation.
+evaluation:
+  deterministic_checks:
+    - id: setup_screenshot
+      description: Screenshot shows a working owned setup.
+    - id: comparison_five_tasks
+      description: Comparison artifact covers 5 tasks on both setups.
+    - id: no_visible_secrets
+      description: No API key or credential visible in any artifact.
+  rubric:
+    - criterion: Working ownership
+      looks_like: Evidence shows the learner actually ran a model locally or via their own key - not just read about it.
+      weight: 0.35
+    - criterion: Honest comparison
+      looks_like: The comparison admits where the owned setup is worse, with concrete observations, not ideology in either direction.
+      weight: 0.35
+    - criterion: Trade-off reasoning
+      looks_like: The reflection names a realistic scenario (privacy, cost, offline, control) where the owned path wins, with a defensible why.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: Laptop struggling? Try a smaller model first - a 3B model that runs beats a 7B that crashes. The lesson is the same.
+  - level: 2
+    hint: For the cost column - check what your 5 tasks would cost at API prices (the pricing pages are public) vs free-tier limits vs electricity-and-nothing locally. Real numbers, even rough ones.
+  - level: 3
+    hint: Good comparison test - give both models the SAME flashcard-machine prompt from your earlier mission. Format obedience is where small models struggle visibly. Document exactly how.
+reflection_prompts:
+  - The platform pays for some of your AI calls today. After this mission, why do you think we push you to bring your own?
+unlocks: [explain-it-rebuild-it, ship-for-zahle]
+stretch_challenge: Point one of your earlier builds (flashcards or study helper) at your owned model and make it work end to end.
+safety_notes: API keys are passwords - never in screenshots, never shared, never in submitted files. If a key leaks, revoke it immediately. Free tiers only unless a guardian approves spending.

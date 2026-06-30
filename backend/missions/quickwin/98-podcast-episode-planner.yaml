@@ -1,0 +1,82 @@
+id: podcast-episode-planner
+version: 1
+title: Build a Podcast Episode Planner
+track: core
+difficulty_tier: 1
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Design an episode structure you believe in, build a planner that turns any topic into a full episode blueprint, and prove it by recording one segment.
+goal: An episode planner encoding your chosen show format, producing complete blueprints (segments, timings, questions, hooks) for two real episode ideas, with one segment actually recorded.
+brief: |
+  Every podcast you love has invisible architecture: the cold-open hook,
+  the segment rhythm, the planted questions that sound spontaneous. Today
+  you design YOUR architecture and build the machine that applies it to
+  any topic.
+
+  First, the FORMAT decision - this is your show's skeleton, so choose
+  like a producer: solo commentary or co-host banter? Segment lengths
+  (three tight 5-minute blocks? one deep 20?)? Recurring bits (a rapid-
+  fire round? "wrong opinion of the week"?)? How episodes open (cold
+  story, then intro - the standard for a reason) and close (next-episode
+  tease)? Steal structure from shows you love, combine, make it yours.
+
+  Then the planner: input is a topic ("why our school's canteen economics
+  make no sense"), output is the full blueprint - the cold-open hook
+  written out word-for-word (hooks deserve full drafting; everything
+  else can be bullets), segments with timings and talking points, three
+  questions per segment that go BENEATH the obvious, and transition
+  lines between segments.
+
+  Run TWO real episode ideas through. Then the proof-of-concept that
+  separates planners from dreamers: RECORD the cold open of one - phone
+  voice memo, one take allowed to be rough. Done when you hear your own
+  hook out loud and it pulls even you in.
+build_surfaces:
+  - surface: claude_project
+    why: Holds your format across episodes; strong at hook drafting.
+  - surface: google_ai_studio
+    why: System instructions hold the format; blueprints generate fast.
+  - surface: notion
+    why: Where episode blueprints live and become a real production pipeline.
+skills:
+  teaches: [prompt-decomposition, data-structuring]
+  requires: [prompt-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your format design with its influences, and both episode blueprints.
+  - type: file_upload
+    description: The recorded cold-open segment (voice memo).
+  - type: reflection
+    description: Two sentences - what did hearing it out loud change, and which structural choice are you most sure about now?
+evaluation:
+  deterministic_checks:
+    - id: format_design_present
+      description: Prompt log contains an explicit show format with segments, timings, and recurring elements.
+    - id: two_blueprints_present
+      description: Two complete episode blueprints for real topics exist.
+    - id: recording_present
+      description: A recorded cold-open audio file is attached.
+  rubric:
+    - criterion: The format is authored
+      looks_like: Deliberate structural choices with reasons and influences - a producer's document, not a generic template.
+      weight: 0.35
+    - criterion: Blueprints are production-ready
+      looks_like: Full hooks drafted, segments timed, questions that dig beneath the obvious - someone could record from these tomorrow.
+      weight: 0.35
+    - criterion: The proof was recorded
+      looks_like: A real cold open exists in audio, and the reflection shows the out-loud test taught something the page couldn't.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: 'Format-finding shortcut: take your favorite show and write down its skeleton from memory - what happens in the first 60 seconds? When do segments change? You know more structure than you think; you''ve just never written it down.'
+  - level: 2
+    hint: 'For beneath-the-obvious questions, give the rule: "For each segment, write three questions: one anyone would ask, one only a curious person would ask, one nobody would think to ask. Mark which is which." The third column is where episodes get good.'
+  - level: 3
+    hint: 'Recording resistance is normal - lower the bar explicitly: one take, phone on the table, allowed to be bad. The mission isn''t a good recording; it''s discovering what written-for-reading versus written-for-speaking means. Your second hook draft will be different.'
+reflection_prompts:
+  - What did the out-loud test reveal that reading never would?
+  - Which podcast structure that you "borrowed" do you now understand from inside?
+unlocks: [notes-to-script-tool, story-prompt-generator, movie-trailer-me]
+stretch_challenge: Plan a three-episode arc where each episode plants a question the next one answers - serialized structure is the planner's final boss.
+safety_notes: Plan episodes about topics, not exposés of real classmates. If you record with a co-host, both of you own the recording - agree before anything gets shared.

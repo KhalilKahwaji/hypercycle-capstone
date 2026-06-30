@@ -1,0 +1,76 @@
+id: pixel-art-editor
+version: 1
+title: Build Your Own Pixel-Art Editor in the Browser
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 60
+languages: [en]
+summary: Build a working pixel-art editor - grid, palette, draw, erase, save - and then make actual art with the tool you made.
+goal: A functioning pixel editor (16x16 or 32x32 grid, palette, erase, clear, save) built feature by feature, plus one artwork made in it.
+brief: |
+  Until now you've built toys. Today you build a TOOL - software someone uses
+  to make something else. Tools have requirements, and you're writing them.
+
+  Spec your editor before any code. The honest minimum: a 16x16 grid of big
+  pixels, a palette of 8-12 colors, click (or drag) to paint, an eraser, a
+  clear-canvas button, and a way to save the result as an image. Write that
+  list in your own words - congratulations, you've written a spec.
+
+  Build it FEATURE BY FEATURE. Grid first - works? Painting - works? Then
+  palette, then eraser, then save. One feature per message, testing each.
+  When something breaks (drag-painting skips pixels, eraser paints white over
+  your background), report the symptom precisely and iterate. This is exactly
+  how real software gets built - spec, increment, test, debug.
+
+  Final deliverable: ART. Make one real piece in your own editor - a game
+  character, your initials as a logo, a tiny landscape. The tool is only done
+  when it has made something.
+build_surfaces:
+  - surface: google_ai_studio
+    why: Generate and preview each feature increment quickly.
+  - surface: claude_project
+    why: Strong at incremental builds and debugging from symptoms.
+  - surface: replit
+    why: Host your editor at a real URL - your first shipped tool.
+skills:
+  teaches: [data-structuring, debugging-loop]
+  requires: [prompt-basics, ui-basics]
+evidence_required:
+  - type: prompt_log
+    description: Your written spec (the feature list) and the feature-by-feature build conversation including at least one bug fixed.
+  - type: screenshot
+    description: The editor with all features visible.
+  - type: file_upload
+    description: The artwork you made in your own editor.
+evaluation:
+  deterministic_checks:
+    - id: spec_present
+      description: Prompt log exists, min 300 characters, begins with a feature list of five or more items.
+    - id: editor_screenshot_present
+      description: Screenshot shows grid, palette, and controls.
+    - id: artwork_present
+      description: An image artifact made with the editor is attached.
+  rubric:
+    - criterion: Spec-first, incremental build
+      looks_like: The log shows a written feature list, then features added and tested one at a time - not one giant request.
+      weight: 0.35
+    - criterion: The tool actually works
+      looks_like: All specced features function - paint, erase, clear, palette switching, and save.
+      weight: 0.35
+    - criterion: Made something real with it
+      looks_like: The submitted artwork is a deliberate piece (character, logo, scene) showing the editor is genuinely usable.
+      weight: 0.3
+hint_ladder:
+  - level: 1
+    hint: First message - just the grid. "A 16x16 grid of large square cells, light borders, clicking a cell fills it black." Confirm it works before anything else.
+  - level: 2
+    hint: Common bug - dragging skips cells. Report it as - "when I drag fast, some cells don't fill - paint every cell the mouse passes over while held down". Precise symptom, instant fix.
+  - level: 3
+    hint: For saving, ask - "add a Save button that exports the grid as a PNG scaled up 10x so each pixel is sharp". If the export is blurry, say "the PNG is blurry - disable smoothing so pixels stay crisp".
+reflection_prompts:
+  - How did writing the spec first change the build?
+  - What feature would a friend request first if they used your editor?
+unlocks: [illusion-gallery, light-painter, explain-it-rebuild-it]
+stretch_challenge: Add an undo button - and notice how it forces you to think about HISTORY, the feature behind every serious tool.
+safety_notes: Nothing sensitive here - publish your editor and let friends make art in it.

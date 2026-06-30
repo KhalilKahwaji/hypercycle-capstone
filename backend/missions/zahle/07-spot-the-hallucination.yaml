@@ -1,0 +1,68 @@
+id: spot-the-hallucination
+version: 1
+title: Spot the Hallucination
+track: core
+difficulty_tier: 2
+min_age_band: band_15_17
+est_minutes: 75
+languages: [en]
+summary: Become the person who catches AI lies. Run controlled tests on topics you know, compare models, and build your personal verification checklist.
+goal: A documented comparison of 2+ models on 6+ test questions about things you can verify, plus your own written verification checklist.
+brief: |
+  You've caught the AI being wrong before. Now we make you systematically dangerous to bad answers.
+
+  Design 6+ test questions on topics where YOU can verify truth: Zahle facts, your
+  school's details, Lebanese history you can check, your own subjects. Mix them -
+  some easy, some obscure, one or two about things that don't exist at all
+  (a fake restaurant, an invented poet). Watch what the AI does with those.
+
+  Run every question on at least two different models. Score each answer:
+  correct / partly wrong / confidently invented. Note HOW each model fails -
+  does it hedge, or does it lie smoothly?
+
+  Then write your personal verification checklist: 4-6 rules for when you trust an
+  AI answer, when you verify, when you assume invention. This checklist follows you
+  into every future mission.
+build_surfaces:
+  - surface: any_chat_ui
+    why: You need at least two different models - free tiers of any two chats work.
+  - surface: ollama_local
+    why: A small local model fails MORE often - excellent for studying failure.
+skills:
+  teaches: [ai-limits, model-comparison]
+  requires: [self-evaluation]
+evidence_required:
+  - type: file_upload
+    description: Comparison table - questions x models, with scores and failure notes.
+  - type: file_upload
+    description: Your verification checklist.
+  - type: reflection
+    description: Which failure surprised you most, and what does it change about how you'll build?
+evaluation:
+  deterministic_checks:
+    - id: comparison_present
+      description: Comparison artifact covers at least 6 questions and at least 2 models.
+    - id: checklist_present
+      description: Checklist artifact has at least 4 distinct rules.
+  rubric:
+    - criterion: Test design quality
+      looks_like: Questions span difficulty, include verifiable-by-learner topics, and include at least one nonexistence trap.
+      weight: 0.35
+    - criterion: Honest scoring
+      looks_like: Scores are justified with what the truth actually is and how the learner verified it - not vibes.
+      weight: 0.3
+    - criterion: Checklist usability
+      looks_like: Rules are specific behaviors ("if it names a source, check the source exists") rather than slogans ("be careful").
+      weight: 0.35
+hint_ladder:
+  - level: 1
+    hint: The nonexistence trap is the most revealing test - ask about "the famous Al-Wadi restaurant in Zahle" (made up). A trustworthy model says it doesn't know it. Many invent a menu.
+  - level: 2
+    hint: Ask the same question twice in different words. If the answers contradict each other, the model is guessing - that's a checklist rule waiting to be written.
+  - level: 3
+    hint: For your checklist, sort claims into - easy to verify (dates, names, places), hard to verify (motivations, statistics), unverifiable (opinions dressed as facts). Different rules for each.
+reflection_prompts:
+  - Now that you know how smoothly AI invents, what responsibility do YOU carry when you ship a tool that answers other people's questions?
+unlocks: [notes-powered-assistant, own-your-ai]
+stretch_challenge: Give your test set to a friend's helper from mission one. Their helper will fail somewhere yours didn't - compare why.
+safety_notes: This mission is about catching false information - don't republish any AI-invented "facts", even as a joke. Invented local history spreads fast.
