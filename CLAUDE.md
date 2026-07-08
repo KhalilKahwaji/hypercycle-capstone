@@ -21,13 +21,17 @@ AI Buddy is a personalized AI-learning platform. A user self-assesses (goals, ex
 | File | Purpose |
 |------|---------|
 | `api.py` | All endpoints, middleware, helpers |
-| `evaluator.py` | Groq evaluation; score/pass/feedback |
-| `program_generator.py` | 16-day program generation + `adapt_next_day` |
+| `llm_router.py` | LLM routing layer: `chat(system, user, difficulty)` → Groq (default) or Claude/Ollama when `USE_MULTI_LLM=true`; fails closed to Groq |
+| `evaluator.py` | Evaluation via `llm_router` (difficulty from day_number); score/pass/feedback |
+| `program_generator.py` | 16-day program generation + `adapt_next_day`; grounds generation in retrieved missions (RAG) and falls back to `precedents.py` |
+| `mission_retrieval.py` | Mission RAG: embeds the learner's assessment (Gemini), pgvector similarity search + weighted re-rank, returns real mission `content` docs to adapt. See `MISSION_RAG.md` |
+| `ingest_missions.py` | One-off script: embeds mission YAML and upserts into the `missions` table (run locally when missions change) |
 | `github_reader.py` | Reads repo tree+blobs via GitHub REST API; OAuth token required |
 | `file_processor.py` | Analyzes uploaded files (.py .md .pdf etc.) via Groq |
 | `achievements.py` | Badge award logic |
 | `platform_knowledge.py` | Static docs injected into LLM prompts |
-| `rag_store.py` | Optional ChromaDB RAG (only when `USE_RAG=true`) |
+| `precedents.py` | Hand-written precedent programs; fallback grounding when mission RAG is off/empty |
+| `rag_store.py` | Optional ChromaDB RAG over precedents (only when `USE_RAG=true`) |
 | `test_capstone_api.py` | Pytest integration tests (needs running backend) |
 
 ### Key frontend files
@@ -53,8 +57,9 @@ AI Buddy is a personalized AI-learning platform. A user self-assesses (goals, ex
 | Backend framework | FastAPI + Uvicorn |
 | Frontend | React 18, React Router 6, Vite 5 |
 | Styling | Custom CSS variables (`src/index.css`) |
-| DB | Supabase (PostgreSQL + Storage) |
+| DB | Supabase (PostgreSQL + Storage + pgvector) |
 | LLM | Groq (`llama-3.3-70b-versatile` default) |
+| Embeddings | Gemini `models/gemini-embedding-001` (768-dim) via `google-generativeai`, for mission RAG |
 | Auth tokens | `python-jose` (JWT) + `bcrypt` |
 | Package managers | `pip` (backend), `npm` (frontend) |
 
@@ -95,7 +100,14 @@ pytest test_capstone_api.py -v -m "not slow"
 | `GITHUB_CLIENT_ID/SECRET` | ✓ for OAuth | GitHub OAuth app creds |
 | `GITHUB_CALLBACK_URL` | ✓ for OAuth | Must match GitHub app settings exactly |
 | `ENABLE_SIMULATE` | — | Enables `POST /simulate/*` (dev only) |
-| `USE_RAG` | — | Enables ChromaDB RAG for program generation |
+| `USE_RAG` | — | Enables ChromaDB RAG over precedents (fallback grounding) |
+| `USE_MISSION_RAG` | — | Default `true`. Ground generation in real retrieved missions; `false` falls back to `precedents.py` |
+| `GEMINI_API_KEY` | ✓ for mission RAG | Embeds the retrieval query (Gemini). Missing key → graceful fallback to precedents |
+| `MISSION_EMBED_MODEL` | — | Defaults to `models/gemini-embedding-001`. **Must match the model that populated `missions.embedding`** |
+| `USE_MULTI_LLM` | — | Default `false` (all calls → Groq). `true`: hard tasks → Claude, easy → Ollama; failures fall back to Groq |
+| `ANTHROPIC_API_KEY/MODEL` | ✓ if multi-LLM | Claude for hard tasks; model defaults to `claude-opus-4-8`. Needs `pip install anthropic` |
+| `OLLAMA_BASE_URL/MODEL` | — | Ollama OpenAI-compatible endpoint for easy tasks; defaults `http://localhost:11434/v1` / `llama3.2` |
+| `COMPLEXITY_THRESHOLD_DAY` | — | Default `8`. Evaluations for day ≥ this route as "hard" |
 
 ---
 
@@ -111,9 +123,11 @@ pytest test_capstone_api.py -v -m "not slow"
 
 ## Supabase Schema (key tables)
 
-`users` · `self_assessments` · `programs` · `program_days` · `submissions` · `submission_feedback` · `achievements`
+`users` · `self_assessments` · `programs` · `program_days` · `submissions` · `submission_feedback` · `achievements` · `missions`
 
 Notable columns: `users.github_access_token/username/connected_at/oauth_state`, `programs.github_owner/repo/subfolder`, `submission_feedback.repo_summary` (prior-state memory for grading), `submissions.source` (`web`/`cli`/`github`)
+
+**`missions`** (mission RAG source, ~130 rows): `id`, `version`, `title`, `track`, `difficulty_tier` (int 1–4), `min_age_band` (text, e.g. `band_15_17`), `est_minutes` (int), `summary`, `goal`, `content` (jsonb — full mission doc), `embedding` (`vector(768)`, pgvector). Queried via the **`match_missions(query_embedding vector(768), match_count int, max_min_age int)`** SQL RPC (cosine distance `<=>`). See `MISSION_RAG.md`.
 
 ---
 
@@ -135,7 +149,10 @@ Notable columns: `users.github_access_token/username/connected_at/oauth_state`, 
 | Add a backend endpoint | `backend/api.py` (add route + Pydantic model if needed) |
 | Add a frontend page | `frontend/src/pages/NewPage.jsx` + route in `src/App.jsx` |
 | Change what AI evaluates | `backend/evaluator.py` — `build_system_prompt` / `build_user_prompt` |
+| Change which model handles a task | `backend/llm_router.py` — routing table in `chat()`, `evaluation_difficulty` |
 | Change program generation | `backend/program_generator.py` — `generate_program` / `adapt_next_day` |
+| Change mission retrieval / RAG grounding | `backend/mission_retrieval.py` — `retrieve_missions` (query, ranking weights, age filter); prompt grounding in `program_generator.py` `_mission_context` / `build_user_prompt`. See `MISSION_RAG.md` |
+| Re-ingest missions / change embeddings | `backend/ingest_missions.py` (keep its model in sync with `MISSION_EMBED_MODEL`) |
 | Change auth/middleware | `backend/api.py` — `is_public_path`, `auth_logging_rate_limit_middleware` |
 | Change GitHub OAuth | `backend/api.py` — `/auth/github/*` endpoints + `_make_login_state` / `_find_or_create_github_user` |
 | Change GitHub repo reading | `backend/github_reader.py` — `fetch_repo_text` / `validate_repo` |

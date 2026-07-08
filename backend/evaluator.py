@@ -9,17 +9,13 @@ submission just lets the user resubmit.)
 """
 
 import json
-import os
 from typing import List, Optional
 
-from openai import OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-PASS_THRESHOLD = 7
+import llm_router
 
-_client = OpenAI(api_key=GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
+PASS_THRESHOLD = 7
 
 
 class Evaluation(BaseModel):
@@ -118,16 +114,12 @@ def evaluate_submission(
 ) -> Evaluation:
     user_prompt = build_user_prompt(day, submission_text, file_analysis, file_raw_text, prior_summary)
 
-    response = _client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
+    content = llm_router.chat(
+        system=SYSTEM_PROMPT,
+        user=user_prompt,
+        difficulty=llm_router.evaluation_difficulty(day.get("day_number")),
         temperature=0.2,
-        response_format={"type": "json_object"},
     )
-    content = response.choices[0].message.content
 
     try:
         data = json.loads(content)

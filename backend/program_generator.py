@@ -12,18 +12,15 @@ import json
 import os
 from typing import List
 
-from openai import OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
+import llm_router
 from precedents import precedents_block
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-if not GROQ_API_KEY:
-    raise RuntimeError("Missing GROQ_API_KEY environment variable")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 USE_RAG = os.getenv("USE_RAG", "false").lower() == "true"
-
-_client = OpenAI(api_key=GROQ_API_KEY, base_url="https://api.groq.com/openai/v1")
+# Mission RAG: ground generation in real retrieved missions (Supabase pgvector).
+# Default ON; set USE_MISSION_RAG=false to fall back to precedents.py without code changes.
+USE_MISSION_RAG = os.getenv("USE_MISSION_RAG", "true").lower() == "true"
 
 
 class GeneratedDay(BaseModel):
@@ -53,6 +50,75 @@ def _precedent_context(assessment: dict) -> str:
         except Exception:
             pass  # fall back to inline precedents
     return precedents_block()
+
+
+# Mission `content` keys worth surfacing to the generator beyond the always-shown
+# title/summary/goal/skills, when present. Rendered defensively (any may be absent).
+_MISSION_RICH_KEYS = [
+    "brief", "objective", "objectives", "steps", "tasks",
+    "deliverable", "expected_output", "evaluation", "evaluation_criteria", "stretch",
+]
+
+
+def _render_mission_value(value, limit: int = 500) -> str:
+    if isinstance(value, str):
+        text = value
+    elif isinstance(value, list):
+        text = "; ".join(str(x) for x in value)
+    elif isinstance(value, dict):
+        text = json.dumps(value, ensure_ascii=False)
+    else:
+        text = str(value)
+    return " ".join(text.split())[:limit]
+
+
+def _format_mission(content: dict, idx: int) -> str:
+    title = content.get("title") or content.get("id") or f"Mission {idx + 1}"
+    meta = []
+    if content.get("track"):
+        meta.append(f"track={content['track']}")
+    if content.get("difficulty_tier") is not None:
+        meta.append(f"difficulty_tier={content['difficulty_tier']}")
+    if content.get("est_minutes"):
+        meta.append(f"~{content['est_minutes']} min")
+    header = f"MISSION {idx + 1}: {title}" + (f" ({', '.join(meta)})" if meta else "")
+
+    lines = [header]
+    if content.get("summary"):
+        lines.append(f"  Summary: {_render_mission_value(content['summary'], 400)}")
+    if content.get("goal"):
+        lines.append(f"  Goal: {_render_mission_value(content['goal'], 400)}")
+    skills = content.get("skills")
+    teaches = skills.get("teaches") if isinstance(skills, dict) else None
+    if teaches:
+        lines.append(f"  Skills taught: {_render_mission_value(teaches, 300)}")
+    for key in _MISSION_RICH_KEYS:
+        value = content.get(key)
+        if value:
+            label = key.replace("_", " ").capitalize()
+            lines.append(f"  {label}: {_render_mission_value(value)}")
+    return "\n".join(lines)[:1400]
+
+
+def _format_missions(missions: List[dict]) -> str:
+    return "\n\n".join(_format_mission(m, i) for i, m in enumerate(missions))[:9000]
+
+
+def _mission_context(assessment: dict) -> str:
+    """
+    Retrieve real missions for this learner and format them as a grounding block,
+    or return '' to signal the caller should fall back to precedents. Never raises.
+    """
+    if not USE_MISSION_RAG:
+        return ""
+    try:
+        from mission_retrieval import retrieve_missions
+        missions = retrieve_missions(assessment)
+    except Exception:
+        return ""
+    if not missions:
+        return ""
+    return _format_missions(missions)
 
 
 SYSTEM_PROMPT = (
@@ -178,12 +244,37 @@ def _optional_enrichment_block(assessment: dict) -> str:
     )
 
 
-def build_user_prompt(assessment: dict, precedent_context: str, username: str = "learner") -> str:
+def build_user_prompt(
+    assessment: dict,
+    precedent_context: str,
+    username: str = "learner",
+    mission_context: str = "",
+) -> str:
     age = assessment.get("age", "")
     age_line = f"- Age: {age}" if age else ""
     age_block = _age_rules(age, username)
     age_address = " and age" if age else ""
     enrichment_block = _optional_enrichment_block(assessment)
+
+    # GROUNDING: when real missions were retrieved, adapt them (deterministic basis).
+    # Otherwise keep the original precedent-as-loose-inspiration framing unchanged.
+    if mission_context:
+        grounding_section = f"""REAL MISSIONS — DETERMINISTIC BASIS for {username}'s program. ADAPT these into the day format below:
+{mission_context}
+
+These are real, authored missions selected as the best fit for {username}. Build the program by
+ADAPTING these missions into the day structure defined below — you MAY make a mission longer, harder,
+or more sophisticated to match {username}'s skillset, and you MAY combine or re-sequence them sensibly.
+Stay grounded in these real missions rather than inventing topics from scratch, while still tailoring
+everything to {username}'s goals, level{age_address}. Day 0 must still be the environment/setup day and
+Day 15 must still be a synthesizing capstone."""
+    else:
+        grounding_section = f"""PRECEDENT PROGRAMS — LOOSE structural inspiration ONLY. DO NOT copy their topics or structure:
+{precedent_context}
+The precedents above exist solely to show what a well-formed day looks like (spec + shippable deliverable).
+Prioritize {username}'s goals, level{age_address} above all else. Do NOT replicate any precedent's topic
+sequence, tool choices, or phase structure."""
+
     return f"""
 Design a personalized 16-day AI-development learning program for {username}.
 
@@ -197,11 +288,7 @@ LEARNER PROFILE:
 {age_line}
 {enrichment_block}
 
-PRECEDENT PROGRAMS — LOOSE structural inspiration ONLY. DO NOT copy their topics or structure:
-{precedent_context}
-The precedents above exist solely to show what a well-formed day looks like (spec + shippable deliverable).
-Prioritize {username}'s goals, level{age_address} above all else. Do NOT replicate any precedent's topic
-sequence, tool choices, or phase structure.
+{grounding_section}
 
 REQUIREMENTS:
 1. Address {username} directly in second person throughout ALL text fields ("You will build...",
@@ -381,19 +468,15 @@ Return JSON in EXACTLY this shape (no day_number field):
 No text outside the JSON object.
 """
 
-    response = _client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": (
-                "You are an expert AI-development curriculum designer. "
-                "You return STRICT JSON only. No markdown, no commentary."
-            )},
-            {"role": "user", "content": prompt},
-        ],
+    content = llm_router.chat(
+        system=(
+            "You are an expert AI-development curriculum designer. "
+            "You return STRICT JSON only. No markdown, no commentary."
+        ),
+        user=prompt,
+        difficulty="hard",
         temperature=0.4,
-        response_format={"type": "json_object"},
     )
-    content = response.choices[0].message.content
 
     try:
         data = json.loads(content)
@@ -475,19 +558,15 @@ Return JSON in EXACTLY this shape (no day_number field):
 No text outside the JSON object.
 """
 
-    response = _client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": (
-                "You are an expert AI-development curriculum designer. "
-                "You return STRICT JSON only. No markdown, no commentary."
-            )},
-            {"role": "user", "content": prompt},
-        ],
+    content = llm_router.chat(
+        system=(
+            "You are an expert AI-development curriculum designer. "
+            "You return STRICT JSON only. No markdown, no commentary."
+        ),
+        user=prompt,
+        difficulty="hard",
         temperature=0.4,
-        response_format={"type": "json_object"},
     )
-    content = response.choices[0].message.content
 
     try:
         data = json.loads(content)
@@ -521,26 +600,29 @@ def _normalize_days(data: dict) -> dict:
 
 
 def generate_program(assessment: dict, username: str = "learner") -> GeneratedProgram:
-    precedent_context = _precedent_context(assessment)
-    user_prompt = build_user_prompt(assessment, precedent_context, username=username)
+    # Prefer RAG grounding: adapt real retrieved missions. If retrieval is off or
+    # returns nothing, fall back to precedents.py so generation never hard-fails.
+    mission_context = _mission_context(assessment)
+    if mission_context:
+        user_prompt = build_user_prompt(
+            assessment, "", username=username, mission_context=mission_context
+        )
+    else:
+        precedent_context = _precedent_context(assessment)
+        user_prompt = build_user_prompt(assessment, precedent_context, username=username)
 
     last_err: Exception = ValueError("Program generation failed after all retries.")
     for attempt in range(3):
         try:
-            response = _client.chat.completions.create(
-                model=GROQ_MODEL,
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": user_prompt},
-                ],
+            content = llm_router.chat(
+                system=SYSTEM_PROMPT,
+                user=user_prompt,
+                difficulty="hard",
                 temperature=0.6,
-                response_format={"type": "json_object"},
             )
         except Exception as e:
             last_err = e
             continue
-
-        content = response.choices[0].message.content
 
         try:
             data = json.loads(content)

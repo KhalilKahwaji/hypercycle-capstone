@@ -9,5 +9,11 @@ bleach==6.1.0
 python-jose[cryptography]==3.3.0
 openai==1.51.0
 pdfplumber==0.11.4
+# Mission RAG: Gemini embeddings for retrieving real missions (USE_MISSION_RAG=true).
+# If retrieval fails (missing key/package), generation falls back to precedents.
+google-generativeai==0.8.3
 # Optional RAG bonus (only needed if USE_RAG=true):
 chromadb==0.5.5
+# Multi-LLM routing (only needed if USE_MULTI_LLM=true; router falls back to
+# Groq gracefully when this is not installed):
+# anthropic==0.79.0

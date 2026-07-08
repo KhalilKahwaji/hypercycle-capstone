@@ -16,29 +16,12 @@ from tempfile import NamedTemporaryFile
 from typing import List
 
 import pdfplumber
-from openai import OpenAI
 from pydantic import BaseModel, Field, ValidationError
 
-# Groq client is shared from api.py to avoid duplicate clients, but we also
-# build one here so this module works standalone (e.g. for unit tests).
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+import llm_router
+
 MAX_CHARS = 5000
 SUPPORTED_EXTENSIONS = {".txt", ".md", ".py", ".json", ".pdf", ".cpp"}
-
-_groq_client = None
-
-
-def _client() -> OpenAI:
-    global _groq_client
-    if _groq_client is None:
-        if not GROQ_API_KEY:
-            raise ValueError("Missing GROQ_API_KEY")
-        _groq_client = OpenAI(
-            api_key=GROQ_API_KEY,
-            base_url="https://api.groq.com/openai/v1",
-        )
-    return _groq_client
 
 
 class FileAnalysis(BaseModel):
@@ -151,16 +134,12 @@ Rules:
 - line_count must match the provided line count.
 - language_used can be Python, Markdown, JSON, English, Mixed, or Unknown.
 """
-    response = _client().chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
+    content = llm_router.chat(
+        system=system_prompt,
+        user=user_prompt,
+        difficulty="easy",
         temperature=0.2,
-        response_format={"type": "json_object"},
     )
-    content = response.choices[0].message.content
     try:
         data = json.loads(content)
     except json.JSONDecodeError as e:
